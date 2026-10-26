@@ -65,7 +65,8 @@ export default function Asesor() {
               <li>Aprobación del cliente: {c.userApproved ? "dada" : "pendiente"}</li>
             </ul>
             <div className="mt-4 flex flex-wrap items-end gap-3">
-              {!c.advisorApproved && <Button loading={busy === c.id} onClick={() => act(c.id, () => advisorApprove(c.id))}>Aprobar la revisión</Button>}
+              {c.status === "en_revision" && !c.advisorApproved && !c.changesRequested && <Button loading={busy === c.id} onClick={() => act(c.id, () => advisorApprove(c.id))}>Aprobar la revisión</Button>}
+              {(c.status === "calculado" || c.status === "pagado") && <Link href={`/asesor/${c.id}`} className="text-sm font-semibold underline">{c.status === "calculado" ? "Abrir para registrar el pago" : "Abrir para asignarlo"}</Link>}
               {c.advisorApproved && c.userApproved && (
                 <>
                   <div className="min-w-64"><TextField label="Justificante de la presentación" value={refs[c.id] ?? ""} onChange={(e) => setRefs({ ...refs, [c.id]: e.target.value })} help="El código que devuelve la sede electrónica." /></div>
