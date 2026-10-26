@@ -1,6 +1,6 @@
 # Test plan: Tu Gestoría (réplica del núcleo de TaxDown)
 
-Build: tras 5c7c1cb (ver bugs.md)  Date: 2026-10-26  Env: local. e2e contra `next build && next start` en **modo demo** (puerto 3100); backend con vitest contra Postgres en memoria; pasada manual en **modo live** con Supabase real.
+Build: 4bb1b7e  Date: 2026-10-26  Env: local. e2e contra `next build && next start` en **modo demo** (puerto 3100); backend con vitest contra Postgres en memoria; pasada manual en **modo live** con Supabase real.
 
 Cómo ejecutar, desde `web/`: `npm run e2e` (Playwright), `npm test` (vitest).
 
