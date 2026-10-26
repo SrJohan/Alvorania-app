@@ -1,4 +1,5 @@
 "use client";
+import { Plus } from "lucide-react";
 import { useId, useRef, useState, type ReactNode } from "react";
 import type { CaseStatus } from "@/lib/data/types";
 import { formatEuros } from "@/lib/format";
@@ -134,7 +135,7 @@ export function Accordion({ items }: { items: { q: string; a: ReactNode }[] }) {
         <details key={it.q} className="group p-4">
           <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
             {it.q}
-            <span aria-hidden className="text-text-muted transition-transform group-open:rotate-45">+</span>
+            <Plus aria-hidden className="size-4 shrink-0 text-accent transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none" />
           </summary>
           <div className="mt-2 text-text-muted">{it.a}</div>
         </details>

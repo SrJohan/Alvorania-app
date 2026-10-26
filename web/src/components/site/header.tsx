@@ -10,7 +10,7 @@ const links = [
   { href: "/asesoria-gestoria", label: "Autónomos" },
 ];
 
-const navCta = "inline-flex h-9 items-center rounded-pill bg-ink px-4 text-sm font-semibold text-on-ink transition-[transform,background-color] duration-200 ease-brand hover:-translate-y-px hover:bg-accent-hover active:scale-[0.98] motion-reduce:transform-none";
+const navCta = "inline-flex h-9 items-center rounded-pill bg-accent px-4 text-sm font-semibold text-on-accent transition-[transform,background-color] duration-200 ease-brand hover:-translate-y-px hover:bg-accent-hover active:scale-[0.98] motion-reduce:transform-none";
 
 /** Barra a todo el ancho arriba del todo; al bajar se encoge en una píldora flotante. */
 export function SiteHeader() {
@@ -59,23 +59,23 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="mt-24 border-t border-border bg-surface">
-      <div className="mx-auto grid max-w-content gap-8 px-4 py-10 text-sm md:grid-cols-3">
+    <footer className="mt-24 bg-ink text-on-ink">
+      <div className="mx-auto grid max-w-wide gap-8 px-4 py-12 text-sm md:grid-cols-3">
         <div>
-          <Logo size="sm" />
-          <p className="mt-2 text-text-muted">Servicios fiscales digitales con atención profesional. Gestoría sujeta a la normativa española de protección de datos.</p>
+          <Logo size="sm" tone="light" />
+          <p className="mt-3 max-w-xs text-on-ink-muted">Servicios fiscales digitales con atención profesional. Gestoría sujeta a la normativa española de protección de datos.</p>
         </div>
         <div>
           <p className="font-semibold">Servicios</p>
-          <ul className="mt-2 space-y-1 text-text-muted">
-            <li><Link href="/precios">Precios</Link></li>
-            <li><Link href="/tramites">Trámites</Link></li>
-            <li><Link href="/asesoria-gestoria">Gestoría para autónomos</Link></li>
+          <ul className="mt-2 space-y-1 text-on-ink-muted">
+            <li><Link href="/precios" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Precios</Link></li>
+            <li><Link href="/tramites" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Trámites</Link></li>
+            <li><Link href="/asesoria-gestoria" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Gestoría para autónomos</Link></li>
           </ul>
         </div>
         <div>
           <p className="font-semibold">Legal</p>
-          <ul className="mt-2 space-y-1 text-text-muted">
+          <ul className="mt-2 space-y-1 text-on-ink-muted">
             <li>Aviso legal (pendiente)</li>
             <li>Política de privacidad (pendiente)</li>
             <li>Condiciones del servicio (pendiente)</li>

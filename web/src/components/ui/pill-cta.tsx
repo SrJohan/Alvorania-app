@@ -8,9 +8,9 @@ import type { ReactNode } from "react";
  */
 export function PillCta({ href, children, tone = "ink", className = "" }: { href: string; children: ReactNode; tone?: "ink" | "light"; className?: string }) {
   const skin = tone === "ink"
-    ? "bg-ink text-on-ink hover:bg-accent-hover"
+    ? "bg-accent text-on-accent hover:bg-accent-hover"
     : "bg-surface-raised text-ink hover:bg-accent-soft";
-  const dot = tone === "ink" ? "bg-surface-raised text-ink" : "bg-ink text-on-ink";
+  const dot = tone === "ink" ? "bg-surface-raised text-accent" : "bg-accent text-on-accent";
   return (
     <Link
       href={href}

@@ -48,17 +48,29 @@ const fieldStyle = {
     "radial-gradient(at 0% 0%, var(--color-field-a) 0, transparent 55%), radial-gradient(at 100% 10%, var(--color-field-b) 0, transparent 50%), radial-gradient(at 40% 100%, var(--color-field-c) 0, transparent 60%)",
 };
 
+// Fondo de la portada: el degradado blanco a lila de la maqueta, que se funde con el blanco al bajar.
+const heroWash = {
+  backgroundImage:
+    "linear-gradient(to bottom, transparent 55%, var(--color-bg) 100%), radial-gradient(at 85% 20%, var(--color-field-a) 0, transparent 45%), linear-gradient(122deg, var(--color-bg) 0%, var(--color-surface) 48%, var(--color-field-c) 100%)",
+};
+
+// Bloque final en morado profundo con un brillo violeta en la esquina.
+const inkGlow = {
+  backgroundImage: "radial-gradient(at 100% 0%, var(--color-bright) 0, transparent 55%), radial-gradient(at 0% 100%, var(--color-ink-raised) 0, transparent 60%)",
+};
+
 const lift = "transition-[transform,background-color,box-shadow] duration-200 ease-brand hover:-translate-y-0.5 hover:shadow-pop active:translate-y-0 motion-reduce:transform-none";
 
 export default function Home() {
   return (
     <>
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px]" style={heroWash} />
       <section className="mx-auto flex max-w-wide flex-col gap-8 px-4 pt-8 md:pt-12 xl:flex-row xl:items-start xl:justify-between xl:pt-6">
         <h1 className={`${headline} text-[34px] leading-[1.08] sm:text-[56px] sm:leading-[1.05] lg:text-[72px]`}>
           Tu renta, revisada<br />por un experto.
         </h1>
 
-        <div className="inline-flex flex-col gap-4 self-start rounded-[20px] bg-surface-raised p-4 shadow-card xl:mt-4">
+        <div className="inline-flex flex-col gap-4 self-start rounded-[20px] border border-border bg-surface-raised p-4 shadow-pop xl:mt-4">
           <div className="flex items-center gap-3">
             <span aria-hidden className="grid size-11 place-items-center rounded-full bg-accent-soft text-accent"><UserCheck className="size-5" /></span>
             <div>
@@ -75,7 +87,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2" aria-hidden>
               {panelIcons.map((Icon, i) => (
-                <span key={i} className="grid size-9 place-items-center rounded-full bg-surface-raised text-ink ring-2 ring-accent-soft"><Icon className="size-4" /></span>
+                <span key={i} className="grid size-9 place-items-center rounded-full bg-surface-raised text-accent ring-2 ring-accent-soft"><Icon className="size-4" /></span>
               ))}
             </div>
             <p className="text-sm font-semibold text-ink">Cálculo gratis y revisión humana</p>
@@ -89,7 +101,7 @@ export default function Home() {
             {situations.map(({ href, Icon, title, text }) => (
               <li key={title}>
                 <Link href={href} className={`flex h-full items-start gap-3 rounded-[14px] bg-surface-raised/70 p-3 hover:bg-surface-raised ${lift}`}>
-                  <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-[9px] bg-surface-raised text-ink"><Icon className="size-[18px]" /></span>
+                  <span aria-hidden className="grid size-9 shrink-0 place-items-center rounded-[9px] bg-accent-soft text-accent"><Icon className="size-[18px]" /></span>
                   <span>
                     <span className="block text-sm font-semibold leading-5 text-ink">{title}</span>
                     <span className="mt-0.5 block text-xs leading-4 text-text-muted">{text}</span>
@@ -98,7 +110,7 @@ export default function Home() {
               </li>
             ))}
             <li>
-              <Link href="/tramites" className={`group flex h-full min-h-[72px] items-center justify-center gap-2 rounded-[14px] bg-ink/85 p-3 text-sm font-semibold text-on-ink hover:bg-ink ${lift}`}>
+              <Link href="/tramites" className={`group flex h-full min-h-[72px] items-center justify-center gap-2 rounded-[14px] bg-accent p-3 text-sm font-semibold text-on-accent hover:bg-accent-hover ${lift}`}>
                 Mi caso no está aquí
                 <ArrowRight aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none" />
               </Link>
@@ -113,7 +125,7 @@ export default function Home() {
         <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s, i) => (
             <li key={s.title}>
-              <span className="font-display text-display font-semibold leading-none tracking-[-0.06em] text-accent/30" aria-hidden>{i + 1}</span>
+              <span className="font-display text-display font-semibold leading-none tracking-[-0.06em] text-lilac" aria-hidden>{i + 1}</span>
               <p className="mt-2 text-lg font-semibold text-ink"><span className="sr-only">Paso {i + 1}: </span>{s.title}</p>
               <p className="mt-1 text-text-muted">{s.text}</p>
             </li>
@@ -124,8 +136,8 @@ export default function Home() {
       <section aria-label="Nuestras promesas" className="mx-auto mt-24 max-w-wide px-4">
         <ul className="grid gap-6 md:grid-cols-3">
           {promises.map(({ Icon, title, text }) => (
-            <li key={title} className="flex gap-4 rounded-[20px] bg-surface p-6">
-              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-highlight text-on-highlight"><Icon className="size-6" aria-hidden /></span>
+            <li key={title} className="flex gap-4 rounded-[20px] border border-border bg-surface p-6">
+              <span className="grid size-12 shrink-0 place-items-center rounded-full bg-accent text-on-accent"><Icon className="size-6" aria-hidden /></span>
               <div><p className="text-lg font-semibold text-ink">{title}</p><p className="text-text-muted">{text}</p></div>
             </li>
           ))}
@@ -138,7 +150,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto mt-24 max-w-wide px-4">
-        <div className="flex flex-col items-start justify-between gap-6 rounded-[24px] bg-ink p-8 text-on-ink md:flex-row md:items-center md:p-12">
+        <div className="flex flex-col items-start justify-between gap-6 rounded-[24px] bg-ink p-8 text-on-ink md:flex-row md:items-center md:p-12" style={inkGlow}>
           <div>
             <h2 className="font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.06em] sm:text-[44px]">Empieza por tu resultado.</h2>
             <p className="mt-2 text-on-ink-muted">Tarda unos minutos y no necesitas tarjeta.</p>
