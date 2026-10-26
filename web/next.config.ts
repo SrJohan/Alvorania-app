@@ -1,6 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Las pruebas e2e compilan en su propia carpeta para no pisar el servidor de desarrollo.
+  distDir: process.env.NEXT_DIST_DIR ?? ".next",
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,

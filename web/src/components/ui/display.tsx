@@ -1,5 +1,5 @@
 "use client";
-import { useRef, useState, type ReactNode } from "react";
+import { useId, useRef, useState, type ReactNode } from "react";
 import type { CaseStatus } from "@/lib/data/types";
 import { formatEuros } from "@/lib/format";
 import { buttonClass } from "./button";
@@ -147,6 +147,7 @@ export function FileDrop({
   onFile, busy, error, accept = ".pdf,.jpg,.jpeg,.png", maxMb = 20, label = "Sube tu documento",
 }: { onFile: (f: File) => void; busy?: boolean; error?: string; accept?: string; maxMb?: number; label?: string }) {
   const ref = useRef<HTMLInputElement>(null);
+  const inputId = useId();
   const [drag, setDrag] = useState(false);
   const [localError, setLocalError] = useState("");
   const pick = (f?: File) => {
@@ -168,8 +169,8 @@ export function FileDrop({
       >
         <p className="font-semibold">{label}</p>
         <p className="text-sm text-text-muted">Arrastra el archivo aquí o elígelo. PDF, JPG o PNG, hasta {maxMb} MB.</p>
-        <input ref={ref} type="file" accept={accept} className="sr-only" id="file-drop" onChange={(e) => pick(e.target.files?.[0])} />
-        <label htmlFor="file-drop" className={`${buttonClass("secondary", "md", "mt-3 cursor-pointer")} ${busy ? "pointer-events-none opacity-50" : ""}`}>
+        <input ref={ref} type="file" accept={accept} className="sr-only" id={inputId} onChange={(e) => pick(e.target.files?.[0])} />
+        <label htmlFor={inputId} className={`${buttonClass("secondary", "md", "mt-3 cursor-pointer")} ${busy ? "pointer-events-none opacity-50" : ""}`}>
           {busy ? "Subiendo…" : "Elegir archivo"}
         </label>
         {busy && <div role="progressbar" aria-label="Subiendo archivo" className="mx-auto mt-3 h-1.5 w-48 overflow-hidden rounded-pill bg-border"><div className="h-full w-1/2 animate-pulse bg-accent" /></div>}

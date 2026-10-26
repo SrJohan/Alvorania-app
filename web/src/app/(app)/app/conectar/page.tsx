@@ -1,12 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, Notice, Tag } from "@/components/ui/display";
 import { Checkbox } from "@/components/ui/form";
 import { FileDrop } from "@/components/ui/display";
 import { createCase, recordConsent, setDataSource } from "@/lib/data/api";
-import { useDemoState } from "@/lib/data/store";
+import { getState, useDemoState } from "@/lib/data/store";
 
 export default function Conectar() {
   const router = useRouter();
@@ -14,22 +14,35 @@ export default function Conectar() {
   const [busy, setBusy] = useState(false);
   const [file, setFile] = useState<string>("");
   const [error, setError] = useState("");
+  // La elección se guarda de forma asíncrona: «Continuar» espera a que termine en vez de dar un error falso.
+  const pending = useRef<Promise<void> | null>(null);
   const source = s.case?.dataSource;
 
-  async function choose(kind: "manual" | "documento", name?: string) {
+  function choose(kind: "manual" | "documento", name?: string) {
     setBusy(true);
-    await createCase();
-    await setDataSource(kind);
-    if (name) setFile(name);
-    setBusy(false);
+    setError("");
+    pending.current = (async () => {
+      try {
+        await createCase();
+        await setDataSource(kind);
+        if (name) setFile(name);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "No hemos podido guardar tu elección.");
+      } finally {
+        setBusy(false);
+      }
+    })();
+    return pending.current;
   }
 
   async function next() {
-    if (!s.consents.terms || !s.consents.privacy || !s.consents.aeatDataAccess) {
+    if (pending.current) await pending.current;
+    const latest = getState();
+    if (!latest.consents.terms || !latest.consents.privacy || !latest.consents.aeatDataAccess) {
       setError("Acepta las condiciones y el tratamiento de tus datos para continuar.");
       return;
     }
-    if (!source) {
+    if (!latest.case?.dataSource) {
       setError("Elige cómo quieres aportar tus datos fiscales.");
       return;
     }
