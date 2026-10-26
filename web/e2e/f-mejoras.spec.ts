@@ -39,3 +39,24 @@ test.describe("F2 asesor con nombre", () => {
     await expect(page.getByText(/será quien te atienda también el año que viene/)).toBeVisible();
   });
 });
+
+test.describe("Precios: entrada por caso", () => {
+  test("PRE-H1 elegir un caso cambia el precio y el siguiente paso", async ({ page }) => {
+    await page.goto("/precios");
+    await expect(page.getByRole("heading", { name: "¿Qué quieres hacer?" })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /Hacer mi renta/ })).toBeChecked();
+    await expect(page.getByRole("heading", { name: /Tu renta, calculada gratis/ })).toBeVisible();
+    await page.getByRole("radio", { name: /Me ha escrito Hacienda/ }).check({ force: true });
+    await expect(page.getByRole("heading", { name: /Entiende qué te piden/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: "Subir mi carta" })).toHaveAttribute("href", /requerimiento/);
+    await page.getByRole("radio", { name: /Pagué de más/ }).check({ force: true });
+    await expect(page.getByText("10 € por año", { exact: true })).toBeVisible();
+  });
+
+  test("PRE-H2 se puede elegir con el teclado", async ({ page }) => {
+    await page.goto("/precios");
+    await page.getByRole("radio", { name: /Hacer mi renta/ }).focus();
+    await page.keyboard.press("ArrowRight");
+    await expect(page.getByRole("radio", { name: /Me ha escrito Hacienda/ })).toBeChecked();
+  });
+});

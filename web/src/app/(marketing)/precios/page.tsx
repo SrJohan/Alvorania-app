@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { LinkButton } from "@/components/ui/button";
 import { Accordion, Card, Notice, Tag } from "@/components/ui/display";
+import { PriceFinder } from "@/components/site/price-finder";
 import { PLANS } from "@/lib/data/plans";
 import { formatEuros } from "@/lib/format";
 
@@ -26,14 +27,17 @@ const Cell = ({ v }: { v: string | boolean }) =>
 
 export default function Precios() {
   return (
-    <div className="mx-auto max-w-content px-4 py-12">
-      <h1 className="text-xl font-bold">Precios claros, sin sorpresas</h1>
+    <div className="mx-auto max-w-wide px-4 py-12">
+      <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">Precios claros, sin sorpresas</h1>
       <p className="mt-2 max-w-reading text-text-muted">Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
       <div className="mt-4 max-w-reading">
         <Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice>
       </div>
 
-      <div className="mt-8 grid gap-4 md:grid-cols-3">
+      <div className="mt-10"><PriceFinder /></div>
+
+      <h2 id="planes" className="mt-16 scroll-mt-24 text-lg font-semibold">Planes para tu renta</h2>
+      <div className="mt-4 grid gap-4 md:grid-cols-3">
         {PLANS.map((p) => (
           <Card key={p.code} selected={p.recommended} className="flex flex-col">
             <div className="flex items-center justify-between">
