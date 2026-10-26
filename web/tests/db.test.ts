@@ -174,9 +174,12 @@ describe("integridad", () => {
     await q("insert into stripe_events (id, type, payload) values ('evt_1', 'x', '{}')");
     await fails(q("insert into stripe_events (id, type, payload) values ('evt_1', 'x', '{}')"), /duplicate|unique/);
   });
-  it("el catálogo se carga y las reglas de demostración no están revisadas", async () => {
+  it("el catálogo se carga y el paquete IRPF 2025 sustituye a las reglas de demostración, sin revisar", async () => {
     expect((await q("select count(*)::int n from plans"))[0].n).toBe(5);
-    expect((await q("select count(*)::int n from tax_rules where reviewed_at is null"))[0].n).toBe(5);
+    expect((await q("select count(*)::int n from tax_rules where tax_year = 2025"))[0].n).toBe(1);
+    expect((await q("select count(*)::int n from tax_rules where kind = 'paquete' and reviewed_at is null"))[0].n).toBe(1);
+    const pkg = (await q("select rule from tax_rules where kind = 'paquete'"))[0].rule as { territorios: Record<string, unknown> };
+    expect(Object.keys(pkg.territorios).sort()).toEqual(["Andalucía", "Cataluña", "Madrid"]);
   });
   it("importes negativos y rangos de fechas inválidos se rechazan", async () => {
     await fails(q("insert into payments (user_id, type, amount_cents, status) values ($1, 'plan', -1, 'succeeded')", [A]));

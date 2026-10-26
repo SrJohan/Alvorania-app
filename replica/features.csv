@@ -3,9 +3,9 @@ Landing con selector de situación fiscal,marketing,must,yes,yes,S01-S02
 Página de precios con planes y precios por trámite,marketing,must,yes,yes,precios de ejemplo; los reales en replica-launch
 Registro e inicio de sesión,onboarding,must,yes,yes,enlace mágico con Supabase probado en real por el usuario; falta SMTP propio para volumen
 Conexión de datos fiscales con Hacienda (Cl@ve),onboarding,must,yes,partial,subida o entrada manual; sin Cl@ve; requiere ser colaborador social AEAT
-Cuestionario guiado de situación personal,renta,must,yes,partial,4 pasos básicos; faltan alquiler inversiones y discapacidad
-Cálculo del resultado de la renta (a pagar o devolver),renta,must,yes,partial,motor de demostración con escala general; sin deducciones autonómicas; reglas por revisar
-Optimización con deducciones,renta,must,yes,partial,pensiones donativos e hipoteca anterior a 2013
+Cuestionario guiado de situación personal,renta,must,yes,partial,6 pasos: edad discapacidad ahorro familia vivienda y deducciones; faltan ascendientes inmuebles y actividades
+Cálculo del resultado de la renta (a pagar o devolver),renta,must,yes,partial,motor 2025 con escalas estatal y de Madrid Cataluña y Andalucía (cifras AEAT); resto de comunidades como estimación; pendiente de firma de un fiscalista
+Optimización con deducciones,renta,must,yes,partial,pensiones donativos hipoteca maternidad guardería SMI y alquiler autonómico en 3 comunidades; faltan el resto de deducciones autonómicas
 Cálculo gratuito sin tarjeta,pagos,must,yes,yes,
 Selección de plan y pago,pagos,must,yes,partial,Stripe Checkout y webhook escritos (lógica probada); sin probar en modo test real
 Revisión por experto antes de presentar,renta,must,yes,partial,panel /asesor mínimo; falta pedir cambios al cliente

@@ -3,51 +3,38 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { calculate, emptyAnswers } from "@/lib/tax/engine";
 import { rulesFromRows, type TaxRuleRow } from "@/lib/tax/load";
-import { RULES_2025_DEMO } from "@/lib/tax/rules";
+import { RULES_2025 } from "@/lib/tax/rules";
 import { esc, renderEmail } from "./email";
 import { answersDraftSchema, answersSchema, safeFileName, uploadSchema } from "./validation";
 
-// Las filas del catálogo SQL se leen del propio archivo de migración: si divergen del motor, el test lo detecta.
-function rowsFromCatalogMigration(reviewed: boolean): TaxRuleRow[] {
-  const sql = fs.readFileSync(path.join(__dirname, "..", "..", "supabase", "migrations", "0002_catalog.sql"), "utf8");
-  const block = sql.slice(sql.indexOf("insert into tax_rules"));
-  const rows: TaxRuleRow[] = [];
-  for (const m of block.matchAll(/\((\d{4}), '([A-Z]+)', '(\w+)', '(\w+)', '(\{.*?\})', '/g)) {
-    rows.push({ tax_year: Number(m[1]), territory: m[2], kind: m[3], code: m[4], rule: JSON.parse(m[5]), reviewed_at: reviewed ? "2026-01-01" : null });
-  }
-  return rows;
+// El paquete de la migración 0005 se lee del propio SQL: si diverge del JSON del motor, la prueba lo detecta.
+function packageFromMigration(reviewed: boolean): TaxRuleRow[] {
+  const sql = fs.readFileSync(path.join(__dirname, "..", "..", "supabase", "migrations", "0005_irpf_2025.sql"), "utf8");
+  const m = sql.match(/'(\{[\s\S]*\})'::jsonb/);
+  if (!m) throw new Error("no se encontró el paquete en la migración");
+  const rule = JSON.parse(m[1].replace(/''/g, "'"));
+  return [{ tax_year: 2025, territory: "COMUN", kind: "paquete", code: "irpf", rule, reviewed_at: reviewed ? "2026-01-01" : null }];
 }
 
 describe("reglas fiscales desde la base de datos", () => {
-  it("el catálogo SQL produce las mismas reglas que el motor de demostración", () => {
-    const rows = rowsFromCatalogMigration(true);
-    expect(rows).toHaveLength(5);
-    const rules = rulesFromRows(rows, { requireReviewed: true });
-    expect(rules).toMatchObject({
-      minimoPersonal: RULES_2025_DEMO.minimoPersonal, minimoDescendientes: RULES_2025_DEMO.minimoDescendientes, minimoMenor3: RULES_2025_DEMO.minimoMenor3,
-      gastosDeducibles: RULES_2025_DEMO.gastosDeducibles, limitePensiones: RULES_2025_DEMO.limitePensiones, donativo: RULES_2025_DEMO.donativo,
-      hipotecaAnterior2013: RULES_2025_DEMO.hipotecaAnterior2013,
-    });
-    expect(rules.scale).toEqual(RULES_2025_DEMO.scale);
+  it("la migración contiene exactamente el paquete del motor", () => {
+    expect(rulesFromRows(packageFromMigration(true), { requireReviewed: true })).toEqual(RULES_2025);
   });
 
   it("calcula igual con reglas de la base de datos que con las del código", () => {
-    const answers = { ...emptyAnswers, ccaa: "Madrid", civilStatus: "soltero" as const, grossIncome: 32000, socialSecurity: 2080, withholdings: 4100, children: 1, childrenUnder3: 1, pensionContrib: 1200, donations: 100 };
-    const fromDb = calculate(answers, rulesFromRows(rowsFromCatalogMigration(true), { requireReviewed: true }));
-    const fromCode = calculate(answers);
-    expect(fromDb.resultCents).toBe(fromCode.resultCents);
-    expect(fromDb.resultCents).toBe(-4100); // caso comprobado a mano: a devolver 41,00 €
-    expect(fromDb.savingsCents).toBe(44000);
+    const answers = { ...emptyAnswers, ccaa: "Madrid", civilStatus: "soltero" as const, birthYear: 1990, grossIncome: 30000, socialSecurity: 1950, withholdings: 4000 };
+    const fromDb = calculate(answers, rulesFromRows(packageFromMigration(true), { requireReviewed: true }));
+    expect(fromDb.resultCents).toBe(calculate(answers).resultCents);
+    expect(fromDb.resultCents).toBe(59802); // caso A de engine.test.ts, calculado a mano
   });
 
   it("se niega a usar reglas sin revisar cuando se exige revisión", () => {
-    expect(() => rulesFromRows(rowsFromCatalogMigration(false), { requireReviewed: true })).toThrow(/revisadas/);
-    expect(() => rulesFromRows(rowsFromCatalogMigration(false), { requireReviewed: false })).not.toThrow();
+    expect(() => rulesFromRows(packageFromMigration(false), { requireReviewed: true })).toThrow(/revisadas/);
+    expect(() => rulesFromRows(packageFromMigration(false), { requireReviewed: false })).not.toThrow();
   });
 
-  it("falla con un mensaje claro si falta una regla o no hay ninguna", () => {
+  it("falla con un mensaje claro si no hay paquete", () => {
     expect(() => rulesFromRows([], { requireReviewed: false })).toThrow(/No hay reglas/);
-    expect(() => rulesFromRows(rowsFromCatalogMigration(true).slice(1), { requireReviewed: false })).toThrow(/Falta la regla/);
   });
 });
 

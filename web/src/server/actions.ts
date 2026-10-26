@@ -3,7 +3,7 @@ import { createHash, randomUUID } from "node:crypto";
 import { publicEnv } from "@/lib/env";
 import { serverEnv } from "@/server/env";
 import { supabaseAdmin, supabaseForUser } from "@/lib/supabase/server";
-import { calculate } from "@/lib/tax/engine";
+import { calculate, normalizeAnswers } from "@/lib/tax/engine";
 import { rulesFromRows } from "@/lib/tax/load";
 import { FORAL_CCAA } from "@/lib/tax/rules";
 import type { DemoState } from "@/lib/data/types";
@@ -115,11 +115,11 @@ export async function runCalculation(): Promise<ActionResult> {
     if (!qa) throw new AppError("Completa el cuestionario primero.", "invalid");
     const { __step: _ignored, ...raw } = qa.answers as Record<string, unknown>;
     void _ignored;
-    const answers = answersSchema.parse(raw);
+    const answers = answersSchema.parse(normalizeAnswers(raw));
     if (!answers.ccaa) throw new AppError("Indica tu comunidad.", "invalid");
     if ((FORAL_CCAA as readonly string[]).includes(answers.ccaa)) throw new AppError("Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra.", "invalid");
 
-    const { data: ruleRows, error: rulesErr } = await admin.from("tax_rules").select("tax_year,territory,kind,code,rule,reviewed_at").eq("tax_year", answers.taxYear).eq("territory", "ESTATAL");
+    const { data: ruleRows, error: rulesErr } = await admin.from("tax_rules").select("tax_year,territory,kind,code,rule,reviewed_at").eq("tax_year", answers.taxYear).eq("territory", "COMUN").eq("kind", "paquete");
     if (rulesErr) throw rulesErr;
     const rules = rulesFromRows(ruleRows ?? [], { requireReviewed: serverEnv().REQUIRE_REVIEWED_TAX_RULES === "true" });
     const calc = calculate(answers, rules);

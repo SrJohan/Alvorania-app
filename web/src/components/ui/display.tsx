@@ -79,7 +79,7 @@ export function ResultCard({ cents, savingsCents, stale }: { cents: number; savi
     <div role="status" className={`rounded-lg p-6 ${tone}`}>
       <p className="text-base font-medium">{zero ? "Sin cuota" : refund ? "A devolver" : "A pagar"}</p>
       <p className="text-display font-bold">{formatEuros(Math.abs(cents))}</p>
-      {savingsCents > 0 && <p className="mt-1 text-sm">Ahorras {formatEuros(savingsCents)} frente al borrador.</p>}
+      {savingsCents > 0 && <p className="mt-1 text-sm">Ahorras {formatEuros(savingsCents)} con deducciones que el borrador de Hacienda no suele incluir.</p>}
       {stale && <p className="mt-2 text-sm font-semibold">Has cambiado datos desde este cálculo. Vuelve a calcular.</p>}
     </div>
   );

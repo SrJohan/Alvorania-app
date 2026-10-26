@@ -8,14 +8,22 @@ const answersBase = z.object({
   taxYear: z.number().int().min(2015).max(2100),
   ccaa: z.union([z.enum(CCAA), z.literal("")]),
   civilStatus: z.enum(["soltero", "casado", ""]),
+  birthYear: z.number().int().refine((y) => y === 0 || (y >= 1900 && y <= 2025), "Año de nacimiento no válido"),
+  disability: z.union([z.literal(0), z.literal(33), z.literal(65)]),
   payers: z.number().int().min(1).max(20),
   grossIncome: euros,
   socialSecurity: euros,
   withholdings: euros,
+  savingsIncome: euros,
+  savingsGains: euros,
   children: count,
   childrenUnder3: count,
+  workingMother: z.boolean(),
+  nurseryCost: euros,
+  rentPaid: euros,
   pensionContrib: euros,
   donations: euros,
+  donationsRecurrent: z.boolean(),
   mortgagePre2013: euros,
 });
 
@@ -30,7 +38,7 @@ export const emailSchema = z.string().trim().toLowerCase().email().max(254);
 export const nameSchema = z.string().trim().min(2).max(120);
 export const planCodeSchema = z.enum(["PRO", "LIVE", "FULL"]);
 export const consentKindSchema = z.enum(["terms", "privacy", "aeat_data_access", "mandate_presentacion"]);
-export const stepSchema = z.number().int().min(0).max(3);
+export const stepSchema = z.number().int().min(0).max(5);
 export const messageSchema = z.string().trim().min(1).max(4000);
 export const uuidSchema = z.string().uuid();
 

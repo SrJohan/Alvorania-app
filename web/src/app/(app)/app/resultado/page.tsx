@@ -1,12 +1,31 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
-import { Card, EmptyState, ResultCard, Skeleton, Tag } from "@/components/ui/display";
+import { Card, EmptyState, Notice, ResultCard, Skeleton, Tag } from "@/components/ui/display";
 import { runCalculation } from "@/lib/data/api";
 import { useDemoState } from "@/lib/data/store";
 import { formatEuros } from "@/lib/format";
-import { calculate } from "@/lib/tax/engine";
-import { RULES_2025_DEMO } from "@/lib/tax/rules";
+import { calculate, type Breakdown } from "@/lib/tax/engine";
+import { RULES_2025 } from "@/lib/tax/rules";
+
+const ROWS: [keyof Breakdown, string, "+" | "-" | "="][] = [
+  ["rendimientoIntegroTrabajo", "Rendimientos íntegros del trabajo", "+"],
+  ["gastosDeducibles", "Gastos deducibles (Seguridad Social y 2.000 € generales)", "-"],
+  ["reduccionTrabajo", "Reducción por rendimientos del trabajo", "-"],
+  ["baseImponibleAhorro", "Base imponible del ahorro", "+"],
+  ["reduccionPensiones", "Reducción por planes de pensiones", "-"],
+  ["baseLiquidableGeneral", "Base liquidable general", "="],
+  ["minimoEstatal", "Mínimo personal y familiar (estatal)", "="],
+  ["minimoAutonomico", "Mínimo personal y familiar (autonómico)", "="],
+  ["cuotaIntegraEstatal", "Cuota íntegra estatal", "="],
+  ["cuotaIntegraAutonomica", "Cuota íntegra autonómica", "="],
+  ["deduccionesEstatales", "Deducciones (tramo estatal)", "-"],
+  ["deduccionesAutonomicas", "Deducciones (tramo autonómico)", "-"],
+  ["cuotaLiquida", "Cuota líquida", "="],
+  ["deduccionSmi", "Deducción por rendimientos del trabajo (SMI)", "-"],
+  ["retenciones", "Retenciones y pagos a cuenta", "-"],
+  ["maternidad", "Maternidad y guardería", "-"],
+];
 
 export default function Resultado() {
   const s = useDemoState();
@@ -14,7 +33,8 @@ export default function Resultado() {
   const started = useRef(false);
   const calc = c?.calculation ?? null;
   const ready = !!c && c.answers.grossIncome > 0 && !!c.answers.ccaa;
-  const stale = !!(c && calc && ready && calculate(c.answers).resultCents !== calc.resultCents);
+  // Un cálculo guardado con una versión anterior del motor (sin desglose) también cuenta como desactualizado.
+  const stale = !!(c && calc && ready && (!calc.breakdown || calculate(c.answers).resultCents !== calc.resultCents));
 
   useEffect(() => {
     if (ready && !calc && !started.current) {
@@ -46,6 +66,12 @@ export default function Resultado() {
 
       <ResultCard cents={calc.resultCents} savingsCents={calc.savingsCents} stale={stale} />
 
+      {calc.approximate && (
+        <Notice title="Es una estimación">
+          Aún no tenemos cargadas las deducciones propias de {calc.territory}: la parte autonómica se ha calculado con la escala general. Tu asesor la ajustará antes de presentar.
+        </Notice>
+      )}
+
       <Card>
         <h2 className="text-lg font-semibold">Deducciones</h2>
         <ul className="mt-3 divide-y divide-border">
@@ -57,7 +83,7 @@ export default function Resultado() {
               </div>
               {d.status === "aplicada"
                 ? <p className="text-sm"><Tag tone="success">Aplicada</Tag> <span className="font-semibold">{formatEuros(Math.round(d.amount * 100))}</span></p>
-                : <Tag>Sugerida</Tag>}
+                : d.status === "no_aplica" ? <Tag tone="warning">No aplica</Tag> : <Tag>Sugerida</Tag>}
             </li>
           ))}
         </ul>
@@ -65,12 +91,20 @@ export default function Resultado() {
 
       <details className="rounded-lg border border-border p-4">
         <summary className="cursor-pointer font-semibold">Cómo se ha calculado</summary>
-        <dl className="mt-3 grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-sm">
-          <dt className="text-text-muted">Base liquidable</dt><dd>{formatEuros(Math.round(calc.baseLiquidable * 100))}</dd>
-          <dt className="text-text-muted">Cuota íntegra</dt><dd>{formatEuros(Math.round(calc.cuotaIntegra * 100))}</dd>
-          <dt className="text-text-muted">Reglas</dt><dd>{calc.rulesYear} · {calc.engineVersion}</dd>
-        </dl>
-        <p className="mt-3 text-sm text-text-muted">{RULES_2025_DEMO.sourceNote}</p>
+        {calc.breakdown ? (
+          <dl className="mt-3 grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-sm">
+            {ROWS.filter(([k, , sign]) => sign === "=" || calc.breakdown[k] !== 0).map(([k, label, sign]) => (
+              <div key={k} className="contents">
+                <dt className={sign === "=" ? "font-medium" : "text-text-muted"}>{label}</dt>
+                <dd className="text-right tabular-nums">{sign === "-" ? "− " : ""}{formatEuros(Math.round(calc.breakdown[k] * 100))}</dd>
+              </div>
+            ))}
+            <dt className="text-text-muted">Reglas</dt><dd className="text-right">{calc.rulesYear} · motor {calc.engineVersion}</dd>
+          </dl>
+        ) : (
+          <p className="mt-3 text-sm">Este cálculo es de una versión anterior. Pulsa «Volver a calcular».</p>
+        )}
+        <p className="mt-3 text-sm text-text-muted">Cifras del Manual práctico de Renta {RULES_2025.year} de la Agencia Tributaria. {RULES_2025.notes} Estado: {RULES_2025.status}.</p>
       </details>
 
       <div className="flex flex-wrap gap-3">

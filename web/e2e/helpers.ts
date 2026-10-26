@@ -43,24 +43,38 @@ export async function connectManual(page: Page) {
   await expect(page.getByRole("heading", { name: "Cuéntanos tu situación" })).toBeVisible();
 }
 
-export type Q = { ccaa?: string; civil?: string; gross?: number; ss?: number; wh?: number; kids?: number; under3?: number; pension?: number; donations?: number; mortgage?: number };
+export type Q = {
+  ccaa?: string; civil?: string; birthYear?: number; gross?: number; ss?: number; wh?: number; savings?: number;
+  kids?: number; under3?: number; rent?: number; mortgage?: number; pension?: number; donations?: number;
+};
 
-/** Rellena el cuestionario de 4 pasos y llega al resultado. Por defecto, el caso verificado a mano (−41,00 €). */
+const next = (page: Page) => page.getByRole("button", { name: "Siguiente" }).click();
+const fillIf = async (page: Page, label: string | RegExp, v: number) => { if (v) await page.getByLabel(label).fill(String(v)); };
+
+/**
+ * Rellena el cuestionario de 6 pasos y llega al resultado.
+ * Por defecto es el caso A de src/lib/tax/engine.test.ts, calculado a mano: Madrid, 30.000 €, 598,02 € a pagar.
+ */
 export async function fillQuestionnaire(page: Page, q: Q = {}) {
-  const v = { ccaa: "Madrid", civil: "soltero", gross: 32000, ss: 2080, wh: 4100, kids: 1, under3: 1, pension: 1200, donations: 100, mortgage: 0, ...q };
+  const v = { ccaa: "Madrid", civil: "soltero", birthYear: 1990, gross: 30000, ss: 1950, wh: 4000, savings: 0, kids: 0, under3: 0, rent: 0, mortgage: 0, pension: 0, donations: 0, ...q };
   await page.getByLabel("Comunidad donde resides").selectOption(v.ccaa);
   await page.getByLabel("Estado civil").selectOption(v.civil);
-  await page.getByRole("button", { name: "Siguiente" }).click();
+  await page.getByLabel("Año de nacimiento").fill(String(v.birthYear));
+  await next(page);
   await page.getByLabel("Ingresos brutos del trabajo en el año").fill(String(v.gross));
   await page.getByLabel("Cotizaciones a la Seguridad Social").fill(String(v.ss));
   await page.getByLabel("Retenciones practicadas (IRPF)").fill(String(v.wh));
-  await page.getByRole("button", { name: "Siguiente" }).click();
-  await page.getByLabel("Hijos a tu cargo").fill(String(v.kids));
-  await page.getByLabel("De ellos, menores de 3 años").fill(String(v.under3));
-  await page.getByRole("button", { name: "Siguiente" }).click();
-  await page.getByLabel("Aportaciones a planes de pensiones").fill(String(v.pension));
-  await page.getByLabel("Donativos a ONG y fundaciones").fill(String(v.donations));
-  if (v.mortgage) await page.getByLabel(/Hipoteca de vivienda habitual/).fill(String(v.mortgage));
+  await next(page);
+  await fillIf(page, "Intereses y dividendos cobrados", v.savings);
+  await next(page);
+  await fillIf(page, "Hijos a tu cargo", v.kids);
+  await fillIf(page, "De ellos, menores de 3 años", v.under3);
+  await next(page);
+  await fillIf(page, "Alquiler de tu vivienda habitual pagado en el año", v.rent);
+  await fillIf(page, /Hipoteca de vivienda habitual/, v.mortgage);
+  await next(page);
+  await fillIf(page, "Aportaciones a planes de pensiones", v.pension);
+  await fillIf(page, "Donativos a ONG y fundaciones", v.donations);
   await page.getByRole("button", { name: "Ver mi resultado" }).click();
   await expect(page.getByRole("heading", { name: /Tu resultado de la renta/ })).toBeVisible();
 }

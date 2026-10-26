@@ -6,10 +6,9 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await connectManual(page);
     await fillQuestionnaire(page);
 
-    // Caso comprobado a mano: a devolver 41,00 € y 440,00 € de ahorro frente al borrador.
-    const result = page.getByRole("status").filter({ hasText: "A devolver" });
-    await expect(result).toContainText("41,00");
-    await expect(result).toContainText("440,00");
+    // Caso A de engine.test.ts, calculado a mano con las escalas de la AEAT: 598,02 € a pagar.
+    const result = page.getByRole("status").filter({ hasText: "A pagar" });
+    await expect(result).toContainText("598,02");
 
     await payPlan(page);
     await expect(page.getByText("En revisión").first()).toBeVisible();
@@ -36,6 +35,28 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await page.getByRole("button", { name: "Prefiero introducirlos" }).click();
     await page.getByRole("button", { name: "Continuar al cuestionario" }).click();
     await expect(page.getByRole("heading", { name: "Cuéntanos tu situación" })).toBeVisible();
+  });
+
+  test("F01-E11 Andalucía, 30 años y alquiler: aplica la deducción autonómica y muestra el desglose", async ({ page }) => {
+    await signIn(page);
+    await connectManual(page);
+    await fillQuestionnaire(page, { ccaa: "Andalucía", birthYear: 1995, gross: 18000, ss: 1170, wh: 1200, rent: 6000 });
+    // caso B de engine.test.ts: 738,45 € a devolver
+    await expect(page.getByRole("status").filter({ hasText: "A devolver" })).toContainText("738,45");
+    await expect(page.getByText("Alquiler de vivienda habitual (Andalucía, menores de 35 o mayores de 65)")).toBeVisible();
+    await page.getByText("Cómo se ha calculado").click();
+    await expect(page.getByText("Cuota íntegra autonómica")).toBeVisible();
+  });
+
+  test("F01-E12 comunidad sin datos propios: se avisa de que es una estimación", async ({ page }) => {
+    await signIn(page);
+    await connectManual(page);
+    await page.getByLabel("Comunidad donde resides").selectOption("Galicia");
+    await expect(page.getByText("Cálculo estimado")).toBeVisible();
+    await page.getByLabel("Estado civil").selectOption("soltero");
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await page.getByRole("button", { name: "Atrás" }).click();
+    await page.getByRole("button", { name: "Siguiente" }).click();
   });
 
   test("F01-E1 cuestionario vacío: no avanza y explica qué falta", async ({ page }) => {
@@ -148,6 +169,7 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await page.getByRole("button", { name: "Siguiente" }).click();
     await page.getByLabel("Ingresos brutos del trabajo en el año").fill("20000");
     await page.getByRole("button", { name: "Siguiente" }).click();
+    await page.getByRole("button", { name: "Siguiente" }).click(); // ahorro
     await page.getByLabel("Hijos a tu cargo").fill("1");
     await page.getByLabel("De ellos, menores de 3 años").fill("2");
     await page.getByRole("button", { name: "Siguiente" }).click();

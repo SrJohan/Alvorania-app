@@ -1,41 +1,50 @@
-// Reglas de DEMOSTRACIÓN. En producción viven en la tabla tax_rules (por ejercicio y territorio),
-// con fuente y revisor. Estas cifras son orientativas y NO sirven para presentar una declaración real.
-export type Bracket = { upTo: number; rate: number };
+// Reglas del IRPF como DATOS. La fuente es src/lib/tax/data/irpf-<año>.json (cifras del Manual práctico de la AEAT,
+// con la URL de cada una). El mismo JSON alimenta el motor en el navegador y la tabla tax_rules (migración 0005).
+// Nada de aquí sirve para presentar una declaración real hasta que un fiscalista lo revise y lo firme.
+import irpf2025 from "./data/irpf-2025.json";
+
+export type Bracket = { hasta: number | null; tipo: number };
+
+export type Minimos = {
+  personal: number; mayor65: number; mayor75: number;
+  descendientes: number[]; menor3: number;
+  discapacidad33: number; discapacidad65: number; asistencia: number;
+};
+
+export type AutonomicDeduction = {
+  code: string; label: string; tipo: "alquiler";
+  pct: number; max: number;
+  edadMenorDe?: number; edadMaxima?: number; edadMayorDe?: number;
+  alquilerMinPctBase?: number; maxBaseImponible?: number; maxBaseMenosMinimo?: number;
+};
+
+export type TerritoryRules = { escala: Bracket[]; minimos: Minimos | "estatales"; deducciones: AutonomicDeduction[] };
 
 export type TaxRules = {
   year: number;
-  territory: string;
-  sourceNote: string;
-  scale: Bracket[];
-  minimoPersonal: number;
-  minimoDescendientes: number[];
-  minimoMenor3: number;
-  gastosDeducibles: number;
-  limitePensiones: number;
-  donativo: { firstTier: number; firstRate: number; restRate: number };
-  hipotecaAnterior2013: { rate: number; maxBase: number };
+  status: string;
+  notes: string;
+  sources: Record<string, string>;
+  trabajo: {
+    otrosGastos: number;
+    reduccion: { maxOtrasRentas: number; tramos: { hasta: number; fijo?: number; base?: number; desde?: number; pendiente?: number }[] };
+  };
+  deduccionSmi: { maxIntegros: number; plenoHasta: number; importe: number; pendiente: number; maxOtrasRentas: number };
+  pensiones: { limite: number; pctRendimientos: number };
+  donativos: { tramo: number; pctTramo: number; pctResto: number; pctRestoRecurrente: number; limitePctBase: number };
+  hipotecaAnterior2013: { baseMax: number; pctEstatal: number; pctAutonomico: number };
+  maternidad: { porHijo: number; guarderiaMax: number };
+  escalaEstatal: Bracket[];
+  escalaAhorroEstatal: Bracket[];
+  escalaAhorroAutonomica: Bracket[];
+  minimosEstatales: Minimos;
+  territorios: Record<string, TerritoryRules>;
 };
 
-export const RULES_2025_DEMO: TaxRules = {
-  year: 2025,
-  territory: "ESTATAL (escala general combinada)",
-  sourceNote: "Datos de demostración pendientes de revisión por tu equipo fiscal y verificación con el simulador de la AEAT.",
-  scale: [
-    { upTo: 12450, rate: 0.19 },
-    { upTo: 20200, rate: 0.24 },
-    { upTo: 35200, rate: 0.3 },
-    { upTo: 60000, rate: 0.37 },
-    { upTo: 300000, rate: 0.45 },
-    { upTo: Infinity, rate: 0.47 },
-  ],
-  minimoPersonal: 5550,
-  minimoDescendientes: [2400, 2700, 4000, 4500],
-  minimoMenor3: 2800,
-  gastosDeducibles: 2000,
-  limitePensiones: 1500,
-  donativo: { firstTier: 250, firstRate: 0.8, restRate: 0.4 },
-  hipotecaAnterior2013: { rate: 0.15, maxBase: 9040 },
-};
+export const RULES_2025 = irpf2025 as TaxRules;
+
+/** Comunidades con escala, mínimos y deducciones propias cargadas. El resto usa la escala supletoria y es una estimación. */
+export const SUPPORTED_CCAA = Object.keys(RULES_2025.territorios);
 
 export const FORAL_CCAA = ["Navarra", "País Vasco"] as const;
 export const isForal = (ccaa: string) => (FORAL_CCAA as readonly string[]).includes(ccaa);

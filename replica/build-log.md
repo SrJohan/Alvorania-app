@@ -35,3 +35,16 @@ Código en `web/` (Next.js 16, Tailwind 4, TypeScript). Datos falsos en `web/src
 - `tsc`, `eslint` y `next build` sin errores; 14 rutas estáticas.
 - Flujo completo en navegador: acceso, datos fiscales, cuestionario con validación, resultado, plan, pago simulado, aprobación del asesor, aprobación del usuario, presentación, cancelación de la renovación.
 - Sin desbordamiento horizontal a 390 px en 10 rutas comprobadas (faltan acceder, plan y revisión) (se corrigió una en `/precios`).
+
+## 2026-10-26 · Motor de cálculo IRPF 2025
+
+| ID | estado | falta | más difícil de lo previsto |
+| --- | --- | --- | --- |
+| S10 Cuestionario | parcial (6 pasos) | ascendientes, inmuebles, actividades, tributación conjunta | — |
+| S11 Resultado | parcial | firma de un fiscalista; deducciones autonómicas fuera de Madrid, Cataluña y Andalucía | la AEAT calcula con la cuota acumulada de su tabla redondeada al céntimo; hubo que replicarlo para cuadrar al céntimo |
+
+- Reglas como datos en `web/src/lib/tax/data/irpf-2025.json`, cada cifra con su URL del Manual práctico de Renta 2025 de la AEAT. La migración `0005_irpf_2025.sql` se genera desde ese JSON (`node scripts/rules-to-sql.mjs 2025 0005`), y una prueba falla si divergen.
+- Cubre: reducción por rendimientos del trabajo (art. 20), 2.000 € de otros gastos, base del ahorro con su escala, planes de pensiones (1.500 € y 30 %), mínimos estatales y autonómicos (Madrid y Andalucía propios, Cataluña los estatales), cuotas estatal y autonómica por separado, hipoteca anterior a 2013 por tramos, donativos al 50 % en cada cuota, alquiler autonómico (Madrid, Cataluña, Andalucía), deducción nueva para salarios cercanos al SMI, maternidad y guardería.
+- Otras comunidades de régimen común: escala supletoria y aviso de «estimación».
+- Verificado: escalas contra las cuotas publicadas por la AEAT y 8 casos completos calculados a mano (`src/lib/tax/engine.test.ts`).
+- Las reglas quedan **sin firmar** (`reviewed_at` nulo). Con `REQUIRE_REVIEWED_TAX_RULES=true` el servidor no calcula hasta que un fiscalista las revise.

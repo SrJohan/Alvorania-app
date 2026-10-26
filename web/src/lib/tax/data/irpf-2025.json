@@ -1,0 +1,120 @@
+{
+  "year": 2025,
+  "status": "pendiente de revisión por un fiscalista",
+  "notes": "Cifras tomadas del Manual práctico de Renta 2025 de la AEAT (actualizado en marzo de 2026). Solo tributación individual y residentes en territorio común.",
+  "sources": {
+    "escalaEstatal": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html",
+    "escalaAhorro": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/8-cumplimentacion-irpf/8_4-cuota-integra/8_4_4-gravamen-base-liquidable-ahorro.html",
+    "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html",
+    "otrosGastos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c03-rendimientos-trabajo/rendimiento-neto-trabajo-integrar-base-imponible/fase-2-determinacion-rendimiento-neto/particular-analisis-gastos-articulo-19_2_f-lirpf.html",
+    "reduccionTrabajo": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c03-rendimientos-trabajo/rendimiento-neto-trabajo-integrar-base-imponible/fase-3-determinacion-rendimiento-neto-reducido.html",
+    "deduccionSmi": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c18-cuota-liquida-resultante-autoliquidacion/deducciones-cuota-liquida-total/deduccion-obtencion-rendimientos-trabajo.html",
+    "pensiones": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c13-determinacion-renta-contribuyente-sujeta-gravamen/reducciones-base-imponible-general/reducciones-aportaciones-contribuciones-sistemas-prevision-social/normas-comunes-aplicables-aportaciones-sistemas-social/limites-exceso-aportaciones.html",
+    "donativos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c16-deducciones-generales-cuota/deducciones-donativos-otras-aportaciones/donativos-realizados-entidades-incluidas/general-donativos-donaciones-entidades-beneficiarias-mecenazgo/porcentajes-deduccion.html",
+    "maternidad": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c18-cuota-liquida-resultante-autoliquidacion/resultado-declaracion/deduccion-maternidad-incremento-adicional-gastos-custodia/deduccion-maternidad/cuantia-limite-deduccion.html",
+    "madrid": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-madrid.html",
+    "madridAlquiler": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_12-comunidad-madrid/10_12_5-arrendamiento-vivienda-habitual.html",
+    "cataluna": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-cataluna.html",
+    "catalunaAlquiler": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025-deducciones-autonomicas/comunidad-autonoma-cataluna/alquiler-vivienda-habitual.html",
+    "andalucia": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-andalucia.html",
+    "andaluciaAlquiler": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025-deducciones-autonomicas/comunidad-autonoma-andalucia/cantidades-invertidas-alquiler-vivienda-habitual.html"
+  },
+  "trabajo": {
+    "otrosGastos": 2000,
+    "reduccion": {
+      "maxOtrasRentas": 6500,
+      "tramos": [
+        { "hasta": 14852, "fijo": 7302 },
+        { "hasta": 17673.52, "base": 7302, "desde": 14852, "pendiente": 1.75 },
+        { "hasta": 19747.5, "base": 2364.34, "desde": 17673.52, "pendiente": 1.14 }
+      ]
+    }
+  },
+  "deduccionSmi": { "maxIntegros": 18276, "plenoHasta": 16576, "importe": 340, "pendiente": 0.2, "maxOtrasRentas": 6500 },
+  "pensiones": { "limite": 1500, "pctRendimientos": 0.3 },
+  "donativos": { "tramo": 250, "pctTramo": 0.8, "pctResto": 0.4, "pctRestoRecurrente": 0.45, "limitePctBase": 0.1 },
+  "hipotecaAnterior2013": { "baseMax": 9040, "pctEstatal": 0.075, "pctAutonomico": 0.075 },
+  "maternidad": { "porHijo": 1200, "guarderiaMax": 1000 },
+  "escalaEstatal": [
+    { "hasta": 12450, "tipo": 0.095 },
+    { "hasta": 20200, "tipo": 0.12 },
+    { "hasta": 35200, "tipo": 0.15 },
+    { "hasta": 60000, "tipo": 0.185 },
+    { "hasta": 300000, "tipo": 0.225 },
+    { "hasta": null, "tipo": 0.245 }
+  ],
+  "escalaAhorroEstatal": [
+    { "hasta": 6000, "tipo": 0.095 },
+    { "hasta": 50000, "tipo": 0.105 },
+    { "hasta": 200000, "tipo": 0.115 },
+    { "hasta": 300000, "tipo": 0.135 },
+    { "hasta": null, "tipo": 0.15 }
+  ],
+  "escalaAhorroAutonomica": [
+    { "hasta": 6000, "tipo": 0.095 },
+    { "hasta": 50000, "tipo": 0.105 },
+    { "hasta": 200000, "tipo": 0.115 },
+    { "hasta": 300000, "tipo": 0.135 },
+    { "hasta": null, "tipo": 0.15 }
+  ],
+  "minimosEstatales": {
+    "personal": 5550, "mayor65": 1150, "mayor75": 1400,
+    "descendientes": [2400, 2700, 4000, 4500], "menor3": 2800,
+    "discapacidad33": 3000, "discapacidad65": 9000, "asistencia": 3000
+  },
+  "territorios": {
+    "Madrid": {
+      "escala": [
+        { "hasta": 13362.22, "tipo": 0.085 },
+        { "hasta": 19004.63, "tipo": 0.107 },
+        { "hasta": 35425.68, "tipo": 0.128 },
+        { "hasta": 57320.4, "tipo": 0.174 },
+        { "hasta": null, "tipo": 0.205 }
+      ],
+      "minimos": {
+        "personal": 5956.65, "mayor65": 1234.26, "mayor75": 1502.58,
+        "descendientes": [2575.85, 2897.83, 4400, 4950], "menor3": 3005.16,
+        "discapacidad33": 3219.81, "discapacidad65": 9659.44, "asistencia": 3219.81
+      },
+      "deducciones": [
+        { "code": "madrid_alquiler", "label": "Alquiler de vivienda habitual (Madrid, menores de 40 años)", "tipo": "alquiler",
+          "pct": 0.3, "max": 1237.2, "edadMenorDe": 40, "alquilerMinPctBase": 0.2, "maxBaseImponible": 26414.22 }
+      ]
+    },
+    "Cataluña": {
+      "escala": [
+        { "hasta": 12500, "tipo": 0.095 },
+        { "hasta": 22000, "tipo": 0.125 },
+        { "hasta": 33000, "tipo": 0.16 },
+        { "hasta": 53000, "tipo": 0.19 },
+        { "hasta": 90000, "tipo": 0.215 },
+        { "hasta": 120000, "tipo": 0.235 },
+        { "hasta": 175000, "tipo": 0.245 },
+        { "hasta": null, "tipo": 0.255 }
+      ],
+      "minimos": "estatales",
+      "deducciones": [
+        { "code": "cataluna_alquiler", "label": "Alquiler de vivienda habitual (Cataluña, 35 años o menos)", "tipo": "alquiler",
+          "pct": 0.1, "max": 500, "edadMaxima": 35, "maxBaseMenosMinimo": 30000 }
+      ]
+    },
+    "Andalucía": {
+      "escala": [
+        { "hasta": 13000, "tipo": 0.095 },
+        { "hasta": 21100, "tipo": 0.12 },
+        { "hasta": 35200, "tipo": 0.15 },
+        { "hasta": 60000, "tipo": 0.185 },
+        { "hasta": null, "tipo": 0.225 }
+      ],
+      "minimos": {
+        "personal": 5790, "mayor65": 1200, "mayor75": 1460,
+        "descendientes": [2510, 2820, 4170, 4700], "menor3": 2920,
+        "discapacidad33": 3130, "discapacidad65": 9390, "asistencia": 3130
+      },
+      "deducciones": [
+        { "code": "andalucia_alquiler", "label": "Alquiler de vivienda habitual (Andalucía, menores de 35 o mayores de 65)", "tipo": "alquiler",
+          "pct": 0.15, "max": 1200, "edadMenorDe": 35, "edadMayorDe": 65, "maxBaseImponible": 25000 }
+      ]
+    }
+  }
+}
