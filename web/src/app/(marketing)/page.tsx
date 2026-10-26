@@ -53,12 +53,12 @@ const lift = "transition-[transform,background-color,box-shadow] duration-200 ea
 export default function Home() {
   return (
     <>
-      <section className="mx-auto max-w-content px-4 pt-8 md:pt-12">
+      <section className="mx-auto flex max-w-wide flex-col gap-8 px-4 pt-8 md:pt-12 xl:flex-row xl:items-start xl:justify-between xl:pt-6">
         <h1 className={`${headline} text-[34px] leading-[1.08] sm:text-[56px] sm:leading-[1.05] lg:text-[72px]`}>
           Tu renta, revisada<br />por un experto.
         </h1>
 
-        <div className="mt-8 inline-flex flex-col gap-4 rounded-[20px] bg-surface-raised p-4 shadow-card">
+        <div className="inline-flex flex-col gap-4 self-start rounded-[20px] bg-surface-raised p-4 shadow-card xl:mt-4">
           <div className="flex items-center gap-3">
             <span aria-hidden className="grid size-11 place-items-center rounded-full bg-accent-soft text-accent"><UserCheck className="size-5" /></span>
             <div>
@@ -70,7 +70,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="situacion" className="mx-auto mt-8 max-w-content px-4">
+      <section aria-labelledby="situacion" className="mx-auto mt-8 max-w-wide px-4">
         <div className="rounded-[24px] p-5 sm:p-8" style={fieldStyle}>
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2" aria-hidden>
@@ -108,7 +108,7 @@ export default function Home() {
         <p className="mt-3 text-sm text-text-muted sm:text-right">Cálculo gratis · Revisión por un asesor · Nada se presenta sin tu confirmación</p>
       </section>
 
-      <section aria-labelledby="como" className="mx-auto mt-24 max-w-content px-4">
+      <section aria-labelledby="como" className="mx-auto mt-24 max-w-wide px-4">
         <h2 id="como" className={`${headline} text-[34px] leading-[1.1] sm:text-[44px]`}>Así de simple, de principio a fin.</h2>
         <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {steps.map((s, i) => (
@@ -121,7 +121,7 @@ export default function Home() {
         </ol>
       </section>
 
-      <section aria-label="Nuestras promesas" className="mx-auto mt-24 max-w-content px-4">
+      <section aria-label="Nuestras promesas" className="mx-auto mt-24 max-w-wide px-4">
         <ul className="grid gap-6 md:grid-cols-3">
           {promises.map(({ Icon, title, text }) => (
             <li key={title} className="flex gap-4 rounded-[20px] bg-surface p-6">
@@ -137,7 +137,7 @@ export default function Home() {
         <Accordion items={faq} />
       </section>
 
-      <section className="mx-auto mt-24 max-w-content px-4">
+      <section className="mx-auto mt-24 max-w-wide px-4">
         <div className="flex flex-col items-start justify-between gap-6 rounded-[24px] bg-ink p-8 text-on-ink md:flex-row md:items-center md:p-12">
           <div>
             <h2 className="font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.06em] sm:text-[44px]">Empieza por tu resultado.</h2>

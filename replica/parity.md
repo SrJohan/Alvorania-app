@@ -6,9 +6,9 @@ Fecha: 2026-10-26 · Build: 5027ea6 + matriz actualizada · Herramientas: `repli
 
 | | puntuación |
 | --- | --- |
-| **Total** (80 % funciones + 20 % estructura) | **47,3 / 100** |
+| **Total** (80 % funciones + 20 % estructura) | **47,4 / 100** |
 | Funciones | 53,4 (34 contadas; **6 de 13 imprescindibles** hechas) |
-| Estructura de pantallas | 22,8 (8 comparaciones) |
+| Estructura de pantallas | 23,3 (8 comparaciones) |
 
 **Veredicto: no se puede lanzar.** Quedan 7 imprescindibles a medias y un bug S2 abierto (BUG-004). No hay ningún S1.
 
@@ -56,7 +56,7 @@ Mismo tamaño de ventana (1440×900 y 390×844), parte visible al cargar. Solo p
 
 | pantalla | escritorio | móvil | qué cambia |
 | --- | --- | --- | --- |
-| S01 Inicio | 31,2 | 30,5 | mismos bloques en el mismo orden, pero a 1440 px TaxDown usa casi todo el ancho (márgenes de ~48 px frente a un contenedor de 1.120 px) y pone la tarjeta del asesor **arriba a la derecha**, junto al titular |
+| S01 Inicio | 35,3 (antes 31,2) | 30,5 | ya coincide la posición a 1440 px: contenido de 1.344 px y tarjeta del asesor arriba a la derecha del titular. Lo que queda: su panel de situaciones es más alto (las tarjetas van al pie de un campo de color grande), sus fotos de asesores y la diferencia de textos |
 | S03 Precios | 22,2 | 24,4 | composición propia: tarjetas y tabla frente a su cabecera con planes |
 | S04 Trámites | 17,8 | 8,4 | ellos: cabecera grande con ilustración y tarjetas numeradas; nosotros: listas por categoría |
 | S05 Autónomos | 24,5 | 23,0 | composición propia |
@@ -90,6 +90,6 @@ La app de TaxDown no se ha usado (no hay cuenta), así que esta parte compara lo
 4. **Panel de asesor completo**: pedir cambios al cliente, subir la declaración en PDF y ver los documentos del caso. Cierra 1 imprescindible.
 5. **Correo por Resend en Supabase** (BUG-004, S2): es lo único que bloquea el veredicto aparte de los imprescindibles.
 
-Extra si quieres subir la nota de estructura del inicio: a 1440 px, contenedor más ancho y tarjeta del asesor a la derecha del titular. Es un cambio pequeño que aproxima la posición que pediste.
+Hecho: a 1440 px el inicio usa contenido de 1.344 px y la tarjeta del asesor va a la derecha del titular (a 1024 px y en móvil sigue debajo, igual que en TaxDown).
 
 Siguiente paso del pack: `/replica-build` para cerrar estos huecos. `/replica-entrepreneur` tiene más sentido cuando la paridad esté cerca de 80.

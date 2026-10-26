@@ -13,6 +13,9 @@ import { createRequire } from "node:module";
 const { chromium } = createRequire(path.join(process.cwd(), "package.json"))("@playwright/test");
 
 const CLONE = process.argv[2] ?? "http://localhost:3000";
+// --only S01,S03 limita las pantallas (y las visitas al original) a las indicadas.
+const onlyArg = process.argv.indexOf("--only");
+const ONLY = onlyArg > 0 ? process.argv[onlyArg + 1].split(",") : null;
 const ORIGINAL = "https://taxdown.es";
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SCREENS = [
@@ -87,7 +90,7 @@ const results = [];
 for (const vp of VIEWPORTS) {
   const ctx = await browser.newContext({ viewport: { width: vp.width, height: vp.height }, locale: "es-ES", deviceScaleFactor: 1 });
   const page = await ctx.newPage();
-  for (const s of SCREENS) {
+  for (const s of SCREENS.filter((x) => !ONLY || ONLY.includes(x.id))) {
     const file = `${s.id}-${s.name}-${vp.tag}.png`;
     const origPath = path.join(ROOT, "screens", file), clonePath = path.join(ROOT, "clone-screens", file);
 

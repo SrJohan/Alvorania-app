@@ -28,7 +28,7 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 px-2 pt-2 sm:px-4">
       <div
         className={`mx-auto flex h-14 items-center justify-between gap-4 px-4 transition-all duration-300 ease-brand motion-reduce:transition-none ${
-          scrolled ? "max-w-[calc(var(--container-content)+16px)] rounded-pill bg-surface-raised/85 shadow-pop backdrop-blur-md" : "max-w-content bg-transparent"
+          scrolled ? "max-w-[calc(var(--container-wide)+16px)] rounded-pill bg-surface-raised/85 shadow-pop backdrop-blur-md" : "max-w-wide bg-transparent"
         }`}
       >
         <Link href="/" className="font-display text-xl font-semibold tracking-[-0.04em] text-ink">Tu Gestoría</Link>
@@ -47,7 +47,7 @@ export function SiteHeader() {
         </button>
       </div>
       {open && (
-        <nav id="menu-movil" aria-label="Principal móvil" className="mx-auto mt-2 flex max-w-content flex-col gap-1 rounded-lg bg-surface-raised p-3 shadow-pop md:hidden">
+        <nav id="menu-movil" aria-label="Principal móvil" className="mx-auto mt-2 flex max-w-wide flex-col gap-1 rounded-lg bg-surface-raised p-3 shadow-pop md:hidden">
           {links.map((l) => <Link key={l.href} href={l.href} onClick={() => setOpen(false)} className="rounded-md px-2 py-3 font-medium">{l.label}</Link>)}
           <Link href={user ? "/app/caso" : "/acceder?next=/app/conectar"} className={`${navCta} mt-2 h-11 justify-center`}>{user ? "Mi panel" : "Empieza gratis"}</Link>
         </nav>

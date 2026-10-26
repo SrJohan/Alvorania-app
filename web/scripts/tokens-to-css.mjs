@@ -11,6 +11,7 @@ c += `  --shadow-*: initial;\n`;
 for (const [k, v] of Object.entries(t.shadow)) c += `  --shadow-${k}: ${v};\n`;
 c += `  --breakpoint-*: initial;\n`;
 for (const [k, v] of Object.entries(t.layout.breakpoints)) c += `  --breakpoint-${k}: ${v}px;\n`;
-c += `  --container-content: ${t.layout["content-max"]}px;\n  --container-reading: ${t.layout["reading-max"]}px;\n  --ease-brand: ${t.motion.ease};\n}\n\n`;
+c += `  --container-content: ${t.layout["content-max"]}px;\n  --container-reading: ${t.layout["reading-max"]}px;
+  --container-wide: ${t.layout["wide-max"]}px;\n  --ease-brand: ${t.motion.ease};\n}\n\n`;
 c += `html { scroll-behavior: smooth; }\nbody { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }\nh1, h2, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }\n:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }\n@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }\n`;
 fs.writeFileSync("src/app/globals.css", c);
