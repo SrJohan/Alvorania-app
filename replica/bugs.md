@@ -6,7 +6,7 @@ Solo bugs reproducidos. Lo que podría ser un problema pero no se ha reproducido
 | --- | --- | --- | --- |
 | BUG-001 | S3 | Error falso «Elige cómo quieres aportar tus datos» al continuar rápido | fixed in 4bb1b7e |
 | BUG-003 | S2 | Régimen foral: callejón sin salida, no hay forma de pedir un asesor | open |
-| BUG-004 | S2 | En modo live, las peticiones de enlace de acceso seguidas fallan | open |
+| BUG-004 | S2 | En modo live, las peticiones de enlace de acceso seguidas fallan | parcial: mensaje fixed in 4b3e9a7; falta SMTP propio |
 
 (BUG-002 se abrió como sospecha y no se reprodujo: ver «A comprobar».)
 
@@ -60,7 +60,7 @@ Expected: o llega el correo, o la pantalla dice claramente que hay que esperar.
 Actual: la acción falla en el servidor (`[action] unexpected error: magic link failed` tres veces en el log) y la pantalla muestra el mensaje genérico «Algo ha salido mal».
 Evidence: registro del servidor de desarrollo, 2026-10-26.
 Suspected cause: límite de envío del SMTP incluido en Supabase gratis (muy pocos correos por hora). Dos problemas: el límite en sí y que el mensaje no lo explica.
-Status: open. Arreglo propuesto: configurar Resend como SMTP en Supabase (ya tienes la clave) y traducir el error de límite de Supabase a «Has pedido varios enlaces seguidos; espera unos minutos».
+Status: parcial. El mensaje se corrigió en 4b3e9a7 (prueba `src/server/auth-errors.test.ts`): ahora dice que hay que esperar unos minutos, sin revelar si la cuenta existe. **Sigue abierto** el límite en sí: hay que configurar Resend como SMTP en Supabase (ajuste en su panel, lo haces tú con tu clave).
 
 ## A comprobar (no reproducido)
 
