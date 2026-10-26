@@ -2,7 +2,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Card, EmptyState, Notice, StatusBadge, Timeline, type TimelineItem } from "@/components/ui/display";
-import { demoAdvisorApprove, demoAdvisorSubmit, refreshState, sendMessage } from "@/lib/data/api";
+import { clientResubmit, demoAdvisorApprove, demoAdvisorRequestChanges, demoAdvisorSubmit, downloadDocument, refreshState, sendMessage } from "@/lib/data/api";
 import { isLive } from "@/lib/env";
 import { planByCode } from "@/lib/data/plans";
 import { useDemoState } from "@/lib/data/store";
@@ -14,6 +14,8 @@ export default function Caso() {
   const [text, setText] = useState("");
   const [sending, setSending] = useState(false);
   const [demoError, setDemoError] = useState("");
+  const [resubmitting, setResubmitting] = useState(false);
+  const [docError, setDocError] = useState("");
   const [tries, setTries] = useState(0);
   const [pagoOk] = useState(() => typeof window !== "undefined" && new URLSearchParams(window.location.search).get("pago") === "ok");
   const status = s.case?.status;
@@ -42,7 +44,7 @@ export default function Caso() {
     { title: "Resultado calculado", state: calc ? "done" : "pending", detail: calc ? `${calc.resultCents < 0 ? "A devolver" : "A pagar"} ${formatEuros(Math.abs(calc.resultCents))}` : undefined },
     { title: "Plan contratado", state: r ? "done" : calc ? "current" : "pending", detail: plan ? `Plan ${plan.name}` : undefined,
       action: calc && !r && <LinkButton href="/app/plan" size="sm">Elegir plan</LinkButton> },
-    { title: "Revisión del asesor", state: r?.advisorApprovedAt ? "done" : r ? "current" : "pending", detail: r?.advisorApprovedAt ? `Aprobada el ${formatDateTime(r.advisorApprovedAt)}` : r ? `${r.advisorName} está revisando tu declaración.` : undefined },
+    { title: "Revisión del asesor", state: r?.advisorApprovedAt ? "done" : r ? "current" : "pending", detail: r?.advisorApprovedAt ? `Aprobada el ${formatDateTime(r.advisorApprovedAt)}` : r?.status === "cambios_pedidos" ? "Tu asesor te ha pedido cambios." : r ? `${r.advisorName} está revisando tu declaración.` : undefined },
     { title: "Tu aprobación", state: r?.userApprovedAt ? "done" : r?.advisorApprovedAt ? "current" : "pending",
       detail: r?.userApprovedAt ? `Dada el ${formatDateTime(r.userApprovedAt)}` : undefined,
       action: r?.advisorApprovedAt && !r.userApprovedAt && <LinkButton href="/app/revision" size="sm">Revisar y aprobar</LinkButton> },
@@ -71,6 +73,33 @@ export default function Caso() {
       </div>
 
       {confirming && <Notice title="Estamos confirmando tu pago">Puede tardar unos segundos. No hace falta que hagas nada.</Notice>}
+
+      {r?.status === "cambios_pedidos" && (
+        <Card selected>
+          <h2 className="text-lg font-semibold">Tu asesor necesita que revises algunos datos</h2>
+          <blockquote className="mt-2 rounded-md bg-surface px-4 py-3">{r.notes}</blockquote>
+          <p className="mt-3 text-sm">Corrige lo que haga falta en el cuestionario, vuelve a calcular y avísale.</p>
+          <div className="mt-4 flex flex-wrap gap-3">
+            <LinkButton href="/app/cuestionario" variant="secondary">Ir al cuestionario</LinkButton>
+            <Button loading={resubmitting} onClick={async () => { setResubmitting(true); setDocError(""); try { await clientResubmit(); } catch (e) { setDocError((e as Error).message); } setResubmitting(false); }}>Ya lo he corregido</Button>
+          </div>
+        </Card>
+      )}
+
+      {s.documents.some((d) => d.kind === "declaracion") && (
+        <Card>
+          <h2 className="text-lg font-semibold">Tu declaración</h2>
+          <ul className="mt-2 divide-y divide-border">
+            {s.documents.filter((d) => d.kind === "declaracion").map((d) => (
+              <li key={d.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
+                <span className="text-sm">{d.name}</span>
+                <Button size="sm" variant="secondary" onClick={() => downloadDocument(d.id).catch((e: Error) => setDocError(e.message))}>Descargar</Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+      {docError && <p role="alert" className="text-sm text-danger">{docError}</p>}
 
       <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card><h2 className="mb-4 text-lg font-semibold">Seguimiento</h2><Timeline items={items} /></Card>
@@ -107,7 +136,8 @@ export default function Caso() {
           <h2 className="text-lg font-semibold">Modo demostración</h2>
           <p className="mb-3 text-sm text-text-muted">Simula lo que haría tu asesor desde su panel. No existirá en la versión real de cara al cliente.</p>
           <div className="flex flex-wrap gap-3">
-            <Button variant="secondary" disabled={!!r.advisorApprovedAt} onClick={() => demo(demoAdvisorApprove)}>El asesor aprueba la revisión</Button>
+            <Button variant="secondary" disabled={!!r.advisorApprovedAt || r.status === "cambios_pedidos"} onClick={() => demo(demoAdvisorApprove)}>El asesor aprueba la revisión</Button>
+            <Button variant="secondary" disabled={!!r.userApprovedAt || r.status === "cambios_pedidos"} onClick={() => demo(() => demoAdvisorRequestChanges())}>El asesor pide cambios</Button>
             <Button variant="secondary" disabled={!r.userApprovedAt} onClick={() => demo(demoAdvisorSubmit)}>El asesor presenta y registra el justificante</Button>
           </div>
           {demoError && <p role="alert" className="mt-2 text-sm text-danger">{demoError}</p>}

@@ -278,18 +278,18 @@ export async function userApprove(): Promise<ActionResult> {
 
 // ---------- panel de asesor ----------
 
-export async function advisorCases(): Promise<ActionResult<{ id: string; status: string; taxYear: number | null; client: string; resultCents: number | null; advisorApproved: boolean; userApproved: boolean }[]>> {
+export async function advisorCases(): Promise<ActionResult<{ id: string; status: string; taxYear: number | null; client: string; resultCents: number | null; advisorApproved: boolean; userApproved: boolean; changesRequested: boolean }[]>> {
   return run(async () => {
     const { user, role } = await requireStaff();
     const admin = supabaseAdmin();
-    let q = admin.from("cases").select("id,status,tax_year,result_amount_cents,user_id,advisor_id,profiles!cases_user_id_fkey(full_name,email),reviews(advisor_approved_at,user_approved_at)")
-      .in("status", ["en_revision", "pendiente_aprobacion", "pagado"]).order("created_at");
+    let q = admin.from("cases").select("id,status,tax_year,result_amount_cents,user_id,advisor_id,profiles!cases_user_id_fkey(full_name,email),reviews(status,advisor_approved_at,user_approved_at)")
+      .in("status", role === "admin" ? ["calculado", "pagado", "en_revision", "pendiente_aprobacion"] : ["en_revision", "pendiente_aprobacion", "pagado"]).order("created_at");
     if (role === "advisor") q = q.eq("advisor_id", user.id);
     const { data, error } = await q;
     if (error) throw error;
     return ((data ?? []) as any[]).map((c) => { // eslint-disable-line @typescript-eslint/no-explicit-any
       const rev = Array.isArray(c.reviews) ? c.reviews[0] : c.reviews;
-      return { id: c.id, status: c.status, taxYear: c.tax_year, client: c.profiles?.full_name ?? c.profiles?.email ?? "Cliente", resultCents: c.result_amount_cents, advisorApproved: !!rev?.advisor_approved_at, userApproved: !!rev?.user_approved_at };
+      return { id: c.id, status: c.status, taxYear: c.tax_year, client: c.profiles?.full_name ?? c.profiles?.email ?? "Cliente", resultCents: c.result_amount_cents, advisorApproved: !!rev?.advisor_approved_at, userApproved: !!rev?.user_approved_at, changesRequested: rev?.status === "cambios_pedidos" };
     });
   });
 }

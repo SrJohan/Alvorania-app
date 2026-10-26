@@ -64,7 +64,7 @@ async function loadCase(sb: SupabaseClient, c: Row): Promise<CaseRow> {
     sb.from("questionnaire_answers").select("answers").eq("case_id", c.id).order("version", { ascending: false }).limit(1).maybeSingle(),
     sb.from("tax_data").select("source").eq("case_id", c.id).maybeSingle(),
     sb.from("calculations").select("output").eq("case_id", c.id).order("created_at", { ascending: false }).limit(1),
-    sb.from("reviews").select("advisor_id,advisor_approved_at,user_approved_at,notes").eq("case_id", c.id).maybeSingle(),
+    sb.from("reviews").select("status,advisor_id,advisor_approved_at,user_approved_at,notes").eq("case_id", c.id).maybeSingle(),
   ]);
 
   const { __step, ...answers } = ((qa?.answers ?? {}) as Row);
@@ -83,7 +83,7 @@ async function loadCase(sb: SupabaseClient, c: Row): Promise<CaseRow> {
     questionnaireStep: Number(__step ?? 0),
     dataSource: td?.source === "manual" || td?.source === "documento" ? td.source : null,
     calculation: ((calcs ?? [])[0]?.output as Calculation | undefined) ?? null,
-    review: rev ? { advisorName, advisorApprovedAt: rev.advisor_approved_at, userApprovedAt: rev.user_approved_at, notes: rev.notes ?? "" } : null,
+    review: rev ? { status: rev.status, advisorName, advisorApprovedAt: rev.advisor_approved_at, userApprovedAt: rev.user_approved_at, notes: rev.notes ?? "" } : null,
     aeatReference: c.aeat_reference ?? null,
     submittedAt: c.submitted_at ?? null,
     createdAt: c.created_at,

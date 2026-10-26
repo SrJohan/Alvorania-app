@@ -2,13 +2,13 @@
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, EmptyState, ErrorState, Skeleton, StatusBadge } from "@/components/ui/display";
+import { Card, EmptyState, ErrorState, Skeleton, StatusBadge, Tag } from "@/components/ui/display";
 import { TextField } from "@/components/ui/form";
 import { formatEuros } from "@/lib/format";
 import { advisorApprove, advisorCases, advisorSubmit } from "@/server/actions";
 import type { CaseStatus } from "@/lib/data/types";
 
-type Row = { id: string; status: string; taxYear: number | null; client: string; resultCents: number | null; advisorApproved: boolean; userApproved: boolean };
+type Row = { id: string; status: string; taxYear: number | null; client: string; resultCents: number | null; advisorApproved: boolean; userApproved: boolean; changesRequested: boolean };
 
 export default function Asesor() {
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -55,10 +55,10 @@ export default function Asesor() {
           <Card key={c.id}>
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div>
-                <p className="font-semibold">{c.client}</p>
+                <Link href={`/asesor/${c.id}`} className="font-semibold underline-offset-2 hover:underline">{c.client}</Link>
                 <p className="text-sm text-text-muted">Renta {c.taxYear} · {c.resultCents == null ? "sin calcular" : `${c.resultCents < 0 ? "a devolver" : "a pagar"} ${formatEuros(Math.abs(c.resultCents))}`}</p>
               </div>
-              <StatusBadge status={c.status as CaseStatus} />
+              <div className="flex gap-2">{c.changesRequested && <Tag tone="warning">Cambios pedidos</Tag>}<StatusBadge status={c.status as CaseStatus} /></div>
             </div>
             <ul className="mt-3 text-sm text-text-muted">
               <li>Revisión del asesor: {c.advisorApproved ? "aprobada" : "pendiente"}</li>

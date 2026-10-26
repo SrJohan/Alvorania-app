@@ -74,6 +74,13 @@ describe("validación de entradas", () => {
 });
 
 describe("correos", () => {
+  it("la nota del asesor se escapa en el correo de cambios pedidos", () => {
+    const r = renderEmail("changes_requested", { name: "Ana", notes: "<script>x</script> falta el certificado" });
+    expect(r.html).not.toContain("<script>");
+    expect(r.html).toContain("falta el certificado");
+    expect(r.text).toContain("falta el certificado");
+  });
+
   it("escapa HTML en los datos del usuario", () => {
     expect(esc(`<script>alert("x")</script>`)).toBe("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;");
     const r = renderEmail("submitted", { name: `<img src=x onerror=alert(1)>`, reference: "<b>X</b>" });
@@ -81,7 +88,7 @@ describe("correos", () => {
     expect(r.html).not.toContain("<b>X</b>");
   });
   it("incluye texto plano y asunto en cada plantilla", () => {
-    for (const k of ["payment_received", "advisor_approved", "submitted", "renewal_reminder", "nudge_unpaid", "nudge_approval", "account_deleted"] as const) {
+    for (const k of ["payment_received", "advisor_approved", "submitted", "renewal_reminder", "nudge_unpaid", "nudge_approval", "account_deleted", "changes_requested"] as const) {
       const r = renderEmail(k, { name: "Ana", invoice: "F-2026-000001", reference: "R1", renewsOn: "1 de enero", amount: "59 €" });
       expect(r.subject.length).toBeGreaterThan(5);
       expect(r.text.length).toBeGreaterThan(20);

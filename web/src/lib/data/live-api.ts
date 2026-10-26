@@ -3,6 +3,7 @@
 import { supabaseBrowser } from "@/lib/supabase/browser";
 import type { Answers } from "@/lib/tax/engine";
 import * as actions from "@/server/actions";
+import * as advisor from "@/server/advisor-actions";
 import type { ActionResult } from "@/server/errors";
 import { initialState, replaceState, update } from "./store";
 import type { DemoState, PlanCode } from "./types";
@@ -89,6 +90,13 @@ export async function uploadLetter(file: File) {
   const { error } = await supabaseBrowser().storage.from("case-documents").uploadToSignedUrl(path, token, file);
   if (error) throw new Error("No hemos podido subir el archivo. Inténtalo de nuevo.");
   await mutate(() => actions.registerDocument({ path, kind: "carta_hacienda", mime, sizeBytes: file.size }));
+}
+
+export const clientResubmit = () => mutate(() => advisor.clientResubmit());
+
+export async function downloadDocument(documentId: string) {
+  const { url } = unwrap(await advisor.documentDownloadUrl(documentId));
+  window.open(url, "_blank", "noopener");
 }
 
 export async function openBillingPortal() {

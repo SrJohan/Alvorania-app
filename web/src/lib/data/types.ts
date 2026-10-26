@@ -24,9 +24,10 @@ export type Message = {
   at: string; // ISO UTC
 };
 
-export type DocumentRow = { id: string; kind: "carta_hacienda" | "justificante" | "otro"; name: string; sizeBytes: number; at: string };
+export type DocumentRow = { id: string; kind: "carta_hacienda" | "justificante" | "declaracion" | "otro"; name: string; sizeBytes: number; at: string };
 
 export type Review = {
+  status?: "pendiente" | "cambios_pedidos" | "aprobada_por_asesor" | "rechazada";
   advisorName: string;
   advisorApprovedAt: string | null;
   userApprovedAt: string | null;

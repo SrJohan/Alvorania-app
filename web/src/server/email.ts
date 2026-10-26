@@ -6,7 +6,7 @@ import { supabaseAdmin } from "@/lib/supabase/server";
 
 export type EmailKind =
   | "payment_received" | "advisor_approved" | "submitted" | "renewal_reminder"
-  | "nudge_unpaid" | "nudge_approval" | "account_deleted";
+  | "nudge_unpaid" | "nudge_approval" | "account_deleted" | "changes_requested";
 
 const ESCAPES: Record<string, string> = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
 export const esc = (s: unknown) => String(s ?? "").replace(/[&<>"']/g, (c) => ESCAPES[c]);
@@ -66,6 +66,15 @@ export function renderEmail(kind: EmailKind, p: Record<string, unknown>): Render
         subject: "Recuerda aprobar tu declaración",
         html: layout("Tu declaración espera tu visto bueno", `<p>${hi}</p><p>No se presentará hasta que la apruebes. Revisa el resumen cuando puedas.</p>`, { label: "Revisar y aprobar", href: url("/app/revision") }),
         text: `${hi}\nApruébala aquí cuando quieras: ${url("/app/revision")}`,
+      };
+    case "changes_requested":
+      return {
+        subject: "Tu asesor necesita que revises algunos datos",
+        html: layout("Revisa tus datos", `<p>${hi}</p><p>Tu asesor ha revisado tu declaración y necesita que corrijas o completes algo:</p><blockquote style="margin:12px 0;padding:12px 16px;background:#f6f2ea;border-radius:8px">${esc(p.notes)}</blockquote>`, { label: "Revisar mis datos", href: url("/app/caso") }),
+        text: `${hi}
+Tu asesor necesita que revises algunos datos:
+${p.notes}
+${url("/app/caso")}`,
       };
     case "account_deleted":
       return {

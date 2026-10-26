@@ -21,7 +21,7 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await approve.click();
     await expect(page.getByText(/Tu asesor presentará la declaración/)).toBeVisible();
 
-    await page.getByRole("link", { name: "Mi caso" }).click();
+    await page.getByRole("link", { name: "Mi caso", exact: true }).click();
     await page.getByRole("button", { name: /El asesor presenta y registra/ }).click();
     await expect(page.getByText(/Justificante DEMO-/).first()).toBeVisible();
     await expect(page.getByText("Presentado").first()).toBeVisible();
@@ -57,6 +57,32 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await page.getByRole("button", { name: "Siguiente" }).click();
     await page.getByRole("button", { name: "Atrás" }).click();
     await page.getByRole("button", { name: "Siguiente" }).click();
+  });
+
+  test("F01-E13 el asesor pide cambios: el cliente lo ve, corrige, reenvía y el caso sigue hasta presentarse", async ({ page }) => {
+    await signIn(page);
+    await connectManual(page);
+    await fillQuestionnaire(page);
+    await payPlan(page);
+    await page.getByRole("button", { name: "El asesor pide cambios" }).click();
+    await expect(page.getByRole("heading", { name: "Tu asesor necesita que revises algunos datos" })).toBeVisible();
+    await expect(page.getByText("Falta el certificado de retenciones de tu segundo pagador.").first()).toBeVisible();
+    // mientras haya cambios pedidos, no se puede aprobar
+    await expect(page.getByRole("button", { name: "El asesor aprueba la revisión" })).toBeDisabled();
+    await page.getByRole("link", { name: "Ir al cuestionario" }).click();
+    await page.getByLabel("Donativos a ONG y fundaciones").fill("50");
+    await page.getByRole("link", { name: "Resultado" }).click();
+    await page.getByRole("button", { name: "Volver a calcular" }).click();
+    await page.getByRole("link", { name: "Mi caso", exact: true }).click();
+    await page.getByRole("button", { name: "Ya lo he corregido" }).click();
+    await expect(page.getByRole("heading", { name: "Tu asesor necesita que revises algunos datos" })).toHaveCount(0);
+    await page.getByRole("button", { name: "El asesor aprueba la revisión" }).click();
+    await page.getByRole("link", { name: "Revisar y aprobar" }).click();
+    await page.getByLabel(/He revisado mi declaración y autorizo/).check();
+    await page.getByRole("button", { name: "Aprobar y presentar" }).click();
+    await page.getByRole("link", { name: "Mi caso", exact: true }).click();
+    await page.getByRole("button", { name: /El asesor presenta y registra/ }).click();
+    await expect(page.getByText("Presentado").first()).toBeVisible();
   });
 
   test("F01-E1 cuestionario vacío: no avanza y explica qué falta", async ({ page }) => {

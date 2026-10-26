@@ -83,6 +83,36 @@ export async function demoAdvisorApprove() {
   });
 }
 
+// Solo demostración: el asesor devuelve el caso al cliente con una nota.
+export async function demoAdvisorRequestChanges(notes = "Falta el certificado de retenciones de tu segundo pagador.") {
+  await delay(300);
+  update((s) => {
+    if (!s.case?.review) return s;
+    return {
+      ...s,
+      case: { ...s.case, status: "en_revision", review: { ...s.case.review, status: "cambios_pedidos", notes, advisorApprovedAt: null } },
+      messages: [...s.messages, { id: id(), from: "advisor", body: `Necesito que revises algunos datos: ${notes}`, at: now() }],
+    };
+  });
+}
+
+export async function clientResubmit() {
+  await delay(300);
+  update((s) => {
+    if (s.case?.review?.status !== "cambios_pedidos") return s;
+    return {
+      ...s,
+      case: { ...s.case, review: { ...s.case.review, status: "pendiente" } },
+      messages: [...s.messages, { id: id(), from: "system", body: "Has corregido tus datos. Tu asesor volverá a revisarlos.", at: now() }],
+    };
+  });
+}
+
+export async function downloadDocument(documentId: string) {
+  void documentId; // en la demo los archivos no se guardan
+  throw new Error("En la demostración los documentos no se guardan, así que no se pueden descargar.");
+}
+
 export async function userApprove() {
   await delay(500);
   const s = getState();

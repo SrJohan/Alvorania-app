@@ -21,6 +21,8 @@ export const sendMessage = impl.sendMessage;
 export const userApprove = impl.userApprove;
 export const cancelRenewal = impl.cancelRenewal;
 export const uploadLetter = impl.uploadLetter;
+export const clientResubmit = impl.clientResubmit;
+export const downloadDocument = impl.downloadDocument;
 
 /** Carga el estado del servidor (modo live). En demo no hace nada: el estado vive en el navegador. */
 export const refreshState = isLive ? live.refreshState : async () => undefined;
@@ -28,6 +30,7 @@ export const refreshState = isLive ? live.refreshState : async () => undefined;
 // Solo demostración: simulan al asesor. En live el asesor usa /asesor y estas funciones no deben llamarse.
 export const demoAdvisorApprove = demo.demoAdvisorApprove;
 export const demoAdvisorSubmit = demo.demoAdvisorSubmit;
+export const demoAdvisorRequestChanges = demo.demoAdvisorRequestChanges;
 
 // Solo live.
 export const openBillingPortal = live.openBillingPortal;
