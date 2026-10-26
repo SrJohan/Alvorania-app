@@ -17,3 +17,10 @@ next-env.d.ts
 .vercel/
 *.log
 .DS_Store
+
+# caché de herramientas de diseño
+.impeccable/
+
+# capturas del original (contenido de terceros): solo en local
+replica/screens/
+replica/diffs/*.png

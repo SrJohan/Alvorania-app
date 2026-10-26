@@ -1,0 +1,72 @@
+{
+  "mode": "layout",
+  "files": {
+    "original": "screens/S04-tramites-mobile.png",
+    "clone": "clone-screens/S04-tramites-mobile.png"
+  },
+  "score": 8.4,
+  "original": {
+    "width": 390,
+    "height": 844
+  },
+  "clone": {
+    "width": 390,
+    "height": 844
+  },
+  "compared_at": {
+    "width": 390,
+    "height": 844
+  },
+  "height_delta_pct": 0,
+  "regions": [
+    {
+      "x": 0,
+      "y": 448,
+      "w": 288,
+      "h": 416,
+      "cells": 70,
+      "where": "abajo centro"
+    },
+    {
+      "x": 0,
+      "y": 96,
+      "w": 384,
+      "h": 160,
+      "cells": 34,
+      "where": "arriba centro"
+    },
+    {
+      "x": 32,
+      "y": 288,
+      "w": 288,
+      "h": 160,
+      "cells": 27,
+      "where": "en medio centro"
+    },
+    {
+      "x": 0,
+      "y": 0,
+      "w": 192,
+      "h": 64,
+      "cells": 7,
+      "where": "arriba izquierda"
+    },
+    {
+      "x": 320,
+      "y": 0,
+      "w": 32,
+      "h": 32,
+      "cells": 1,
+      "where": "arriba derecha"
+    },
+    {
+      "x": 352,
+      "y": 32,
+      "w": 32,
+      "h": 32,
+      "cells": 1,
+      "where": "arriba derecha"
+    }
+  ],
+  "verdict": "different"
+}
