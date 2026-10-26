@@ -36,7 +36,7 @@ const faq = [
   { q: "¿Tengo que pagar para ver mi resultado?", a: "No. El cálculo es gratis y no pide tarjeta. Pagas solo si decides que lo presente un asesor." },
   { q: "¿Quién revisa mi declaración?", a: "Un asesor fiscal de nuestro equipo. Nada se presenta sin su revisión y sin tu confirmación." },
   { q: "¿Qué datos necesitáis?", a: "Tus datos fiscales del ejercicio y unas preguntas sobre tu situación: hijos, hipoteca, aportaciones y donativos." },
-  { q: "¿Y si vivo en el País Vasco o Navarra?", a: "Tienen régimen foral propio. Esos casos los lleva directamente un asesor, sin cálculo automático." },
+  { q: "¿Y si vivo en el País Vasco o Navarra?", a: "Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra: tienen su propio régimen fiscal y aún no podemos llevarlas. Si tu residencia fiscal está en otra comunidad, sí podemos ayudarte." },
 ];
 
 const headline = "font-display font-semibold tracking-[-0.06em] text-ink";

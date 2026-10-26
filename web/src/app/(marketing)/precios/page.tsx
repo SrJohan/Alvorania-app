@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { LinkButton } from "@/components/ui/button";
-import { Accordion, Card, Tag } from "@/components/ui/display";
+import { Accordion, Card, Notice, Tag } from "@/components/ui/display";
 import { PLANS } from "@/lib/data/plans";
 import { formatEuros } from "@/lib/format";
 
@@ -29,6 +29,9 @@ export default function Precios() {
     <div className="mx-auto max-w-content px-4 py-12">
       <h1 className="text-xl font-bold">Precios claros, sin sorpresas</h1>
       <p className="mt-2 max-w-reading text-text-muted">Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
+      <div className="mt-4 max-w-reading">
+        <Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice>
+      </div>
 
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {PLANS.map((p) => (
@@ -76,7 +79,7 @@ export default function Precios() {
           </div>
         ))}
       </dl>
-      <p className="mt-2 text-sm text-text-muted">El análisis de una carta de Hacienda es gratuito. En el País Vasco y Navarra, consulta antes con un asesor.</p>
+      <p className="mt-2 text-sm text-text-muted">El análisis de una carta de Hacienda es gratuito.</p>
 
       <h2 className="mt-12 text-lg font-semibold">Preguntas sobre precios</h2>
       <div className="mt-4 max-w-reading">

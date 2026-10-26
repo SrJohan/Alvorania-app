@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
@@ -78,7 +79,12 @@ export default function Cuestionario() {
         {step === 0 && (
           <>
             <SelectField label="Comunidad donde resides" value={a.ccaa} onChange={(e) => set("ccaa", e.target.value)} options={CCAA} placeholder="Elige una" error={errors.ccaa} />
-            {foral && <Notice tone="warning" title="Régimen foral">En {a.ccaa} se aplica una normativa propia y todavía no calculamos estos casos automáticamente. Elige otra comunidad si tu residencia fiscal es distinta.</Notice>}
+            {foral && (
+              <Notice tone="warning" title="No disponible en tu comunidad">
+                Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral). No te cobraremos nada. Si tu residencia fiscal está en otra comunidad, elígela arriba.{" "}
+                <Link href="/" className="font-semibold underline">Volver al inicio</Link>
+              </Notice>
+            )}
             <SelectField label="Estado civil" value={a.civilStatus} onChange={(e) => set("civilStatus", e.target.value as Answers["civilStatus"])} options={["soltero", "casado"]} placeholder="Elige uno" error={errors.civilStatus} />
           </>
         )}

@@ -117,7 +117,7 @@ export async function runCalculation(): Promise<ActionResult> {
     void _ignored;
     const answers = answersSchema.parse(raw);
     if (!answers.ccaa) throw new AppError("Indica tu comunidad.", "invalid");
-    if ((FORAL_CCAA as readonly string[]).includes(answers.ccaa)) throw new AppError("Los casos de régimen foral los calcula un asesor.", "invalid");
+    if ((FORAL_CCAA as readonly string[]).includes(answers.ccaa)) throw new AppError("Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra.", "invalid");
 
     const { data: ruleRows, error: rulesErr } = await admin.from("tax_rules").select("tax_year,territory,kind,code,rule,reviewed_at").eq("tax_year", answers.taxYear).eq("territory", "ESTATAL");
     if (rulesErr) throw rulesErr;

@@ -97,15 +97,18 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await signIn(page);
     await connectManual(page);
     await page.getByLabel("Comunidad donde resides").selectOption("Navarra");
-    await expect(page.getByText(/se aplica una normativa propia/)).toBeVisible();
+    await expect(page.getByText(/Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
     await expect(page.getByRole("button", { name: "Siguiente" })).toBeDisabled();
   });
 
-  test("F01-E7 hay una salida para el régimen foral (contactar con un asesor)", async ({ page }) => {
+  test("F01-E7 régimen foral: dice claramente que no lo aceptamos y ofrece salida (BUG-003)", async ({ page }) => {
     await signIn(page);
     await connectManual(page);
     await page.getByLabel("Comunidad donde resides").selectOption("País Vasco");
-    await expect(page.getByRole("link", { name: /asesor/i }).or(page.getByRole("button", { name: /asesor/i }))).toBeVisible();
+    await expect(page.getByText(/Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
+    await expect(page.getByRole("button", { name: "Siguiente" })).toBeDisabled();
+    await page.getByRole("link", { name: "Volver al inicio" }).click();
+    await expect(page).toHaveURL("/");
   });
 
   test("F01-E8 solo teclado: acceso y primer paso", async ({ page }) => {
