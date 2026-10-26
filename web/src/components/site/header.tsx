@@ -8,6 +8,7 @@ const links = [
   { href: "/precios", label: "Precios" },
   { href: "/tramites", label: "Trámites" },
   { href: "/asesoria-gestoria", label: "Autónomos" },
+  { href: "/articulos", label: "Artículos" },
 ];
 
 const navCta = "inline-flex h-9 items-center rounded-pill bg-accent px-4 text-sm font-semibold text-on-accent transition-[transform,background-color] duration-200 ease-brand hover:-translate-y-px hover:bg-accent-hover active:scale-[0.98] motion-reduce:transform-none";
@@ -71,6 +72,7 @@ export function SiteFooter() {
             <li><Link href="/precios" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Precios</Link></li>
             <li><Link href="/tramites" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Trámites</Link></li>
             <li><Link href="/asesoria-gestoria" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Gestoría para autónomos</Link></li>
+            <li><Link href="/articulos" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Artículos</Link></li>
           </ul>
         </div>
         <div>
