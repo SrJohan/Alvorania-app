@@ -1,0 +1,290 @@
+{
+  "_about": "Temas para reseñas de un servicio de declaración de la renta, en español. Expresiones regulares JavaScript sin distinguir mayúsculas. kind: complaint (queja) o request (algo que piden).",
+  "request_patterns": [
+    "\\bme gustar[ií]a\\b",
+    "\\bdeber[ií]an?\\b",
+    "\\bestar[ií]a bien\\b",
+    "\\bojal[aá]\\b",
+    "\\becho en falta\\b",
+    "\\bno (permite|deja|puedes|se puede|pod[ií]a)\\b",
+    "\\bfalta(n|ba)?\\b",
+    "\\bser[ií]a (m[aá]s|mucho|ideal|genial|bueno)\\b",
+    "\\bque (pongan|a[ñn]adan|incluyan|mejoren)\\b"
+  ],
+  "themes": [
+    {
+      "id": "errores",
+      "label": "Errores en la declaración (el cliente tiene que vigilar)",
+      "kind": "complaint",
+      "patterns": [
+        "\\berror(es)?\\b",
+        "\\bmal hech",
+        "\\bse equivoc",
+        "\\bequivocad",
+        "\\brequerimiento",
+        "\\bmulta\\b",
+        "\\bsanci[oó]n",
+        "\\bfallos?\\b",
+        "\\bla hac[ií]an mal\\b",
+        "\\bborradores? (err[oó]neos|disparatados)",
+        "\\bme la l[ií]an\\b",
+        "\\bse l[ií]an\\b",
+        "\\bincorrect"
+      ]
+    },
+    {
+      "id": "trabajo_cliente",
+      "label": "Pagas y el trabajo lo haces tú",
+      "kind": "complaint",
+      "patterns": [
+        "\\blo haces t[uú]\\b",
+        "\\bhacerlo yo\\b",
+        "\\bhe hecho yo\\b",
+        "\\btuve que (revisar|corregir|hacer|decir|ser yo)",
+        "\\bhe tenido que (hacer|revisar|corregir|ir diciendo)",
+        "\\bles (dije|dec[ií]a|he tenido)",
+        "\\bcorregir(les)? (yo|varias|montones)",
+        "\\bacab[eé] yo\\b",
+        "\\bel trabajo est[aá] hecho por m[ií]\\b",
+        "\\bquien les dijese\\b",
+        "\\bpor m[ií] mismo\\b"
+      ]
+    },
+    {
+      "id": "precio",
+      "label": "Precio alto, subidas y extras sorpresa",
+      "kind": "complaint",
+      "patterns": [
+        "\\bcar[oa]s?\\b",
+        "\\bprecios?\\b",
+        "\\bsuplemento",
+        "\\bpagar m[aá]s\\b",
+        "\\bm[aá]s dinero\\b",
+        "\\bcoste extra\\b",
+        "\\bun dineral\\b",
+        "\\btarifas?\\b",
+        "\\bsuben\\b",
+        "\\bcobran\\b",
+        "\\bcobraron\\b",
+        "\\b5 ?%",
+        "\\bplan (full|premium|live)\\b",
+        "\\bpremium\\b",
+        "\\bperder dinero\\b",
+        "\\bupselling\\b",
+        "\\bextras?\\b",
+        "\\badicional(es)?\\b",
+        "\\bpaga por servicio\\b",
+        "\\blo que tienes que pagar\\b",
+        "\\bal cobrar\\b",
+        "\\bhasta 239\\b",
+        "\\bpagu[eé] (para nada|el paquete)\\b"
+      ]
+    },
+    {
+      "id": "renovacion",
+      "label": "Renovación, cancelación y reembolsos",
+      "kind": "complaint",
+      "patterns": [
+        "\\brenov",
+        "\\bsuscripci[oó]n\\b",
+        "\\bcancel",
+        "\\breembolso",
+        "\\bdevoluci[oó]n del importe",
+        "\\bdesisti",
+        "\\bmembres[ií]a",
+        "\\btarjeta\\b",
+        "\\bsin avisar\\b",
+        "\\bsin mi permiso\\b",
+        "\\bno me devolvieron lo que pagu"
+      ]
+    },
+    {
+      "id": "atencion",
+      "label": "Atención lenta o que no responde",
+      "kind": "complaint",
+      "patterns": [
+        "\\batenci[oó]n al cliente\\b",
+        "\\bno (contestan|responden|me contestan|me responden)\\b",
+        "\\bdejan de contestar\\b",
+        "\\btardan\\b",
+        "\\btardaron\\b",
+        "\\bd[ií]as (en|sin)\\b",
+        "\\bsin respuesta\\b",
+        "\\bno me han dado respuesta\\b",
+        "\\b24 horas\\b",
+        "\\bno te llaman\\b",
+        "\\bllamada\\b",
+        "\\bcita\\b",
+        "\\bsoporte\\b",
+        "\\bcontactar\\b",
+        "\\bhablar con (alguien|un asesor|una persona)\\b",
+        "\\bponer(te|me|se)? en contacto\\b",
+        "\\bsupport\\b",
+        "\\bticket\\b",
+        "\\bnada que responden\\b",
+        "\\bcu[aá]ndo te responden\\b",
+        "\\bdesbordados\\b",
+        "\\bmucho volumen\\b"
+      ]
+    },
+    {
+      "id": "sin_continuidad",
+      "label": "Cada vez te atiende alguien distinto",
+      "kind": "complaint",
+      "patterns": [
+        "\\botra persona\\b",
+        "\\balguien diferente\\b",
+        "\\bvarios agentes\\b",
+        "\\bdiferentes (agentes|personas)\\b",
+        "\\bagente de referencia\\b",
+        "\\bimpersonal\\b",
+        "\\bexplicarles de nuevo\\b",
+        "\\bcada vez (te|me) (contesta|atiende)",
+        "\\bconversaci[oó]n anterior\\b",
+        "\\bnuevo asesor\\b",
+        "\\bexplicar todo de nuevo\\b"
+      ]
+    },
+    {
+      "id": "ia",
+      "label": "La IA o el bot no resuelve",
+      "kind": "complaint",
+      "patterns": [
+        "\\bia\\b",
+        "\\binteligencia artificial\\b",
+        "\\bbot\\b",
+        "\\basistente virtual\\b",
+        "\\bm[aá]quina\\b",
+        "\\bautomatism"
+      ]
+    },
+    {
+      "id": "inversiones",
+      "label": "Inversiones, bróker y cripto mal resueltas",
+      "kind": "complaint",
+      "patterns": [
+        "\\bcripto",
+        "\\bacciones\\b",
+        "\\bdegiro\\b",
+        "\\bxtb\\b",
+        "\\bbolsa\\b",
+        "\\binversi[oó]n(es)?\\b",
+        "\\bbr[oó]ker\\b",
+        "\\btrade republic\\b",
+        "\\bfifo\\b",
+        "\\bcompraventa de valores\\b"
+      ]
+    },
+    {
+      "id": "app",
+      "label": "La app falla o se cierra",
+      "kind": "complaint",
+      "patterns": [
+        "\\bse cierra\\b",
+        "\\bno funciona\\b",
+        "\\bse queda en blanco\\b",
+        "\\bborra todo\\b",
+        "\\bperdido datos\\b",
+        "\\berror en el sistema\\b",
+        "\\bel bot[oó]n no funciona\\b",
+        "\\bno carga\\b",
+        "\\bsms\\b",
+        "\\bactualizaci[oó]n\\b",
+        "\\bse bloquea\\b",
+        "\\bno me deja (entrar|acceder)\\b",
+        "\\bno (me )?abre\\b",
+        "\\bse ha borrado\\b",
+        "\\bno me deja ni entrar\\b",
+        "\\bni la app ni la web funcionan\\b"
+      ]
+    },
+    {
+      "id": "presentacion",
+      "label": "Presentan sin confirmar o sin entregar copia",
+      "kind": "complaint",
+      "patterns": [
+        "\\bsin preguntarme\\b",
+        "\\bsin darme opci[oó]n\\b",
+        "\\bpresentado autom[aá]ticamente\\b",
+        "\\bdos veces\\b",
+        "\\bcopia de la declaraci[oó]n\\b",
+        "\\bjustificante\\b",
+        "\\bno me han llamado\\b"
+      ]
+    },
+    {
+      "id": "plazos",
+      "label": "Plazos, fraccionamiento y pagos aplazados",
+      "kind": "complaint",
+      "patterns": [
+        "\\bplazos?\\b",
+        "\\bfraccion",
+        "\\baplaz",
+        "\\b2 pagos\\b",
+        "\\bdos pagos\\b"
+      ]
+    },
+    {
+      "id": "promesa",
+      "label": "El resultado previo no se parece al final",
+      "kind": "complaint",
+      "patterns": [
+        "\\bcantidad muy alejada\\b",
+        "\\bvuelven a decirte que tienes que pagar\\b",
+        "\\bpase de pagar\\b",
+        "\\bpas[eé] de \\d",
+        "\\bpublicidad (enga[ñn]osa|fraudulenta)\\b",
+        "\\bpagas m[aá]s\\b",
+        "\\ben vez de pagar menos\\b",
+        "\\bborrador de hacienda\\b",
+        "\\bmismo borrador\\b",
+        "\\bpierdes dinero\\b",
+        "\\bme sal[ií]a a devolver\\b",
+        "\\bclickbait\\b",
+        "\\bprometedores solo\\b",
+        "\\bbeneficios en tu declaraci[oó]n\\b"
+      ]
+    },
+    {
+      "id": "casos_complejos",
+      "label": "Casos no simples: alquileres, ventas, autónomos, conjunta",
+      "kind": "request",
+      "patterns": [
+        "\\balquiler(es)?\\b",
+        "\\bventa de (una|la) (propiedad|vivienda)\\b",
+        "\\breinversi[oó]n\\b",
+        "\\baut[oó]nomo",
+        "\\bconjunta\\b",
+        "\\bascendientes\\b",
+        "\\bprorratear\\b",
+        "\\btitularidad\\b",
+        "\\bceuta\\b",
+        "\\bmelilla\\b",
+        "\\bbaja m[eé]dica\\b"
+      ]
+    },
+    {
+      "id": "correos",
+      "label": "Demasiados correos y avisos",
+      "kind": "complaint",
+      "patterns": [
+        "\\b\\d+ correos\\b",
+        "\\bmareando\\b",
+        "\\bspam\\b",
+        "\\bnotificaciones\\b",
+        "\\bpesados\\b"
+      ]
+    },
+    {
+      "id": "accesibilidad",
+      "label": "Difícil para personas mayores o poco digitales",
+      "kind": "request",
+      "patterns": [
+        "\\bgente mayor\\b",
+        "\\bpersonas mayores\\b",
+        "\\bmuy complicado\\b",
+        "\\bno est[aá] preparad[oa]\\b"
+      ]
+    }
+  ]
+}

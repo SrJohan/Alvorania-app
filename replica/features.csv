@@ -37,3 +37,9 @@ Acuerdos con bancos y brókeres,partners,could,yes,skip,relaciones comerciales n
 Acreditación de Colaborador Social AEAT,legal,must,yes,skip,la tramita tu gestoría; no se copia
 IA entrenada con 800.000 declaraciones,ia,could,yes,skip,sin acceso a ese dataset
 Marca testimonios y cifras de TaxDown,marketing,could,yes,skip,no son tuyos
+Precio cerrado antes de pagar según tu caso; sin suplementos tras pagar,pagos,must,no,partial,F1 de fixes.md; hoy el plan se elige tras el resultado pero el precio no depende del caso
+Asesor con nombre para todo el caso y el mismo el año siguiente,seguimiento,must,no,partial,F2; hay asignación de asesor por caso; falta continuidad entre años
+Respuesta de una persona en 1 día laborable con plazo visible,soporte,should,no,no,F3
+Lista de revisión del asesor visible para el cliente,renta,should,no,partial,F4; el cliente ya ve desglose y deducciones con motivo
+Llamada con el asesor incluida en el plan alto,soporte,could,no,no,F7; tabla advisor_slots ya existe
+Informes de bróker a precio fijo (DEGIRO XTB Trade Republic),renta,could,no,no,F8
