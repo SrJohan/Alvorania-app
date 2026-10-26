@@ -9,6 +9,7 @@ import { FORAL_CCAA } from "@/lib/tax/rules";
 import type { DemoState } from "@/lib/data/types";
 import { clientIp, rateLimit, requireCaseAccess, requireStaff, requireUser } from "./authz";
 import { notify } from "./email";
+import { magicLinkError } from "./auth-errors";
 import { AppError, run, type ActionResult } from "./errors";
 import { loadState } from "./state";
 import { priceIdForPlan, stripe } from "./stripe";
@@ -40,7 +41,7 @@ export async function requestMagicLink(input: { email: string; fullName: string;
       email,
       options: { emailRedirectTo: `${publicEnv.siteUrl}/auth/callback`, data: { full_name: fullName }, shouldCreateUser: true },
     });
-    if (error) throw new Error("magic link failed"); // mensaje genérico: no revela si la cuenta existe
+    if (error) throw magicLinkError(error);
     return { sent: true as const };
   });
 }
