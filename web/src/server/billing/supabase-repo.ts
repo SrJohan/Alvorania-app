@@ -66,7 +66,8 @@ export function supabaseBillingRepo(): BillingRepo {
       // Asignar asesor y abrir la revisión solo una vez.
       let advisorId: string | null = kase.advisor_id;
       if (!advisorId) {
-        const { data: picked } = await admin.rpc("pick_advisor");
+        // F2: si el cliente ya tuvo asesor, vuelve con el mismo.
+        const { data: picked } = await admin.rpc("pick_advisor", { p_user_id: c.userId });
         advisorId = (picked as string | null) ?? null;
       }
       if (kase.status === "calculado" || kase.status === "borrador") {

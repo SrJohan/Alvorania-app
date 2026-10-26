@@ -50,6 +50,11 @@ export default function Precios() {
         ))}
       </div>
 
+      <section aria-labelledby="cerrado" className="mt-10 rounded-lg bg-success-soft p-6 text-on-success-soft">
+        <h2 id="cerrado" className="text-lg font-semibold">Precio cerrado antes de pagar</h2>
+        <p className="mt-1 max-w-reading">Al terminar el cuestionario te decimos qué plan necesita tu caso y cuánto cuesta en total. Ese es el precio: no hay suplementos después. Si has vendido acciones o fondos necesitarás el plan Completo, y te lo diremos antes de pagar.</p>
+      </section>
+
       <h2 className="mt-12 text-lg font-semibold">Comparativa</h2>
       <div className="relative mt-4 overflow-x-auto">
         <table className="w-full min-w-[520px] border-collapse text-sm">

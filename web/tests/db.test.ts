@@ -204,3 +204,30 @@ describe("operación", () => {
     expect(id).toBe(OTHER_ADV);
   });
 });
+
+describe("F2 · continuidad del asesor entre años", () => {
+  const D = "00000000-0000-0000-0000-00000000000d";
+  beforeAll(async () => {
+    await db.query("insert into auth.users (id, email) values ($1, 'd@example.com')", [D]);
+  });
+
+  it("un cliente que ya tuvo asesor vuelve con el mismo, aunque haya otro menos cargado", async () => {
+    // A tuvo su caso de 2025 con ADV (presentado). ADV además tiene casos abiertos y OTHER_ADV ninguno.
+    expect((await q("select pick_advisor($1) id", [A]))[0].id).toBe(ADV);
+  });
+
+  it("un cliente nuevo va al asesor con menos casos abiertos", async () => {
+    expect((await q("select pick_advisor($1) id", [D]))[0].id).toBe(OTHER_ADV);
+  });
+
+  it("si el asesor anterior ya no está, se asigna por carga", async () => {
+    await q("update profiles set deleted_at = now() where id = $1", [ADV]);
+    expect((await q("select pick_advisor($1) id", [A]))[0].id).toBe(OTHER_ADV);
+    await q("update profiles set deleted_at = null where id = $1", [ADV]);
+  });
+
+  it("la versión sin argumentos sigue funcionando y los clientes no pueden llamarla", async () => {
+    expect((await q("select pick_advisor() id"))[0].id).toBe(OTHER_ADV);
+    await fails(as(A, () => q("select pick_advisor($1)", [A])));
+  });
+});

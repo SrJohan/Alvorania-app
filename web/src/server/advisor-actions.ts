@@ -7,6 +7,7 @@ import { normalizeAnswers, type Answers, type Calculation } from "@/lib/tax/engi
 import { requireCaseAccess, requireStaff, requireUser, roleOf } from "./authz";
 import { supabaseBillingRepo } from "./billing/supabase-repo";
 import { notify } from "./email";
+import { assertPlanCoversCase } from "./pricing-guard";
 import { AppError, run, type ActionResult } from "./errors";
 import { messageSchema, planCodeSchema, safeFileName, uploadSchema, uuidSchema } from "./validation";
 
@@ -167,6 +168,7 @@ export async function adminMarkPaid(caseId: string, planCode: string): Promise<A
     const { data: c } = await admin.from("cases").select("id,user_id,status").eq("id", id).single();
     if (!c) throw new AppError("Caso no encontrado.", "not_found");
     if (c.status !== "calculado") throw new AppError("Solo se puede registrar el pago de un caso calculado y sin pagar.", "conflict");
+    await assertPlanCoversCase(id, code);
     await supabaseBillingRepo().completeCheckout({
       caseId: id, userId: c.user_id, planCode: code, customerId: null, subscriptionId: null,
       paymentIntentId: `manual-${id}`, amountCents: PRICE_CENTS[code], currency: "EUR",

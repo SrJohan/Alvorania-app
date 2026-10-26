@@ -69,10 +69,18 @@ async function loadCase(sb: SupabaseClient, c: Row): Promise<CaseRow> {
 
   const { __step, ...answers } = ((qa?.answers ?? {}) as Row);
   let advisorName = "Tu asesor";
+  let advisorColegiado: string | null = null;
+  let advisorReturning = false;
   if (rev?.advisor_id) {
-    // El cliente no puede leer el perfil del asesor (RLS); solo se expone el nombre.
-    const { data: adv } = await supabaseAdmin().from("profiles").select("full_name").eq("id", rev.advisor_id).maybeSingle();
+    // El cliente no puede leer el perfil del asesor (RLS); solo se exponen el nombre y el nº de colegiado.
+    const admin = supabaseAdmin();
+    const { data: adv } = await admin.from("profiles").select("full_name,colegiado_no").eq("id", rev.advisor_id).maybeSingle();
     if (adv?.full_name) advisorName = adv.full_name;
+    advisorColegiado = adv?.colegiado_no ?? null;
+    // F2: ¿es el mismo asesor que ya llevó un caso anterior de este cliente?
+    const { count } = await admin.from("cases").select("id", { count: "exact", head: true })
+      .eq("user_id", c.user_id).eq("advisor_id", rev.advisor_id).neq("id", c.id);
+    advisorReturning = (count ?? 0) > 0;
   }
 
   return {
@@ -83,7 +91,7 @@ async function loadCase(sb: SupabaseClient, c: Row): Promise<CaseRow> {
     questionnaireStep: Number(__step ?? 0),
     dataSource: td?.source === "manual" || td?.source === "documento" ? td.source : null,
     calculation: ((calcs ?? [])[0]?.output as Calculation | undefined) ?? null,
-    review: rev ? { status: rev.status, advisorName, advisorApprovedAt: rev.advisor_approved_at, userApprovedAt: rev.user_approved_at, notes: rev.notes ?? "" } : null,
+    review: rev ? { status: rev.status, advisorName, advisorColegiado, advisorReturning, advisorApprovedAt: rev.advisor_approved_at, userApprovedAt: rev.user_approved_at, notes: rev.notes ?? "" } : null,
     aeatReference: c.aeat_reference ?? null,
     submittedAt: c.submitted_at ?? null,
     createdAt: c.created_at,

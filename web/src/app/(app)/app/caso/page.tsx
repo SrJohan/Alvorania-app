@@ -101,6 +101,23 @@ export default function Caso() {
       )}
       {docError && <p role="alert" className="text-sm text-danger">{docError}</p>}
 
+      {r && (
+        <Card>
+          <div className="flex items-center gap-4">
+            <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-full bg-accent-soft font-display text-lg font-semibold text-on-accent-soft">
+              {r.advisorName.split(" ").map((w) => w[0]).slice(0, 2).join("")}
+            </span>
+            <div>
+              <h2 className="text-lg font-semibold">Tu asesor: {r.advisorName}</h2>
+              <p className="text-sm text-text-muted">
+                {r.advisorColegiado ? `Asesor fiscal colegiado nº ${r.advisorColegiado}. ` : ""}
+                {r.advisorReturning ? "Ya llevó tu declaración anterior, así que conoce tu caso." : "Lleva tu caso de principio a fin y será quien te atienda también el año que viene."}
+              </p>
+            </div>
+          </div>
+        </Card>
+      )}
+
       <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card><h2 className="mb-4 text-lg font-semibold">Seguimiento</h2><Timeline items={items} /></Card>
 

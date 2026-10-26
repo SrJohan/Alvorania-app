@@ -2,6 +2,8 @@
 // Capa de datos FALSA con las mismas firmas que tendrá la real (server actions + Supabase).
 // Cambiar la implementación por la real no debería tocar ninguna pantalla.
 import { calculate, type Answers } from "@/lib/tax/engine";
+import { coversCase, requiredPlan } from "@/lib/pricing";
+import { planByCode } from "./plans";
 import { getState, newCase, update } from "./store";
 import type { PlanCode } from "./types";
 
@@ -49,6 +51,11 @@ export async function runCalculation() {
 
 export async function checkout(planCode: PlanCode) {
   await delay(1100); // en producción: redirección a Stripe Checkout
+  const current = getState().case;
+  if (current && !coversCase(planCode, current.answers)) {
+    const need = requiredPlan(current.answers);
+    throw new Error(`Tu caso necesita el plan ${planByCode(need.plan)?.name ?? need.plan}. ${need.reasons.join(" ")}`);
+  }
   update((s) => {
     if (!s.case) return s;
     return {

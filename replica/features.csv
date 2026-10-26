@@ -37,8 +37,8 @@ Acuerdos con bancos y brókeres,partners,could,yes,skip,relaciones comerciales n
 Acreditación de Colaborador Social AEAT,legal,must,yes,skip,la tramita tu gestoría; no se copia
 IA entrenada con 800.000 declaraciones,ia,could,yes,skip,sin acceso a ese dataset
 Marca testimonios y cifras de TaxDown,marketing,could,yes,skip,no son tuyos
-Precio cerrado antes de pagar según tu caso; sin suplementos tras pagar,pagos,must,no,partial,F1 de fixes.md; hoy el plan se elige tras el resultado pero el precio no depende del caso
-Asesor con nombre para todo el caso y el mismo el año siguiente,seguimiento,must,no,partial,F2; hay asignación de asesor por caso; falta continuidad entre años
+Precio cerrado antes de pagar según tu caso; sin suplementos tras pagar,pagos,must,no,yes,F1 hecho: regla única de plan necesario en pantalla demo y servidor; total con IVA y sin suplementos
+Asesor con nombre para todo el caso y el mismo el año siguiente,seguimiento,must,no,yes,F2 hecho: pick_advisor(cliente) con continuidad; tarjeta Tu asesor con nº de colegiado
 Respuesta de una persona en 1 día laborable con plazo visible,soporte,should,no,no,F3
 Lista de revisión del asesor visible para el cliente,renta,should,no,partial,F4; el cliente ya ve desglose y deducciones con motivo
 Llamada con el asesor incluida en el plan alto,soporte,could,no,no,F7; tabla advisor_slots ya existe

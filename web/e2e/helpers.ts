@@ -44,7 +44,7 @@ export async function connectManual(page: Page) {
 }
 
 export type Q = {
-  ccaa?: string; civil?: string; birthYear?: number; gross?: number; ss?: number; wh?: number; savings?: number;
+  ccaa?: string; civil?: string; birthYear?: number; gross?: number; ss?: number; wh?: number; savings?: number; gains?: number;
   kids?: number; under3?: number; rent?: number; mortgage?: number; pension?: number; donations?: number;
 };
 
@@ -56,7 +56,7 @@ const fillIf = async (page: Page, label: string | RegExp, v: number) => { if (v)
  * Por defecto es el caso A de src/lib/tax/engine.test.ts, calculado a mano: Madrid, 30.000 €, 598,02 € a pagar.
  */
 export async function fillQuestionnaire(page: Page, q: Q = {}) {
-  const v = { ccaa: "Madrid", civil: "soltero", birthYear: 1990, gross: 30000, ss: 1950, wh: 4000, savings: 0, kids: 0, under3: 0, rent: 0, mortgage: 0, pension: 0, donations: 0, ...q };
+  const v = { ccaa: "Madrid", civil: "soltero", birthYear: 1990, gross: 30000, ss: 1950, wh: 4000, savings: 0, gains: 0, kids: 0, under3: 0, rent: 0, mortgage: 0, pension: 0, donations: 0, ...q };
   await page.getByLabel("Comunidad donde resides").selectOption(v.ccaa);
   await page.getByLabel("Estado civil").selectOption(v.civil);
   await page.getByLabel("Año de nacimiento").fill(String(v.birthYear));
@@ -66,6 +66,7 @@ export async function fillQuestionnaire(page: Page, q: Q = {}) {
   await page.getByLabel("Retenciones practicadas (IRPF)").fill(String(v.wh));
   await next(page);
   await fillIf(page, "Intereses y dividendos cobrados", v.savings);
+  await fillIf(page, "Ganancias por vender acciones o fondos", v.gains);
   await next(page);
   await fillIf(page, "Hijos a tu cargo", v.kids);
   await fillIf(page, "De ellos, menores de 3 años", v.under3);

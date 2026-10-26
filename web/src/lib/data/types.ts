@@ -29,6 +29,8 @@ export type DocumentRow = { id: string; kind: "carta_hacienda" | "justificante" 
 export type Review = {
   status?: "pendiente" | "cambios_pedidos" | "aprobada_por_asesor" | "rechazada";
   advisorName: string;
+  advisorColegiado?: string | null;
+  advisorReturning?: boolean; // F2: ya llevó un caso anterior de este cliente
   advisorApprovedAt: string | null;
   userApprovedAt: string | null;
   notes: string;

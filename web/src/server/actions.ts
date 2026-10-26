@@ -11,6 +11,7 @@ import { clientIp, rateLimit, requireCaseAccess, requireStaff, requireUser } fro
 import { notify } from "./email";
 import { magicLinkError } from "./auth-errors";
 import { AppError, run, type ActionResult } from "./errors";
+import { assertPlanCoversCase } from "./pricing-guard";
 import { loadState } from "./state";
 import { priceIdForPlan, stripe } from "./stripe";
 import {
@@ -145,6 +146,7 @@ export async function createCheckout(planCode: string): Promise<ActionResult<{ u
     const admin = supabaseAdmin();
     const c = await myRentaCase(user.id);
     if (c.status !== "calculado") throw new AppError("Este caso no está listo para contratar.", "conflict");
+    await assertPlanCoversCase(c.id, code);
 
     const { data: mandate } = await admin.from("consents").select("granted").eq("user_id", user.id).eq("kind", "mandate_presentacion")
       .order("created_at", { ascending: false }).limit(1).maybeSingle();
