@@ -11,7 +11,7 @@ import { supabaseBrowser } from "@/lib/supabase/browser";
 import type { Answers } from "@/lib/tax/engine";
 import { advisorApprove, advisorSubmit } from "@/server/actions";
 import {
-  adminMarkPaid, advisorCaseDetail, advisorRegisterDeclaration, advisorRequestChanges, advisorSendMessage, advisorUploadUrl, documentDownloadUrl,
+  adminAssignToMe, adminMarkPaid, advisorCaseDetail, advisorRegisterDeclaration, advisorRequestChanges, advisorSendMessage, advisorUploadUrl, documentDownloadUrl,
   type AdvisorCaseDetail,
 } from "@/server/advisor-actions";
 
@@ -100,6 +100,14 @@ export function CaseDetail() {
             <div className="w-48"><SelectField label="Plan" value={plan} onChange={(e) => setPlan(e.target.value)} options={["PRO", "LIVE", "FULL"]} /></div>
             <Button loading={busy === "paid"} onClick={() => act("paid", () => adminMarkPaid(id, plan))}>Marcar como pagado</Button>
           </div>
+        </Card>
+      )}
+
+      {d.status === "pagado" && d.isAdmin && (
+        <Card>
+          <h2 className="text-lg font-semibold">Caso pagado sin asesor</h2>
+          <p className="mt-1 text-sm text-text-muted">No había ningún asesor libre cuando se pagó.</p>
+          <div className="mt-3"><Button loading={busy === "assign"} onClick={() => act("assign", () => adminAssignToMe(id))}>Asignármelo</Button></div>
         </Card>
       )}
 

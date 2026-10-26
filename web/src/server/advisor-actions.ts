@@ -172,5 +172,28 @@ export async function adminMarkPaid(caseId: string, planCode: string): Promise<A
       paymentIntentId: `manual-${id}`, amountCents: PRICE_CENTS[code], currency: "EUR",
     });
     await admin.from("audit_log").insert({ actor_id: user.id, action: "manual_payment_recorded", entity: "case", entity_id: id, meta: { plan: code } });
+    // Sin asesores dados de alta, el caso se queda en «pagado» sin revisión: lo asume quien registra el pago.
+    await assignIfUnassigned(id, user.id);
+  });
+}
+
+/** Asigna el caso a este miembro del equipo si nadie lo lleva todavía, y abre la revisión. */
+async function assignIfUnassigned(caseId: string, staffId: string) {
+  const admin = supabaseAdmin();
+  const { data: c } = await admin.from("cases").select("advisor_id,status").eq("id", caseId).single();
+  if (!c || c.advisor_id) return;
+  await admin.from("cases").update({ advisor_id: staffId, status: c.status === "pagado" ? "en_revision" : c.status }).eq("id", caseId);
+  const { data: rev } = await admin.from("reviews").select("id").eq("case_id", caseId).maybeSingle();
+  if (!rev) await admin.from("reviews").insert({ case_id: caseId, advisor_id: staffId });
+}
+
+/** Solo admin: asumir un caso pagado que no tiene asesor (por ejemplo, si no había ninguno libre al pagar). */
+export async function adminAssignToMe(caseId: string): Promise<ActionResult> {
+  return run(async () => {
+    const { user, role } = await requireStaff();
+    if (role !== "admin") throw new AppError("Solo un administrador puede asignar casos.", "forbidden");
+    const id = uuidSchema.parse(caseId);
+    await assignIfUnassigned(id, user.id);
+    await supabaseAdmin().from("audit_log").insert({ actor_id: user.id, action: "case_assigned", entity: "case", entity_id: id });
   });
 }
