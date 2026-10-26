@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Logo } from "@/components/site/logo";
 import { useEffect, useState } from "react";
 import { useDemoState } from "@/lib/data/store";
 
@@ -31,7 +32,7 @@ export function SiteHeader() {
           scrolled ? "max-w-[calc(var(--container-wide)+16px)] rounded-pill bg-surface-raised/85 shadow-pop backdrop-blur-md" : "max-w-wide bg-transparent"
         }`}
       >
-        <Link href="/" className="font-display text-xl font-semibold tracking-[-0.04em] text-ink">Tu Gestoría</Link>
+        <Link href="/" className="rounded-md"><Logo /></Link>
         <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
           {links.map((l) => <Link key={l.href} href={l.href} className="text-sm text-text transition-colors hover:text-accent">{l.label}</Link>)}
           {user
@@ -61,8 +62,8 @@ export function SiteFooter() {
     <footer className="mt-24 border-t border-border bg-surface">
       <div className="mx-auto grid max-w-content gap-8 px-4 py-10 text-sm md:grid-cols-3">
         <div>
-          <p className="text-base font-bold">Tu Gestoría</p>
-          <p className="mt-2 text-text-muted">Nombre y marca provisionales. Gestoría sujeta a la normativa española de protección de datos.</p>
+          <Logo size="sm" />
+          <p className="mt-2 text-text-muted">Servicios fiscales digitales con atención profesional. Gestoría sujeta a la normativa española de protección de datos.</p>
         </div>
         <div>
           <p className="font-semibold">Servicios</p>

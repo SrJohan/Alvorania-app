@@ -15,13 +15,13 @@ export type Rendered = { subject: string; html: string; text: string };
 
 function layout(title: string, bodyHtml: string, cta?: { label: string; href: string }) {
   const button = cta
-    ? `<p style="margin:24px 0 0"><a href="${esc(cta.href)}" style="background:#4338ca;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:8px;font-weight:600;display:inline-block">${esc(cta.label)}</a></p>`
+    ? `<p style="margin:24px 0 0"><a href="${esc(cta.href)}" style="background:#5631b5;color:#ffffff;text-decoration:none;padding:12px 22px;border-radius:999px;font-weight:600;display:inline-block">${esc(cta.label)}</a></p>`
     : "";
-  return `<!doctype html><html lang="es"><body style="margin:0;background:#f6f2ea;font-family:system-ui,Segoe UI,Arial,sans-serif;color:#1a1a2e">
+  return `<!doctype html><html lang="es"><body style="margin:0;background:#fbf9ff;font-family:system-ui,Segoe UI,Arial,sans-serif;color:#211350">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:24px">
 <table role="presentation" width="560" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;padding:32px">
-<tr><td><p style="margin:0 0 16px;font-size:20px;font-weight:700">${esc(title)}</p>${bodyHtml}${button}
-<p style="margin:32px 0 0;font-size:12px;color:#5c5a6b">Tu Gestoría. Si no esperabas este correo, puedes ignorarlo.</p>
+<tr><td><p style="margin:0 0 20px;font-size:22px;font-weight:800;letter-spacing:-0.06em;color:#39177d">alvorania</p><p style="margin:0 0 16px;font-size:20px;font-weight:700">${esc(title)}</p>${bodyHtml}${button}
+<p style="margin:32px 0 0;font-size:12px;color:#625a78">Alvorania. Si no esperabas este correo, puedes ignorarlo.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 

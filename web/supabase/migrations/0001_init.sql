@@ -1,4 +1,4 @@
--- Gestoría online (réplica del núcleo de TaxDown). Postgres 15+ (Supabase).
+-- Alvorania, gestoría online. Postgres 15+ (Supabase).
 -- Alcance L: cálculo + revisión humana + presentación por tu equipo. Sin IA, sin conexión automática a AEAT.
 -- Convenciones: uuid pk, timestamptz UTC, dinero en céntimos enteros + currency, RLS en todas las tablas.
 

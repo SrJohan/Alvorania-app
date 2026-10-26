@@ -1,6 +1,6 @@
 import { connectManual, expect, fillQuestionnaire, payPlan, signIn, test } from "./helpers";
 
-// Mejoras de replica/fixes.md, nacidas de las reseñas de usuarios de TaxDown.
+// Mejoras de replica/fixes.md, nacidas de las reseñas de usuarios del servicio original.
 test.describe("F1 precio cerrado antes de pagar", () => {
   test("F1-H1 caso solo con nómina: todos los planes valen y se ve el total cerrado", async ({ page }) => {
     await signIn(page);

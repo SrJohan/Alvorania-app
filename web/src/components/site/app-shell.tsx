@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { Logo } from "@/components/site/logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { refreshState, signOut } from "@/lib/data/api";
@@ -45,7 +46,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-bg px-4">
-        <Link href="/" className="font-display text-lg font-bold">Tu Gestoría</Link>
+        <Link href="/" className="rounded-md"><Logo size="sm" /></Link>
         <div className="flex items-center gap-3 text-sm">
           {s.case && <StatusBadge status={s.case.status} />}
           <span className="hidden text-text-muted sm:inline">{s.user.fullName}</span>

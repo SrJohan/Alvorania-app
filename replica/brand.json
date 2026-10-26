@@ -1,0 +1,7 @@
+{
+  "name": "Alvorania",
+  "wordmark": "alvorania",
+  "avoid": ["TaxDown", "Tax Down", "Tu Gestoría", "Tu Gestoria"],
+  "domains": ["taxdown.es", "taxdown.com"],
+  "colors": ["#5974d4", "#3d3a62", "#0fb997", "#01a5ed"]
+}

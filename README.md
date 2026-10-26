@@ -1,8 +1,8 @@
-# taxdown
+# Alvorania
 
-Recon de TaxDown (taxdown.es) para una gestoría propia, generado con `replica-recon`.
+Gestoría online Alvorania. La investigación del servicio original, generada con `replica-recon`, está en `replica/` (fuera del barrido de marca).
 
 - `replica/recon.md`: mapa del producto
 - `replica/features.csv`: matriz de funcionalidades
 
-Siguiente paso: `/replica-architect`.
+Siguiente paso: `/replica-launch`.
