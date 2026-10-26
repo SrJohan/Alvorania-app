@@ -1,0 +1,39 @@
+feature,area,priority,original,clone,notes
+Landing con selector de situación fiscal,marketing,must,yes,yes,S01-S02
+Página de precios con planes y precios por trámite,marketing,must,yes,yes,precios de ejemplo; los reales en replica-launch
+Registro e inicio de sesión,onboarding,must,yes,partial,enlace mágico con Supabase escrito; sin probar con claves reales
+Conexión de datos fiscales con Hacienda (Cl@ve),onboarding,must,yes,partial,subida o entrada manual; sin Cl@ve; requiere ser colaborador social AEAT
+Cuestionario guiado de situación personal,renta,must,yes,partial,4 pasos básicos; faltan alquiler inversiones y discapacidad
+Cálculo del resultado de la renta (a pagar o devolver),renta,must,yes,partial,motor de demostración con escala general; sin deducciones autonómicas; reglas por revisar
+Optimización con deducciones,renta,must,yes,partial,pensiones donativos e hipoteca anterior a 2013
+Cálculo gratuito sin tarjeta,pagos,must,yes,yes,
+Selección de plan y pago,pagos,must,yes,partial,Stripe Checkout y webhook escritos (lógica probada); sin probar en modo test real
+Revisión por experto antes de presentar,renta,must,yes,partial,panel /asesor mínimo; falta pedir cambios al cliente
+Confirmación explícita del usuario antes de presentar,renta,must,yes,yes,regla en base de datos probada; acción de servidor sin probar con datos reales
+Presentación de la declaración ante Hacienda,renta,must,yes,partial,registro del justificante por el asesor; la presentación real la hace tu gestoría
+Panel de seguimiento del caso,seguimiento,must,yes,yes,timeline y mensajes
+Notificaciones de la declaración presentada,notificaciones,should,yes,partial,correo con Resend y reintentos escritos; sin probar
+Subida de carta de Hacienda y análisis gratuito,requerimientos,should,yes,partial,sube la carta; el análisis lo hará un asesor
+Borrador de respuesta a requerimiento para aprobar,requerimientos,should,yes,no,
+Precios por tipo de requerimiento,requerimientos,should,yes,yes,listado
+Revisión de las últimas 4 declaraciones (rectificativa),renta,should,yes,no,10 EUR/año + 20% del ahorro
+Presentación fuera de plazo (hasta 4 años),renta,should,yes,no,
+Chat con asistente de IA,soporte,should,yes,no,
+Chat o WhatsApp con asesor (planes LIVE y FULL),soporte,should,yes,partial,mensajes locales; falta tiempo real y WhatsApp
+Gestoría de autónomos con suscripción mensual,autonomos,should,yes,partial,solo página informativa
+Modelos trimestrales 130 y 303,autonomos,should,yes,no,
+Alta de autónomo,autonomos,should,yes,no,
+Gestión y cancelación de suscripción,cuenta,should,yes,yes,cancelar con un clic y Customer Portal escritos; sin probar con Stripe real
+Aviso de seguridad y cifrado,confianza,should,yes,yes,texto; el cifrado real llega con el backend
+Trámites internacionales (Beckham 149/151/210/720/721/7p/residencia),internacional,could,yes,partial,solo listado Próximamente
+Reseñas y casos de éxito propios,marketing,could,yes,no,contenido propio
+Página para empresas,b2b,could,yes,no,
+Blog y contenido SEO propio,marketing,could,yes,no,redactado desde cero
+Glosario fiscal y páginas de deducciones,marketing,could,yes,no,redactado desde cero
+Ayuda al alquiler en Madrid,ayudas,could,yes,no,
+Pack para familias,ayudas,could,yes,no,
+Encuesta para pedir trámites no listados,producto,could,yes,no,
+Acuerdos con bancos y brókeres,partners,could,yes,skip,relaciones comerciales no replicables
+Acreditación de Colaborador Social AEAT,legal,must,yes,skip,la tramita tu gestoría; no se copia
+IA entrenada con 800.000 declaraciones,ia,could,yes,skip,sin acceso a ese dataset
+Marca testimonios y cifras de TaxDown,marketing,could,yes,skip,no son tuyos

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vista previa del sistema de diseño</title>
+<style>
+:root {
+  --color-bg: #ffffff;
+  --color-surface: #f6f7f9;
+  --color-surface-raised: #ffffff;
+  --color-border: #e3e6ea;
+  --color-border-input: #868e98;
+  --color-text: #14171c;
+  --color-text-muted: #5b6470;
+  --color-accent: #2f5bea;
+  --color-accent-hover: #2548c4;
+  --color-on-accent: #ffffff;
+  --color-accent-soft: #eaf0ff;
+  --color-on-accent-soft: #1f3fa8;
+  --color-danger: #c62f2f;
+  --color-danger-soft: #fdecec;
+  --color-on-danger-soft: #9b1c1c;
+  --color-success: #1f7a4d;
+  --color-success-soft: #e6f5ed;
+  --color-on-success-soft: #14573a;
+  --color-warning: #8a5a00;
+  --color-warning-soft: #fff4d9;
+  --color-on-warning-soft: #6b4500;
+  --color-focus-ring: #2f5bea;
+  --font-sans: Inter, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-xs: 12px;
+  --text-xs-line: 16px;
+  --text-xs-weight: 500;
+  --text-sm: 14px;
+  --text-sm-line: 20px;
+  --text-sm-weight: 400;
+  --text-base: 16px;
+  --text-base-line: 24px;
+  --text-base-weight: 400;
+  --text-lg: 20px;
+  --text-lg-line: 28px;
+  --text-lg-weight: 600;
+  --text-xl: 28px;
+  --text-xl-line: 34px;
+  --text-xl-weight: 700;
+  --text-display: 40px;
+  --text-display-line: 44px;
+  --text-display-weight: 700;
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-card: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
+  --shadow-pop: 0 12px 32px rgba(16,24,40,.16);
+  --motion-fast: 120ms;
+  --motion-base: 200ms;
+  --motion-ease: cubic-bezier(.2,.8,.2,1);
+  --content-max: 1120px;
+  --reading-max: 680px;
+  --app-sidebar: 256px;
+  --header-h: 64px;
+}
+
+:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+</style>
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--color-bg);color:var(--color-text);font:400 var(--text-base)/var(--text-base-line) var(--font-sans)}
+  .wrap{max-width:var(--content-max);margin:0 auto;padding:0 16px}
+  header{height:var(--header-h);border-bottom:1px solid var(--color-border);display:flex;align-items:center}
+  header .wrap{display:flex;justify-content:space-between;align-items:center;width:100%}
+  .logo{font-weight:700;font-size:var(--text-lg)}
+  h1{font:700 var(--text-display)/var(--text-display-line) var(--font-sans);margin:0 0 16px}
+  h2{font:600 var(--text-lg)/var(--text-lg-line) var(--font-sans);margin:48px 0 16px}
+  p{margin:0 0 16px}
+  .muted{color:var(--color-text-muted)}
+  .btn{font:600 var(--text-sm)/20px var(--font-sans);height:40px;padding:0 16px;border-radius:var(--radius-md);border:1px solid transparent;cursor:pointer;transition:background var(--motion-fast) var(--motion-ease)}
+  .btn.lg{height:48px;padding:0 24px;font-size:var(--text-base)}
+  .primary{background:var(--color-accent);color:var(--color-on-accent)}
+  .primary:hover{background:var(--color-accent-hover)}
+  .secondary{background:var(--color-bg);border-color:var(--color-border-input);color:var(--color-text)}
+  .danger{background:var(--color-danger);color:#fff}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+  .grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  .card{background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-lg);box-shadow:var(--shadow-card);padding:24px}
+  .card.sel{border:2px solid var(--color-accent);background:var(--color-accent-soft);padding:23px}
+  .card h3{margin:8px 0 4px;font:600 var(--text-base)/24px var(--font-sans)}
+  .ico{width:40px;height:40px;border-radius:var(--radius-md);background:var(--color-accent-soft);color:var(--color-on-accent-soft);display:grid;place-items:center;font-weight:700}
+  .price{font:700 var(--text-xl)/var(--text-xl-line) var(--font-sans)}
+  .tag{display:inline-block;font:500 var(--text-xs)/16px var(--font-sans);padding:2px 8px;border-radius:var(--radius-pill)}
+  .t-acc{background:var(--color-accent-soft);color:var(--color-on-accent-soft)}
+  .t-ok{background:var(--color-success-soft);color:var(--color-on-success-soft)}
+  .t-warn{background:var(--color-warning-soft);color:var(--color-on-warning-soft)}
+  .t-bad{background:var(--color-danger-soft);color:var(--color-on-danger-soft)}
+  .t-neu{background:var(--color-surface);color:var(--color-text-muted);border:1px solid var(--color-border)}
+  label{display:block;font:500 var(--text-sm)/20px var(--font-sans);margin-bottom:4px}
+  input{width:100%;height:40px;border:1px solid var(--color-border-input);border-radius:var(--radius-md);padding:0 12px;font:inherit;background:var(--color-bg);color:var(--color-text)}
+  input.err{border-color:var(--color-danger)}
+  .help{font-size:var(--text-sm);color:var(--color-text-muted);margin-top:4px}
+  .errtxt{font-size:var(--text-sm);color:var(--color-danger);margin-top:4px}
+  .result{border-radius:var(--radius-lg);padding:24px}
+  .result .amt{font:700 var(--text-display)/var(--text-display-line) var(--font-sans)}
+  .ok{background:var(--color-success-soft);color:var(--color-on-success-soft)}
+  .warn{background:var(--color-warning-soft);color:var(--color-on-warning-soft)}
+  ol.steps{list-style:none;display:flex;gap:8px;padding:0;margin:0;flex-wrap:wrap}
+  ol.steps li{display:flex;align-items:center;gap:8px;font-size:var(--text-sm);color:var(--color-text-muted)}
+  ol.steps .n{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--color-border-input);font-weight:600}
+  ol.steps .done .n{background:var(--color-success);border-color:var(--color-success);color:#fff}
+  ol.steps .cur{color:var(--color-text);font-weight:600}
+  ol.steps .cur .n{border-color:var(--color-accent);color:var(--color-accent)}
+  ol.steps li+li::before{content:"";width:24px;height:2px;background:var(--color-border)}
+  .notice{background:var(--color-accent-soft);color:var(--color-on-accent-soft);border-radius:var(--radius-md);padding:12px 16px;font-size:var(--text-sm)}
+  .tl{list-style:none;margin:0;padding:0 0 0 16px;border-left:2px solid var(--color-border)}
+  .tl li{position:relative;padding:0 0 20px 16px}
+  .tl li::before{content:"";position:absolute;left:-23px;top:4px;width:12px;height:12px;border-radius:50%;background:var(--color-border-input)}
+  .tl .d::before{background:var(--color-success)}
+  .tl .c::before{background:var(--color-accent);box-shadow:0 0 0 4px var(--color-accent-soft)}
+  .chat{display:flex;flex-direction:column;gap:8px;max-width:420px}
+  .b{padding:8px 12px;border-radius:var(--radius-md);font-size:var(--text-sm);max-width:85%}
+  .b.u{background:var(--color-accent-soft);align-self:flex-end}
+  .b.a{background:var(--color-surface)}
+  .sw{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+  .sw div{border:1px solid var(--color-border);border-radius:var(--radius-md);padding:8px;font-size:var(--text-xs)}
+  .sw i{display:block;height:32px;border-radius:var(--radius-sm);margin-bottom:6px;border:1px solid var(--color-border)}
+  footer{border-top:1px solid var(--color-border);margin-top:64px;padding:24px 0;font-size:var(--text-sm);color:var(--color-text-muted)}
+</style>
+</head>
+<body>
+<header><div class="wrap"><span class="logo">Tu Gestoría</span><div class="row"><a class="muted" href="#">Precios</a><a class="muted" href="#">Trámites</a><button class="btn primary">Empezar</button></div></div></header>
+
+<main class="wrap" style="padding-top:48px">
+  <span class="tag t-acc">Marca provisional</span>
+  <h1 style="margin-top:12px">Haz tu renta con un experto a tu lado</h1>
+  <p class="muted" style="max-width:var(--reading-max)">Calcula gratis tu resultado. Un asesor lo revisa y nada se presenta sin tu confirmación.</p>
+  <div class="row"><button class="btn primary lg">Calcular mi renta gratis</button><button class="btn secondary lg">Ver precios</button></div>
+
+  <h2>1. Elige tu situación</h2>
+  <div class="grid">
+    <div class="card sel"><div class="ico">R</div><h3>Declarar la renta</h3><span class="muted" style="font-size:14px">Seleccionada</span></div>
+    <div class="card"><div class="ico">D</div><h3>Pedir mi devolución</h3><span class="muted" style="font-size:14px">Por defecto</span></div>
+    <div class="card"><div class="ico">H</div><h3>Tengo una carta de Hacienda</h3><span class="muted" style="font-size:14px">Por defecto</span></div>
+    <div class="card"><div class="ico">A</div><h3>Soy autónomo</h3><span class="muted" style="font-size:14px">Por defecto</span></div>
+  </div>
+
+  <h2>2. Cómo funciona</h2>
+  <ol class="steps"><li class="done"><span class="n">✓</span>Datos fiscales</li><li class="cur"><span class="n">2</span>Cuestionario</li><li><span class="n">3</span>Resultado</li><li><span class="n">4</span>Revisión</li></ol>
+
+  <h2>3. Cuestionario</h2>
+  <div class="grid" style="max-width:720px">
+    <div><label for="a">Nombre completo</label><input id="a" value="María García López"><div class="help">Como aparece en tu DNI.</div></div>
+    <div><label for="b">NIF</label><input id="b" class="err" value="1234" aria-invalid="true"><div class="errtxt">Introduce un NIF válido, por ejemplo 12345678Z.</div></div>
+  </div>
+
+  <h2>4. Resultado</h2>
+  <div class="grid">
+    <div class="result ok"><div>A devolver</div><div class="amt">482,15 €</div><div style="font-size:14px">Ahorras 126 € frente al borrador</div></div>
+    <div class="result warn"><div>A pagar</div><div class="amt">318,40 €</div><div style="font-size:14px">Fecha límite 30 de junio</div></div>
+  </div>
+
+  <h2>5. Planes</h2>
+  <div class="grid">
+    <div class="card"><h3>PRO</h3><div class="price">— €<span class="muted" style="font:400 14px var(--font-sans)"> al año</span></div><p class="muted" style="font-size:14px">Revisión y presentación.</p><button class="btn secondary" style="width:100%">Elegir plan PRO</button></div>
+    <div class="card sel"><span class="tag t-acc">Recomendado</span><h3>LIVE</h3><div class="price">— €<span class="muted" style="font:400 14px var(--font-sans)"> al año</span></div><p style="font-size:14px">Incluye chat con tu asesor.</p><button class="btn primary" style="width:100%">Elegir plan LIVE</button></div>
+    <div class="card"><h3>FULL</h3><div class="price">— €<span class="muted" style="font:400 14px var(--font-sans)"> al año</span></div><p class="muted" style="font-size:14px">Casos complejos.</p><button class="btn secondary" style="width:100%">Elegir plan FULL</button></div>
+  </div>
+  <p class="help">Precios de ejemplo. Los reales se fijan en /replica-launch.</p>
+
+  <h2>6. Seguimiento del caso</h2>
+  <div class="grid" style="align-items:start">
+    <div class="card">
+      <div class="row" style="margin-bottom:16px"><strong>Renta 2025</strong><span class="tag t-warn">Pendiente de tu aprobación</span></div>
+      <ul class="tl">
+        <li class="d"><strong>Pago recibido</strong><div class="help">12 mar, 10:42</div></li>
+        <li class="d"><strong>Revisión del asesor</strong><div class="help">13 mar, 17:05</div></li>
+        <li class="c"><strong>Tu confirmación</strong><div class="help">Revisa el resumen y autoriza la presentación.</div><div style="margin-top:8px"><button class="btn primary">Revisar y aprobar</button></div></li>
+        <li><strong>Presentada</strong></li>
+      </ul>
+    </div>
+    <div class="card">
+      <div class="chat"><div class="b a">Hola María, he revisado tu borrador. ¿Tienes el certificado del alquiler?</div><div class="b u">Sí, lo subo ahora.</div><div class="b a">Perfecto, gracias.</div></div>
+    </div>
+  </div>
+
+  <h2>7. Estados y avisos</h2>
+  <div class="row"><span class="tag t-neu">Borrador</span><span class="tag t-acc">En revisión</span><span class="tag t-warn">Pendiente de aprobación</span><span class="tag t-ok">Presentado</span><span class="tag t-bad">Cancelado</span></div>
+  <p></p>
+  <div class="notice">Tus documentos se guardan cifrados y solo los ven tú y tu asesor. <a href="#" style="color:inherit;text-decoration:underline">Política de privacidad</a></div>
+  <p></p>
+  <div class="row"><button class="btn primary">Primario</button><button class="btn secondary">Secundario</button><button class="btn danger">Cancelar suscripción</button><button class="btn primary" disabled>Deshabilitado</button></div>
+
+  <h2>8. Paleta</h2>
+  <div class="sw" id="sw"></div>
+</main>
+<footer><div class="wrap">Vista previa generada desde tokens.css. Valores provisionales hasta /replica-brand.</div></footer>
+<script>
+  const names=["bg","surface","border","border-input","text","text-muted","accent","accent-hover","accent-soft","danger","success","warning"];
+  document.getElementById("sw").innerHTML=names.map(n=>`<div><i style="background:var(--color-${n})"></i>${n}</div>`).join("");
+</script>
+</body>
+</html>

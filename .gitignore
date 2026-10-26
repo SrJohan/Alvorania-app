@@ -1,0 +1,16 @@
+# dependencias y compilación
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# secretos: nunca se suben
+.env*
+!.env.example
+
+# herramientas locales
+.taste-skill/
+.vercel/
+*.log
+.DS_Store

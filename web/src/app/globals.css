@@ -1,0 +1,80 @@
+/* Generado desde replica/design/tokens.json con scripts/tokens-to-css.mjs. No editar a mano. */
+@import "tailwindcss";
+
+@theme {
+  --color-*: initial;
+  --color-bg: #fffdf9;
+  --color-surface: #f6f2ea;
+  --color-surface-raised: #ffffff;
+  --color-border: #e7e0d3;
+  --color-border-input: #857f72;
+  --color-text: #1a1a2e;
+  --color-text-muted: #5c5a6b;
+  --color-accent: #4338ca;
+  --color-accent-hover: #3730a3;
+  --color-on-accent: #ffffff;
+  --color-accent-soft: #ece9ff;
+  --color-on-accent-soft: #312e81;
+  --color-danger: #c62f2f;
+  --color-danger-soft: #fdecec;
+  --color-on-danger-soft: #9b1c1c;
+  --color-success: #1f7a4d;
+  --color-success-soft: #e6f5ed;
+  --color-on-success-soft: #14573a;
+  --color-warning: #8a5a00;
+  --color-warning-soft: #fff4d9;
+  --color-on-warning-soft: #6b4500;
+  --color-focus-ring: #4338ca;
+  --color-ink: #1e1b4b;
+  --color-on-ink: #ffffff;
+  --color-on-ink-muted: #c9c5f2;
+  --color-highlight: #ffc857;
+  --color-on-highlight: #1a1a2e;
+  --color-field-a: #dce3ff;
+  --color-field-b: #ffe4c2;
+  --color-field-c: #d3f0e2;
+  --color-card-glass: #ffffff;
+  --font-sans: var(--font-body), Figtree, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-display: var(--font-heading), Sora, Figtree, system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-xs--font-weight: 500;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-sm--font-weight: 400;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-base--font-weight: 400;
+  --text-lg: 20px;
+  --text-lg--line-height: 28px;
+  --text-lg--font-weight: 600;
+  --text-xl: 28px;
+  --text-xl--line-height: 34px;
+  --text-xl--font-weight: 700;
+  --text-display: 40px;
+  --text-display--line-height: 44px;
+  --text-display--font-weight: 700;
+  --radius-*: initial;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-pill: 999px;
+  --shadow-*: initial;
+  --shadow-card: 0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10);
+  --shadow-pop: 0 12px 32px rgba(16,24,40,.16);
+  --breakpoint-*: initial;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --container-content: 1120px;
+  --container-reading: 680px;
+  --ease-brand: cubic-bezier(.2,.8,.2,1);
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
+h1, h2, .font-display { font-family: var(--font-display); letter-spacing: -0.01em; }
+:focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
