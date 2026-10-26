@@ -17,7 +17,7 @@ Cada prueba e2e falla además si hay errores de consola, excepciones o respuesta
 | F01-E4 | edge: datos cambiados tras calcular | cambiar donativos tras el resultado | aviso de resultado desactualizado y botón para recalcular | e2e | pass |
 | F01-E5 | edge: doble clic | doble clic en Pagar | un solo pago | e2e | pass |
 | F01-E6 | edge: régimen foral | elegir Navarra | aviso y no se calcula | e2e | pass |
-| F01-E7 | edge: régimen foral | elegir País Vasco | hay una salida para hablar con un asesor | e2e | **fail → BUG-003** |
+| F01-E7 | edge: régimen foral | elegir País Vasco | dice que no aceptamos régimen foral y ofrece volver al inicio | e2e | pass tras fix (BUG-003) |
 | F01-E8 | edge: solo teclado | acceso con Tab y Enter | llega a Datos fiscales | e2e | pass |
 | F01-E9 | edge: móvil 390 px | todo el flujo hasta Plan | sin desbordamiento horizontal | e2e (Pixel 7) | pass |
 | F01-E10 | edge: clic rápido | «a mano» y Continuar enseguida | pasa al cuestionario sin error falso | e2e | pass tras fix (BUG-001) |
@@ -51,6 +51,7 @@ Cada prueba e2e falla además si hay errores de consola, excepciones o respuesta
 | F03-* | — | — | no implementado (should-have) | — | n/a |
 | F04-H1 | happy | autónomos → Contratar Premium | lleva a /acceder | e2e | pass |
 | F05-H1 | happy | trámites | internacionales como Próximamente | e2e | pass |
+| F05-E2 | edge: régimen foral | precios e inicio | aviso claro de que no se aceptan | e2e | pass |
 | F04/F05-A11Y | a11y | /, /precios, /tramites, /asesoria-gestoria, /acceder | 0 infracciones | e2e | pass |
 | F04/F05-E1 | edge: móvil | mismas páginas a 390 px | sin desbordamiento | e2e (Pixel 7) | pass |
 
@@ -90,6 +91,6 @@ Cada prueba e2e falla además si hay errores de consola, excepciones o respuesta
 
 ## Totales
 
-- e2e: 31 casos automatizados, 30 pass, 1 fail (BUG-003).
-- vitest: 45 casos, 45 pass.
+- e2e: 32 casos automatizados, 32 pass.
+- vitest: 48 casos, 48 pass.
 - manual: 6, 1 pass, 1 esperado, 1 con problema, 3 pendientes o bloqueados.

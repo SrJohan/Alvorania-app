@@ -5,7 +5,7 @@ Solo bugs reproducidos. Lo que podría ser un problema pero no se ha reproducido
 | ID | sev | título | estado |
 | --- | --- | --- | --- |
 | BUG-001 | S3 | Error falso «Elige cómo quieres aportar tus datos» al continuar rápido | fixed in 4bb1b7e |
-| BUG-003 | S2 | Régimen foral: callejón sin salida, no hay forma de pedir un asesor | open |
+| BUG-003 | S2 | Régimen foral: callejón sin salida, no hay forma de pedir un asesor | fixed in c8360c2 |
 | BUG-004 | S2 | En modo live, las peticiones de enlace de acceso seguidas fallan | parcial: mensaje fixed in 4b3e9a7; falta SMTP propio |
 
 (BUG-002 se abrió como sospecha y no se reprodujo: ver «A comprobar».)
@@ -43,7 +43,7 @@ Expected: un aviso y una forma de que un asesor lleve el caso (contacto, cita o 
 Actual: aviso y «Siguiente» desactivado. No hay ningún enlace ni botón para seguir. Un cliente foral no puede contratar.
 Evidence: prueba `F01-E7` falla de forma estable (3 de 3 ejecuciones).
 Suspected cause: no se ha decidido el canal de contacto para estos casos.
-Status: open. **Necesita una decisión tuya**: ¿cómo quieres atender a los clientes forales? Opciones: (a) que contraten directamente el plan Completo sin cálculo previo, (b) un formulario o email de contacto, (c) no aceptarlos por ahora y decirlo claramente.
+Status: fixed in c8360c2. Decisión: por ahora no se aceptan clientes forales. El cuestionario lo dice claramente, asegura que no se cobra nada y ofrece «Volver al inicio»; precios lo avisa arriba y la pregunta frecuente lo explica. Pruebas `F01-E6`, `F01-E7` y `F05-E2`.
 
 ### BUG-004: Las peticiones seguidas de enlace de acceso fallan en modo live
 
