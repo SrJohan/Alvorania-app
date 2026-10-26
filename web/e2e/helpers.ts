@@ -20,8 +20,19 @@ export const test = base.extend<{ problems: string[] }>({
 });
 export { expect };
 
+/** Recorre la página para que aparezcan los bloques que entran al hacer scroll y espera a que acabe todo movimiento: un texto a medio aparecer no se puede medir. */
+async function settle(page: Page) {
+  await page.evaluate(async () => {
+    for (let y = 0; y < document.body.scrollHeight; y += 500) { window.scrollTo(0, y); await new Promise((r) => setTimeout(r, 60)); }
+    window.scrollTo(0, 0);
+    await Promise.all(document.getAnimations().map((a) => a.finished.catch(() => undefined)));
+    await new Promise((r) => setTimeout(r, 800));
+  });
+}
+
 /** Escaneo de accesibilidad (WCAG 2.1 AA). Devuelve las infracciones para poder afirmarlas en la prueba. */
 export async function a11y(page: Page) {
+  await settle(page);
   const r = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).analyze();
   return r.violations.map((v) => `${v.id} (${v.impact}): ${v.nodes.length} nodos — ${v.help}`);
 }

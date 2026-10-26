@@ -60,3 +60,14 @@ test.describe("Precios: entrada por caso", () => {
     await expect(page.getByRole("radio", { name: /Me ha escrito Hacienda/ })).toBeChecked();
   });
 });
+
+test.describe("Precios: movimiento", () => {
+  test.use({ reducedMotion: "reduce" });
+  test("PRE-M1 con 'reducir movimiento' no se esconde nada y el resaltado no viaja", async ({ page }) => {
+    await page.goto("/precios");
+    await expect(page.getByRole("heading", { name: "Preguntas sobre precios" })).toBeVisible();
+    expect(await page.locator("[data-reveal='hidden']").count()).toBe(0);
+    await page.getByRole("radio", { name: /Vivo entre países/ }).check({ force: true });
+    await expect(page.getByRole("heading", { name: /Trámites internacionales/ })).toBeVisible();
+  });
+});

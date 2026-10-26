@@ -1,5 +1,5 @@
 "use client";
-import { useState, type ComponentType } from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ComponentType, type CSSProperties } from "react";
 import { Check, FileText, Globe, Mail, MessageCirclePlus, RotateCcw } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 import { PillCta } from "@/components/ui/pill-cta";
@@ -61,12 +61,36 @@ const options: Option[] = [
   },
 ];
 
+type Box = { x: number; y: number; w: number; h: number };
+
+/** Mide la tarjeta elegida respecto a su contenedor, y vuelve a medir si cambia el ancho (móvil, giro, zoom). */
+function useSelectedBox(selected: string) {
+  const wrap = useRef<HTMLDivElement>(null);
+  const [box, setBox] = useState<Box | null>(null);
+  const measure = useCallback(() => {
+    const el = wrap.current?.querySelector<HTMLElement>("[data-card][data-on='true']");
+    if (el) setBox({ x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight });
+  }, []);
+  useLayoutEffect(measure, [measure, selected]);
+  useEffect(() => {
+    const el = wrap.current;
+    if (!el) return;
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [measure]);
+  return { wrap, box };
+}
+
+const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
+
 const stepLabel = "flex items-center gap-3 text-sm font-semibold text-ink";
 
 /** Entrada de la página de precios: eliges tu caso (paso 1) y ves su precio y su siguiente paso (paso 2). */
 export function PriceFinder() {
   const [selected, setSelected] = useState("renta");
   const current = options.find((o) => o.id === selected) ?? options[1];
+  const { wrap, box } = useSelectedBox(selected);
   const d = current.detail;
 
   return (
@@ -77,36 +101,47 @@ export function PriceFinder() {
       </p>
       <h2 id="que-quieres" className="mt-4 font-display text-[28px] font-semibold leading-[1.1] tracking-[-0.04em] text-ink sm:text-[36px]">¿Qué quieres hacer?</h2>
 
-      <fieldset aria-labelledby="que-quieres" className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+      <div ref={wrap} className="relative mt-6">
+        {box && (
+          <span
+            aria-hidden
+            className="pointer-events-none absolute left-0 top-0 rounded-[20px] bg-accent-soft transition-[transform,width,height] duration-[420ms] ease-brand motion-reduce:transition-none"
+            style={{ width: box.w, height: box.h, transform: `translate3d(${box.x}px, ${box.y}px, 0)` }}
+          />
+        )}
+      <fieldset aria-labelledby="que-quieres" className="relative grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {options.map(({ id, Icon, title, text, chip }) => (
           <label
             key={id}
-            className="group relative flex cursor-pointer flex-col rounded-[20px] border border-border bg-surface-raised p-5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-brand hover:-translate-y-0.5 hover:border-lilac hover:shadow-pop has-[:checked]:border-accent has-[:checked]:bg-accent-soft has-[:checked]:ring-1 has-[:checked]:ring-accent has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring motion-reduce:transform-none"
+            data-card
+            data-on={selected === id}
+            className={`group relative flex cursor-pointer flex-col rounded-[20px] border border-border p-5 transition-[transform,box-shadow,border-color,background-color] duration-200 ease-brand hover:-translate-y-0.5 hover:border-lilac hover:shadow-pop active:translate-y-0 active:scale-[0.99] has-[:checked]:border-accent ${box ? "" : "has-[:checked]:bg-accent-soft"} has-[:checked]:ring-1 has-[:checked]:ring-accent has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring motion-reduce:transform-none`}
           >
             <input type="radio" name="caso" value={id} checked={selected === id} onChange={() => setSelected(id)} className="sr-only" />
-            <span aria-hidden className="grid size-12 place-items-center rounded-[14px] bg-accent-soft text-accent transition-colors group-has-[:checked]:bg-surface-raised"><Icon className="size-6" /></span>
+            <span aria-hidden className="grid size-12 place-items-center rounded-[14px] bg-accent-soft text-accent transition-[background-color,transform] duration-300 ease-brand group-has-[:checked]:-rotate-6 group-has-[:checked]:scale-110 group-has-[:checked]:bg-surface-raised motion-reduce:transform-none"><Icon className="size-6" /></span>
             <span className="mt-4 text-lg font-semibold leading-6 text-ink">{title}</span>
             <span className="mt-1 mb-5 text-sm leading-5 text-text-muted">{text}</span>
             <span className="mt-auto inline-block self-start rounded-pill bg-accent-soft px-3 py-1 text-xs font-semibold text-on-accent-soft transition-colors group-has-[:checked]:bg-surface-raised">{chip}</span>
           </label>
         ))}
       </fieldset>
+      </div>
 
       <p className={`${stepLabel} mt-10`}>
         <span aria-hidden className="grid size-7 place-items-center rounded-full bg-accent text-sm font-bold text-on-accent">2</span>
         Paso 2 de 2 · Tu precio y tu siguiente paso
       </p>
-      <div aria-live="polite" className="mt-4 grid gap-8 rounded-[24px] bg-surface p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
-        <div>
-          <h3 className="font-display text-[24px] font-semibold leading-[1.15] tracking-[-0.03em] text-ink sm:text-[30px]">{d.title}</h3>
-          <p className="mt-3 max-w-reading text-text-muted">{d.text}</p>
+      <div aria-live="polite" className="mt-4 grid gap-8 overflow-hidden rounded-[24px] bg-surface p-6 sm:p-8 lg:grid-cols-[1.4fr_1fr] lg:items-center">
+        <div key={`t-${selected}`}>
+          <h3 className="anim-swap font-display text-[24px] font-semibold leading-[1.15] tracking-[-0.03em] text-ink sm:text-[30px]">{d.title}</h3>
+          <p className="anim-swap mt-3 max-w-reading text-text-muted" style={delay(70)}>{d.text}</p>
         </div>
-        <div className="flex flex-col gap-5 rounded-[20px] bg-surface-raised p-6 shadow-card">
+        <div key={`p-${selected}`} className="anim-swap flex flex-col gap-5 rounded-[20px] bg-surface-raised p-6 shadow-card" style={delay(110)}>
           <div>
-            <p className="font-display text-[34px] font-semibold leading-none tracking-[-0.05em] text-ink">{d.price}</p>
-            <p className="mt-1 text-sm text-text-muted">{d.priceNote}</p>
+            <p className="overflow-hidden pb-1"><span className="anim-swap block font-display text-[34px] font-semibold leading-none tracking-[-0.05em] text-ink" style={{ ...delay(190), "--rise": "100%" } as CSSProperties}>{d.price}</span></p>
+            <p className="anim-swap mt-1 text-sm text-text-muted" style={delay(260)}>{d.priceNote}</p>
           </div>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="anim-swap flex flex-wrap items-center gap-3" style={delay(320)}>
             <PillCta href={d.cta.href}>{d.cta.label}</PillCta>
             {d.extra && <LinkButton href={d.extra.href} variant="ghost">{d.extra.label}</LinkButton>}
           </div>
