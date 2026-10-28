@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>web autonomos motion proposals — 2026-10-28</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        oklch(0.155 0.006 255);
+      --surface:    oklch(0.195 0.007 255);
+      --surface-2:  oklch(0.235 0.008 255);
+      --paper:      oklch(0.945 0.004 255);
+      --paper-dim:  oklch(0.800 0.006 255);
+      --muted:      oklch(0.680 0.008 255);
+      --faint:      oklch(0.505 0.008 255);
+      --line:       oklch(0.95 0.01 255 / 0.09);
+      --line-strong:oklch(0.95 0.01 255 / 0.16);
+      --accent:     var(--paper);
+      --accent-soft:var(--paper-dim);
+      --accent-tint:color-mix(in oklch, var(--paper) 8%, transparent);
+      --crit: oklch(0.655 0.185 25);
+      --imp:  oklch(0.805 0.125 78);
+      --opp:  oklch(0.745 0.135 152);
+      --t-good: oklch(0.745 0.135 152);
+      --t-mid:  oklch(0.805 0.125 78);
+      --t-slow: oklch(0.655 0.185 25);
+      --dot-ink: oklch(0.15 0.01 255);
+      --display: "Familjen Grotesk", "Hanken Grotesk", system-ui, sans-serif;
+      --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    :root:has(#theme-light:checked) {
+      --ink:        oklch(0.985 0.003 255);
+      --surface:    oklch(0.965 0.004 255);
+      --surface-2:  oklch(0.940 0.005 255);
+      --paper:      oklch(0.180 0.006 255);
+      --paper-dim:  oklch(0.330 0.008 255);
+      --muted:      oklch(0.475 0.010 255);
+      --faint:      oklch(0.640 0.009 255);
+      --line:       oklch(0.180 0.010 255 / 0.12);
+      --line-strong:oklch(0.180 0.010 255 / 0.22);
+      --crit: oklch(0.52 0.185 25);
+      --imp:  oklch(0.58 0.125 70);
+      --opp:  oklch(0.50 0.135 152);
+      --t-good: oklch(0.50 0.135 152);
+      --t-mid:  oklch(0.58 0.125 70);
+      --t-slow: oklch(0.52 0.185 25);
+      --dot-ink: oklch(0.985 0.003 255);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark light; }
+    body { background: var(--ink); color: var(--paper); font-family: var(--sans); margin: 0; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; position: relative; }
+    code { font-family: var(--mono); font-size: 0.86em; background: var(--accent-tint); padding: 1px 5px; border-radius: 4px; }
+    a { color: inherit; }
+    .mono-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* theme switch */
+    .theme-switch { display: flex; justify-content: flex-end; }
+    .theme-switch .seg label { padding: 5px 12px; }
+    #theme-dark:checked ~ .theme-switch label[for="theme-dark"],
+    #theme-light:checked ~ .theme-switch label[for="theme-light"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+
+    /* header */
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 24px; }
+    h1.title { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 48px); line-height: 1.08; letter-spacing: -0.02em; margin: 10px 0 12px; }
+    .lede { max-width: 680px; color: var(--paper-dim); margin: 0 0 14px; }
+    .meta-row { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .stat { display: flex; align-items: baseline; gap: 8px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 14px; text-decoration: none; transition: border-color .2s ease; }
+    .stat:hover { border-color: var(--paper-dim); }
+    .stat b { font-family: var(--display); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .stat span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .stat[data-sev="crit"] b { color: var(--crit); } .stat[data-sev="imp"] b { color: var(--imp); } .stat[data-sev="opp"] b { color: var(--opp); }
+
+    section.block { margin-top: 64px; }
+    h2.sec { font-family: var(--display); font-size: 22px; font-weight: 600; margin: 8px 0 18px; letter-spacing: -0.01em; }
+    .assessment p { font-family: var(--display); font-size: clamp(19px, 2.4vw, 24px); line-height: 1.4; max-width: 860px; margin: 8px 0 0; font-weight: 500; }
+
+    /* lens table */
+    .lens-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .lens-table th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: left; font-weight: 500; padding: 0 14px; }
+    .lens-table td { background: var(--surface); padding: 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: top; transition: border-color .2s ease; }
+    .lens-table td:first-child { border-left: 1px solid var(--line); border-radius: 10px 0 0 10px; }
+    .lens-table td:last-child { border-right: 1px solid var(--line); border-radius: 0 10px 10px 0; }
+    .chip { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--line-strong); border-radius: 100px; padding: 2px 8px; color: var(--muted); white-space: nowrap; }
+    .verdict { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; }
+    .verdict i { width: 9px; height: 9px; border-radius: 50%; background: var(--imp); }
+    .verdict.strong i { background: var(--opp); } .verdict.concern i { background: var(--crit); }
+
+    /* timing diagram */
+    .timing-grid { display: grid; grid-template-columns: 1fr 260px; gap: 28px; align-items: start; }
+    .timing-grid svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+    .z-good { fill: color-mix(in oklch, var(--t-good) 14%, transparent); } .z-mid { fill: color-mix(in oklch, var(--t-mid) 14%, transparent); } .z-slow { fill: color-mix(in oklch, var(--t-slow) 14%, transparent); }
+    .d-good { fill: var(--t-good); } .d-mid { fill: var(--t-mid); } .d-slow { fill: var(--t-slow); }
+    .d-none { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .dn { font-family: var(--mono); font-size: 11px; font-weight: 600; fill: var(--dot-ink); text-anchor: middle; dominant-baseline: central; }
+    .dn.none { fill: var(--muted); }
+    .zl { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--muted); }
+    .key { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+    .key li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+    .key li span:last-child { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .key li span:first-child { font-family: var(--mono); font-weight: 600; }
+    .off { margin-top: 18px; color: var(--paper-dim); font-size: 14.5px; max-width: 820px; }
+
+    /* lens sections */
+    .lens-sec { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line-strong); }
+    .lens-sec__head { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .lens-sec__head h3 { font-family: var(--display); font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+    .lens-sec__verdict { margin: 8px 0 0; }
+    .lens-block { margin-top: 26px; }
+    .lens-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+    .lens-list li { position: relative; padding-left: 26px; font-size: 14.5px; color: var(--paper-dim); }
+    .lens-list li::before { position: absolute; left: 0; top: 0; font-family: var(--mono); }
+    .lens-list.good li::before { content: "✓"; color: var(--opp); }
+    .lens-list.opp li::before { content: "◆"; color: var(--opp); font-size: 11px; top: 3px; }
+    .lens-empty { color: var(--faint); font-style: italic; margin: 10px 0 0; }
+    .lens-take { margin-top: 26px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; color: var(--paper-dim); font-size: 14.5px; }
+    .lens-take b { color: var(--paper); }
+
+    .finding-row { display: grid; grid-template-columns: 1fr 380px; gap: 28px; margin-top: 16px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color .2s ease; }
+    .finding-row:hover { border-color: var(--line-strong); }
+    .find-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .sev { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; border-radius: 100px; padding: 2px 9px; border: 1px solid currentColor; }
+    .finding-row[data-sev="crit"] .sev { color: var(--crit); } .finding-row[data-sev="imp"] .sev { color: var(--imp); }
+    h4.find-title { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 0 10px; line-height: 1.25; }
+    .find-body p { margin: 0 0 10px; font-size: 14.5px; color: var(--paper-dim); }
+    .find-body .label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .fix { background: var(--accent-tint); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .fix p { margin: 0; }
+    .find-loc { font-size: 12.5px; }
+
+    /* recs */
+    .tier-label { display: flex; align-items: center; gap: 12px; margin: 34px 0 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .tier-label::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+    .tier-label.crit { color: var(--crit); } .tier-label.imp { color: var(--imp); } .tier-label.opp { color: var(--opp); }
+    .tier-label em { font-style: normal; color: var(--muted); order: 3; }
+    table.rec { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.rec th { text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 6px 10px; border-bottom: 1px solid var(--line-strong); }
+    table.rec td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--paper-dim); }
+    table.rec td:first-child { color: var(--paper); font-weight: 500; }
+
+    .ref-summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; color: var(--paper-dim); font-size: 14.5px; }
+    .ref-lean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+    .ref-lean div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+    .ref-lean b { display: block; color: var(--paper); margin-bottom: 4px; }
+    footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+    /* ───────────── Demo card (shell) ───────────── */
+    .demo { position: relative; min-width: 0; }
+    .demo__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .demo__meta { min-width: 0; }
+    .demo__title { display: block; font-size: 13.5px; font-weight: 600; color: var(--paper); line-height: 1.3; }
+    .demo__timing { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .demo__controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .demo__loop { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+    .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 100px; overflow: hidden; }
+    .seg label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; cursor: pointer; user-select: none; transition: background 0.15s ease, color 0.15s ease; }
+    .demo input[id$="-a"]:checked ~ .demo__bar .seg label[for$="-a"],
+    .demo input[id$="-l"]:checked ~ .demo__bar .seg label[for$="-l"],
+    .demo input[id$="-d"]:checked ~ .demo__bar .seg label[for$="-d"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+    .demo input:focus-visible ~ .demo__bar .seg { outline: 2px solid var(--paper-dim); outline-offset: 2px; }
+    .demo__stage {
+      --st-bg: var(--surface-2); --st-fg: var(--paper); --st-line: var(--line-strong);
+      --st-dim: color-mix(in oklch, var(--paper) 55%, transparent);
+      background: var(--st-bg); color: var(--st-fg);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 28px 20px; min-height: 190px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .demo input[id$="-l"]:checked ~ .demo__stage { --st-bg: oklch(0.985 0.003 255); --st-fg: oklch(0.180 0.006 255); --st-line: oklch(0.180 0.010 255 / 0.18); --st-dim: oklch(0.180 0.010 255 / 0.45); }
+    .demo input[id$="-d"]:checked ~ .demo__stage { --st-bg: oklch(0.180 0.006 255); --st-fg: oklch(0.985 0.003 255); --st-line: oklch(0.985 0.010 255 / 0.18); --st-dim: oklch(0.985 0.010 255 / 0.50); }
+
+    .ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--st-fg); color: var(--st-bg); font-size: 13px; font-weight: 600; }
+    .ui-card { background: var(--st-bg); border: 1px solid var(--st-line); border-radius: 12px; padding: 14px 16px; min-width: 220px; box-shadow: 0 8px 24px oklch(0 0 0 / 0.12); }
+    .ui-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--st-fg); padding: 6px 0; }
+    .ui-row + .ui-row { border-top: 1px solid var(--st-line); }
+    .ui-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--st-dim); margin-bottom: 4px; }
+    .ui-num { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--st-fg); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; line-height: 1; }
+    .ui-dim { font-size: 12px; color: var(--st-dim); }
+    .ui-ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; }
+    .ui-ico svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .demo__loop { display: none; }
+      [class*="__mt"], [class*="__mt"] * { animation: none !important; transition: none !important; }
+    }
+
+    /* ── per-finding motion (cadence 0 / 60 / 100, 3s loop) ── */
+    @property --n { syntax: "<integer>"; inherits: false; initial-value: 1280; }
+    @media (prefers-reduced-motion: no-preference) {
+      /* 1 · calendario vivo: la línea del año se llena hasta hoy y el plazo próximo se marca */
+      @keyframes m1f { 0% { transform: scaleX(0); } 60% { transform: scaleX(.58); } 100% { transform: scaleX(.58); } }
+      @keyframes m1m { 0% { transform: translateX(0); opacity: 0; } 20% { opacity: 1; } 60% { transform: translateX(133px); opacity: 1; } 100% { transform: translateX(133px); opacity: 1; } }
+      @keyframes m1r { 0%, 40% { box-shadow: 0 0 0 2px transparent; } 70% { box-shadow: 0 0 0 2px var(--st-fg); } 100% { box-shadow: 0 0 0 2px var(--st-fg); } }
+      .demo-1__mt .fl { animation: m1f 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-1__mt .mk { animation: m1m 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-1__mt .nx { animation: m1r 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 2 · tarjeta de ejemplo: el importe cuenta, la etiqueta aparece, las filas suben en cascada */
+      @keyframes m2n { 0% { --n: 0; } 60% { --n: 1280; } 100% { --n: 1280; } }
+      @keyframes m2p { 0%, 10% { transform: scale(.8); opacity: 0; } 40% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+      @keyframes m2a { 0%, 20% { transform: translateY(8px); opacity: 0; } 55% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+      @keyframes m2b { 0%, 28% { transform: translateY(8px); opacity: 0; } 63% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+      .demo-2__mt .nm { animation: m2n 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .pl { animation: m2p 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .ra { animation: m2a 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .rb { animation: m2b 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 3 · pasos: la línea se dibuja y cada número se enciende por orden */
+      @keyframes m3l { 0% { transform: scaleX(0); } 60% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+      @keyframes m3a { 0% { background-color: var(--st-line); color: var(--st-dim); } 12% { background-color: var(--st-fg); color: var(--st-bg); } 100% { background-color: var(--st-fg); color: var(--st-bg); } }
+      @keyframes m3b { 0%, 14% { background-color: var(--st-line); color: var(--st-dim); } 26% { background-color: var(--st-fg); color: var(--st-bg); } 100% { background-color: var(--st-fg); color: var(--st-bg); } }
+      @keyframes m3c { 0%, 28% { background-color: var(--st-line); color: var(--st-dim); } 40% { background-color: var(--st-fg); color: var(--st-bg); } 100% { background-color: var(--st-fg); color: var(--st-bg); } }
+      @keyframes m3d { 0%, 42% { background-color: var(--st-line); color: var(--st-dim); } 54% { background-color: var(--st-fg); color: var(--st-bg); } 100% { background-color: var(--st-fg); color: var(--st-bg); } }
+      .demo-3__mt .ln { animation: m3l 3s cubic-bezier(.4,0,.2,1) infinite; }
+      .demo-3__mt .d1 { animation: m3a 3s ease infinite; }
+      .demo-3__mt .d2 { animation: m3b 3s ease infinite; }
+      .demo-3__mt .d3 { animation: m3c 3s ease infinite; }
+      .demo-3__mt .d4 { animation: m3d 3s ease infinite; }
+
+      /* 4 · plan señalado: su columna se tiñe y la otra se atenúa */
+      @keyframes m4h { 0%, 10% { background-color: transparent; } 40% { background-color: color-mix(in oklch, var(--st-fg) 12%, transparent); } 100% { background-color: color-mix(in oklch, var(--st-fg) 12%, transparent); } }
+      @keyframes m4d { 0%, 10% { opacity: 1; } 40% { opacity: .5; } 100% { opacity: .5; } }
+      .demo-4__mt .hc { animation: m4h 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-4__mt .dc { animation: m4d 3s cubic-bezier(.2,.8,.2,1) infinite; }
+    }
+
+    /* static rendering = 100% state of each keyframe (reduced-motion contract) */
+    .demo-1__mt { width: 270px; }
+    .demo-1__mt .tr { position: relative; height: 6px; border-radius: 999px; background: var(--st-line); margin: 8px 0 14px; }
+    .demo-1__mt .fl { position: absolute; inset: 0; border-radius: 999px; background: var(--st-fg); transform-origin: left; transform: scaleX(.58); width: 230px; }
+    .demo-1__mt .tr { width: 230px; }
+    .demo-1__mt .mk { position: absolute; top: -4px; left: -7px; width: 14px; height: 14px; border-radius: 50%; background: var(--st-fg); border: 3px solid var(--st-bg); transform: translateX(133px); }
+    .demo-1__mt .qs { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 230px; }
+    .demo-1__mt .qc { border-radius: 12px; padding: 8px 10px; background: color-mix(in oklch, var(--st-fg) 7%, transparent); box-shadow: 0 0 0 2px transparent; }
+    .demo-1__mt .qc b { display: block; font-family: var(--display); font-size: 17px; letter-spacing: -0.02em; line-height: 1.1; }
+    .demo-1__mt .qc span { font-size: 11px; color: var(--st-dim); }
+    .demo-1__mt .nx { box-shadow: 0 0 0 2px var(--st-fg); }
+    .demo-2__mt { width: 250px; }
+    .demo-2__mt .hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; }
+    .demo-2__mt .pl { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 2px 8px; background: color-mix(in oklch, var(--st-fg) 12%, transparent); white-space: nowrap; }
+    .demo-2__mt .nm { counter-reset: n var(--n); --n: 1280; font-family: var(--display); font-size: 38px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; margin-top: 12px; }
+    .demo-2__mt .nm::before { content: counter(n) " €"; }
+    .demo-2__mt .rw { display: flex; justify-content: space-between; font-size: 12px; padding: 7px 0; border-top: 1px solid var(--st-line); }
+    .demo-3__mt { width: 270px; position: relative; display: flex; justify-content: space-between; padding: 0 2px; }
+    .demo-3__mt .ln { position: absolute; left: 14px; right: 14px; top: 13px; height: 2px; background: var(--st-fg); transform-origin: left; }
+    .demo-3__mt .st { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; color: var(--st-dim); }
+    .demo-3__mt .dt { width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; font-weight: 700; font-size: 13px; background-color: var(--st-fg); color: var(--st-bg); }
+    .demo-3__mt .base { position: absolute; left: 14px; right: 14px; top: 13px; height: 2px; background: var(--st-line); }
+    .demo-4__mt { width: 270px; border-collapse: collapse; font-size: 12px; }
+    .demo-4__mt th, .demo-4__mt td { padding: 8px 10px; text-align: left; font-weight: 500; }
+    .demo-4__mt tr + tr td, .demo-4__mt tr + tr th { border-top: 1px solid var(--st-line); }
+    .demo-4__mt .hc { background-color: color-mix(in oklch, var(--st-fg) 12%, transparent); }
+    .demo-4__mt .dc { opacity: .5; }
+
+    @media (max-width: 860px) {
+      .finding-row { grid-template-columns: 1fr; }
+      .timing-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .lens-table thead { display: none; }
+      .lens-table, .lens-table tbody, .lens-table tr, .lens-table td { display: block; width: 100%; }
+      .lens-table td { border: 1px solid var(--line) !important; border-radius: 0 !important; border-bottom: 0 !important; }
+      .lens-table td:first-child { border-radius: 10px 10px 0 0 !important; } .lens-table td:last-child { border-radius: 0 0 10px 10px !important; border-bottom: 1px solid var(--line) !important; }
+      .ref-lean { grid-template-columns: 1fr; }
+      table.rec thead { display: none; } table.rec, table.rec tbody, table.rec tr, table.rec td { display: block; }
+      table.rec tr { padding: 8px 0; border-bottom: 1px solid var(--line); } table.rec td { border: 0; padding: 2px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <input class="vh" type="radio" name="theme" id="theme-dark" checked>
+  <input class="vh" type="radio" name="theme" id="theme-light">
+  <div class="theme-switch"><div class="seg"><label for="theme-dark">Oscuro</label><label for="theme-light">Claro</label></div></div>
+
+  <header>
+    <div class="eyebrow">Propuestas de movimiento · design-motion-principles</div>
+    <h1 class="title">Autónomos: una página de información sin ningún momento vivo, con un calendario que pide serlo</h1>
+    <p class="lede">Propuestas para <code>/asesoria-gestoria</code> (<code>asesoria-gestoria/page.tsx</code>), con la misma metodología que <code>/precios</code> y <code>/tramites</code>. Ponderación elegida: más lúdica (Jhey primario). No se ha tocado código.</p>
+    <div class="meta-row">Next.js 16.4.3 · React 19.3 · solo CSS salvo donde se indica · 28 de octubre de 2026</div>
+    <div class="stats">
+      <a class="stat" href="#rec-crit" data-sev="crit"><b>0</b><span>Críticos</span></a>
+      <a class="stat" href="#rec-imp" data-sev="imp"><b>4</b><span>Importantes</span></a>
+      <a class="stat" href="#rec-opp" data-sev="opp"><b>3</b><span>Oportunidades</span></a>
+      <span class="stat"><b>7</b><span>Propuestas</span></span>
+    </div>
+  </header>
+
+  <section class="block assessment">
+    <div class="mono-label">Valoración general</div>
+    <p>La página tiene buena base: el feedback de hover ya anima (tarjetas de plan, filas de la tabla, botones), el FAQ se despliega con transición y el texto no se anima al montar. Lo que le falta son momentos: la tarjeta de ejemplo, el calendario de plazos y los pasos son bloques fijos, y los planes no hablan con la tabla comparativa. Aquí cabe expresividad, porque son contenidos que se ven una vez por visita.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">01 · Resumen por lente</div>
+    <h2 class="sec">Tres lentes, un veredicto cada una</h2>
+    <table class="lens-table">
+      <thead><tr><th>Lente</th><th>Veredicto</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td><b>Jhey Tompkins</b><br><span class="chip">Primario</span></td><td><span class="verdict concern"><i></i>Preocupa</span></td><td>Ningún momento de deleite: ni la tarjeta de ejemplo, ni el calendario, ni los pasos tienen vida. Hay datos reales (la fecha de hoy) sin usar.</td></tr>
+        <tr><td><b>Jakub Krehel</b><br><span class="chip">Secundario</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>Hovers y FAQ bien resueltos. Planes y tabla son piezas separadas que deberían responderse.</td></tr>
+        <tr><td><b>Emil Kowalski</b><br><span class="chip">Selectivo</span></td><td><span class="verdict strong"><i></i>Sólido</span></td><td>Nada se anima de más: sin cascadas sobre texto ni entradas en cada bloque. Hay que mantenerlo.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">02 · Dónde caen los tiempos</div>
+    <h2 class="sec">Presupuesto de duración</h2>
+    <div class="timing-grid">
+      <svg viewBox="0 0 660 300" role="img" aria-label="Animaciones de la página de autónomos en una escala de 0 a 600 milisegundos">
+        <rect class="z-good" x="40" y="50" width="96.7" height="190"/><rect class="z-good" x="136.7" y="50" width="193.3" height="190"/>
+        <rect class="z-mid" x="330" y="50" width="193.3" height="190"/><rect class="z-slow" x="523.3" y="50" width="96.7" height="190"/>
+        <text class="zl" x="44" y="40">Instantáneo</text><text class="zl" x="140" y="40">Ágil</text><text class="zl" x="334" y="40">Deliberado</text><text class="zl" x="527" y="40">Lento</text>
+        <text class="zl" x="40" y="262">0</text><text class="zl" x="132" y="262">100</text><text class="zl" x="325" y="262">300</text><text class="zl" x="518" y="262">500</text><text class="zl" x="590" y="262">600 ms</text>
+        <circle class="d-none" cx="40" cy="76" r="12"/><text class="dn none" x="40" y="76">6</text>
+        <circle class="d-none" cx="40" cy="108" r="12"/><text class="dn none" x="40" y="108">7</text>
+        <circle class="d-none" cx="40" cy="140" r="12"/><text class="dn none" x="40" y="140">8</text>
+        <circle class="d-none" cx="40" cy="172" r="12"/><text class="dn none" x="40" y="172">9</text>
+        <circle class="d-good" cx="185" cy="96" r="12"/><text class="dn" x="185" y="96">2</text>
+        <circle class="d-good" cx="233" cy="130" r="12"/><text class="dn" x="233" y="130">1</text>
+        <circle class="d-good" cx="253" cy="164" r="12"/><text class="dn" x="253" y="164">3</text>
+        <circle class="d-mid" cx="388" cy="198" r="12"/><text class="dn" x="388" y="198">5</text>
+        <circle class="d-mid" cx="446" cy="112" r="12"/><text class="dn" x="446" y="112">4</text>
+      </svg>
+      <ol class="key">
+        <li><span>1</span><span>Elevación de tarjeta de plan</span><span>200 ms</span></li>
+        <li><span>2</span><span>Hover de fila de la tabla</span><span>150 ms</span></li>
+        <li><span>3</span><span>Apertura del FAQ</span><span>220 ms</span></li>
+        <li><span>4</span><span><code>Reveal</code> de las tarjetas de plan</span><span>420 ms</span></li>
+        <li><span>5</span><span>Fundido de ruta (<code>LateralTransition</code>)</span><span>~360 ms</span></li>
+        <li><span>6</span><span>Tarjeta de ejemplo de la portada</span><span>estática</span></li>
+        <li><span>7</span><span>Calendario de plazos</span><span>estático</span></li>
+        <li><span>8</span><span>Los 4 pasos</span><span>estáticos</span></li>
+        <li><span>9</span><span>Plan ↔ tabla comparativa</span><span>sin relación</span></li>
+      </ol>
+    </div>
+    <p class="off"><b>Qué desentona:</b> todo lo que existe está en rango y es sobrio. Lo que se echa en falta no es tiempo, sino contenido que se mueva con sentido: los tres bloques con más información (tarjeta, calendario y pasos) no tienen ninguno.</p>
+  </section>
+
+  <!-- ============ JHEY ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jhey Tompkins — Experimentación y deleite</h3><span class="chip">Primario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict concern"><i></i>Preocupa</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>La tarjeta de ejemplo con la etiqueta "Ejemplo ilustrativo" y una ligera inclinación (<code>-rotate-1</code>) ya tiene personalidad propia.</li>
+        <li>No hay entradas gratuitas sobre texto: título, frase y cifras de la portada aparecen al instante.</li>
+        <li>El plan recomendado ya se distingue por borde y etiqueta, base sobre la que construir el resaltado de columna.</li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jhey</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">El calendario de plazos no sabe en qué día estamos</h4>
+          <p><span class="label">Qué</span>Cuatro tarjetas con sus fechas fijas. La página tiene un dato real y gratuito que no usa: la fecha de hoy. No indica cuál es el próximo plazo ni cuánto falta.</p>
+          <p><span class="label">Por qué importa</span>Es la propuesta de la página: "olvídate de los plazos". Ver "tu próximo plazo es el 20 de octubre, en 23 días" convierte información en servicio, y es un momento de deleite poco frecuente por visita.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Un componente cliente que calcula el próximo plazo en <code>useEffect</code> (el servidor no sabe la fecha del visitante). La tarjeta próxima gana un aro de <code>ring-2</code> que ya está reservado en transparente, sin salto de layout, y la etiqueta "en N días". Encima, una línea del año que se llena hasta hoy (<code>scaleX</code>, 600 ms, una vez al entrar en pantalla) con un marcador, y ticks en las cuatro fechas. Con movimiento reducido: estado final sin recorrido.</p></div>
+          <p class="find-loc"><code>asesoria-gestoria/page.tsx</code> (sección <code>plazos</code>)</p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st1" id="st1-a" checked><input class="vh" type="radio" name="st1" id="st1-l"><input class="vh" type="radio" name="st1" id="st1-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">La línea del año llega a hoy</span><span class="demo__timing">600 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st1-a">Auto</label><label for="st1-l">Claro</label><label for="st1-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-1__mt"><div class="ui-label">Tu año</div><div class="tr"><span class="fl"></span><span class="mk"></span></div><div class="qs"><div class="qc"><b>20 de julio</b><span>2.º trimestre</span></div><div class="qc nx"><b>20 de octubre</b><span>Próximo · en 23 días</span></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jhey</span></div>
+          <h4 class="find-title">La tarjeta de ejemplo de la portada no hace nada</h4>
+          <p><span class="label">Qué</span>El 1.280 €, la etiqueta "Plazo en 9 días" y las tres filas están ya puestos desde el primer fotograma. Es lo más visual de la primera pantalla y lo único que no reacciona.</p>
+          <p><span class="label">Por qué importa</span>Es el elemento que enseña qué hace el servicio. Que el importe "se calcule" ante los ojos del usuario refuerza la idea de que la gestoría trabaja por él. Se ve una vez por visita.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Al cargar, con ~300 ms de retraso para no competir con el fundido de ruta: el importe cuenta de 0 a 1.280 € en ~600 ms (con <code>requestAnimationFrame</code> y <code>Intl.NumberFormat("es-ES")</code>), la etiqueta aparece con un pop de 180 ms y las filas suben 8 px en cascada de 60 ms. En escritorio, la tarjeta se endereza al pasar el ratón (<code>-rotate-1</code> a 0, 200 ms). El valor final está desde el primer instante para lectores de pantalla y con movimiento reducido. Las cifras son ejemplo: la etiqueta "Ejemplo ilustrativo" no puede desaparecer para que el conteo no se lea como un dato real.</p></div>
+          <p class="find-loc"><code>asesoria-gestoria/page.tsx</code> (tarjeta de la portada)</p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st2" id="st2-a" checked><input class="vh" type="radio" name="st2" id="st2-l"><input class="vh" type="radio" name="st2" id="st2-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Importe que cuenta y filas en cascada</span><span class="demo__timing">600 ms · ease-brand · 60 ms</span></div><div class="demo__controls"><div class="seg"><label for="st2-a">Auto</label><label for="st2-l">Claro</label><label for="st2-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-2__mt"><div class="ui-card" style="min-width:0"><div class="hd"><span>Trimestre 2 · IVA</span><span class="pl">Plazo en 9 días</span></div><div class="nm"></div><div class="ui-dim" style="margin:2px 0 8px">a ingresar</div><div class="rw ra"><span class="ui-dim">Facturas revisadas</span><b>22</b></div><div class="rw rb"><span class="ui-dim">Gastos deducibles</span><b>3.940 €</b></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jhey</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">"Cómo empezar" es una lista de números sin recorrido</h4>
+          <p><span class="label">Qué</span>Cuatro pasos con números grandes y texto, todos visibles a la vez y sin conexión entre ellos.</p>
+          <p><span class="label">Por qué importa</span>Es una secuencia. Que se encienda en orden, con una línea que los une, comunica avance y la hace memorable. Aparece una vez y no se repite.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Una línea que une los cuatro números (<code>scaleX</code>, 600 ms, solo en escritorio) y cada número que pasa de <code>text-lilac</code> a <code>text-accent</code> con 80 ms entre ellos, disparado una vez al entrar la sección (<code>Reveal</code> existente). En móvil, solo la cascada vertical sin línea. Sin movimiento reducido: todo encendido.</p></div>
+          <p class="find-loc"><code>asesoria-gestoria/page.tsx</code> (sección <code>como</code>)</p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st3" id="st3-a" checked><input class="vh" type="radio" name="st3" id="st3-l"><input class="vh" type="radio" name="st3" id="st3-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Línea que se dibuja y pasos que se encienden</span><span class="demo__timing">600 ms · 80 ms entre pasos</span></div><div class="demo__controls"><div class="seg"><label for="st3-a">Auto</label><label for="st3-l">Claro</label><label for="st3-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-3__mt"><span class="base"></span><span class="ln"></span><div class="st"><span class="dt d1">1</span>Plan</div><div class="st"><span class="dt d2">2</span>Actividad</div><div class="st"><span class="dt d3">3</span>Modelos</div><div class="st"><span class="dt d4">4</span>Visto bueno</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>Las tareas Premium llevan al plan.</b> Las etiquetas "Premium" de "Contabilidad y facturación" y "Asesor asignado" pasan a enlaces a <code>#premium</code>; al llegar, la tarjeta del plan Premium recibe un aro que se desvanece en ~1,2 s (con <code>:target</code>, una animación única, sin JS). Orienta sin mover nada. <code>page.tsx</code> (sección <code>incluye</code>)</li>
+        <li><b>El bloque oscuro final entra de una vez.</b> Un <code>Reveal</code> único con la píldora de contratar. Es el último momento de la página y el que más conviene remarcar, y completa el máximo de tres usos de <code>Reveal</code> en la página (planes, pasos y cierre).</li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jhey:</b> la página explica bien pero no sorprende. Tres momentos únicos por visita, calendario, tarjeta y pasos, ofrecen el deleite justo donde no cansa. Más que eso sería ruido.</p>
+  </section>
+
+  <!-- ============ JAKUB ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jakub Krehel — Pulido de producción</h3><span class="chip">Secundario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Las tarjetas de plan se elevan en 200 ms y las filas de la tabla se tiñen en 150 ms, con la lista de transición completa (<code>translate</code> y <code>scale</code> incluidos). <code>page.tsx</code></li>
+        <li><code>Reveal</code> solo en las dos tarjetas de plan, con cascada corta de 60 ms. No se aplica a todo.</li>
+        <li>El FAQ usa el mismo acordeón ya animado de la web.</li>
+        <li>El fundido de ruta lateral coincide con el resto de pestañas hermanas.</li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">Los planes y la tabla comparativa no se responden</h4>
+          <p><span class="label">Qué</span>Las dos tarjetas de plan y la tabla de debajo comparten datos, pero señalar un plan no hace nada en la tabla. El usuario tiene que cruzar con la vista las columnas.</p>
+          <p><span class="label">Por qué importa</span>Es el momento de decisión de la página y se repite al comparar. Un resaltado de columna al pasar el ratón es feedback rápido y útil, no decoración.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Estado compartido (<code>hover</code> o <code>focus-within</code> de la tarjeta) que tiñe la columna del plan con <code>bg-accent-soft</code> y atenúa la otra a ~50 % de opacidad, en 150 ms con <code>ease-brand</code>. Sin animación de entrada. En táctil, el resaltado sigue al último plan tocado. Las filas que Premium añade pueden llevar una marca fija "solo Premium".</p></div>
+          <p class="find-loc"><code>asesoria-gestoria/page.tsx</code> (sección <code>planes</code>, tabla)</p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st4" id="st4-a" checked><input class="vh" type="radio" name="st4" id="st4-l"><input class="vh" type="radio" name="st4" id="st4-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Columna del plan señalado</span><span class="demo__timing">150 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st4-a">Auto</label><label for="st4-l">Claro</label><label for="st4-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><table class="demo-4__mt"><thead><tr><th>Incluye</th><th class="dc">Estándar</th><th class="hc">Premium</th></tr></thead><tbody><tr><td>Modelos 130 y 303</td><td class="dc">✓</td><td class="hc">✓</td></tr><tr><td>Contabilidad</td><td class="dc">–</td><td class="hc">✓</td></tr><tr><td>Asesor por chat</td><td class="dc">–</td><td class="hc">✓</td></tr></tbody></table></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>Barra de contratar que aparece al bajar.</b> Una barra inferior con el botón "Contratar" que entra (<code>translateY</code> y opacidad, 220 ms) cuando los botones de la portada salen de la pantalla, y se oculta al llegar al bloque final. Es una vez por visita y mantiene la acción a mano en móvil. Es una decisión de producto y de diseño: coordinar con el otro agente.</li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jakub:</b> el pulido básico ya está. La mejora de mayor valor es la que une dos piezas que hoy no se hablan.</p>
+  </section>
+
+  <!-- ============ EMIL ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Emil Kowalski — Restraint y velocidad</h3><span class="chip">Selectivo</span></div>
+    <p class="lens-sec__verdict"><span class="verdict strong"><i></i>Sólido</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Ninguna cascada ni entrada sobre texto, tablas ni FAQ.</li>
+        <li>Feedback rápido (150 a 200 ms) y con variante de movimiento reducido.</li>
+        <li>Las tareas, los trimestres y la tabla no llevan elevación al pasar el ratón: no son clicables, y animar un hover sin acción sería una falsa promesa.</li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+      <p class="lens-empty">Sin problemas en este nivel de gravedad.</p>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li>Mantener el tope de tres <code>Reveal</code> en la página (planes, pasos y cierre) y no añadir uno por sección: la regla del skill marca como uniformidad cuatro o más iguales.</li>
+        <li>Los tres momentos nuevos (calendario, tarjeta, pasos) ocurren una vez al entrar en pantalla y no se repiten al volver a subir.</li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Emil:</b> añadir solo lo que tiene un propósito: dar información (calendario), enseñar el servicio (tarjeta) o conectar dos piezas (planes y tabla). El resto de la página debe seguir quieto.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">06 · Recomendaciones combinadas</div>
+    <h2 class="sec">Qué proponer, en orden</h2>
+
+    <div class="tier-label crit" id="rec-crit">Críticos · hay que arreglarlos <em>0</em></div>
+    <table class="rec"><tbody><tr><td class="lens-empty">Ninguno.</td></tr></tbody></table>
+
+    <div class="tier-label imp" id="rec-imp">Importantes · conviene arreglarlos <em>4</em></div>
+    <table class="rec"><thead><tr><th>Propuesta</th><th>Dónde</th><th>Movimiento</th></tr></thead><tbody>
+      <tr><td>Calendario vivo con el próximo plazo</td><td>sección <code>plazos</code></td><td>Línea del año <code>scaleX</code> 600 ms, aro en la tarjeta próxima, "en N días"</td></tr>
+      <tr><td>Tarjeta de ejemplo con importe que cuenta</td><td>portada</td><td>Conteo 600 ms, pop de etiqueta 180 ms, filas en cascada de 60 ms</td></tr>
+      <tr><td>Pasos con línea y encendido por orden</td><td>sección <code>como</code></td><td>Línea 600 ms, 80 ms entre pasos, una vez</td></tr>
+      <tr><td>Plan señalado resalta su columna</td><td>sección <code>planes</code></td><td>Tinte y atenuado en 150 ms</td></tr>
+    </tbody></table>
+
+    <div class="tier-label opp" id="rec-opp">Oportunidades · se pueden mejorar <em>3</em></div>
+    <table class="rec"><thead><tr><th>Mejora</th><th>Dónde</th><th>Impacto</th></tr></thead><tbody>
+      <tr><td>Tareas Premium enlazan al plan y lo resaltan con <code>:target</code></td><td>sección <code>incluye</code></td><td>Medio, sin JS</td></tr>
+      <tr><td>Bloque oscuro final con <code>Reveal</code> único</td><td>cierre</td><td>Bajo</td></tr>
+      <tr><td>Barra de contratar al bajar</td><td>global de la página</td><td>Medio, requiere coordinar diseño</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">07 · Resumen de lentes</div>
+    <div class="ref-summary">
+      <b>Lente más usada: Jhey Tompkins, con Jakub para la conexión de plan y tabla.</b> La página informa pero no tiene momentos; los datos reales (la fecha de hoy) permiten algunos con sentido.
+      <div class="ref-lean">
+        <div><b>Seguir más a Emil</b>Quedarse con la columna resaltada y el tope de tres <code>Reveal</code>; dejar el calendario sin línea animada.</div>
+        <div><b>Seguir más a Jakub</b>Empezar por plan y tabla, que es feedback y no espectáculo.</div>
+        <div><b>Seguir más a Jhey</b>Calendario vivo y tarjeta que cuenta: son los dos momentos con más efecto.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>web · /asesoria-gestoria · 0 críticos · 4 importantes · 3 oportunidades · propuestas sin aplicar · 2026-10-28</footer>
+</div>
+</body>
+</html>

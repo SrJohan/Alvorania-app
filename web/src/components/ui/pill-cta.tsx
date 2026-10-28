@@ -14,7 +14,7 @@ export function PillCta({ href, children, tone = "ink", className = "" }: { href
   return (
     <Link
       href={href}
-      className={`group inline-flex h-11 items-center gap-4 rounded-pill py-1.5 pl-5 pr-1.5 text-[13px] font-semibold uppercase tracking-[0.04em] transition-[transform,background-color,box-shadow] duration-200 ease-brand hover:-translate-y-px hover:shadow-pop active:translate-y-0 active:scale-[0.98] motion-reduce:transform-none ${skin} ${className}`}
+      className={`group inline-flex h-11 items-center gap-4 rounded-pill py-1.5 pl-5 pr-1.5 text-[13px] font-semibold uppercase tracking-[0.04em] transition-[transform,translate,scale,rotate,background-color,box-shadow] duration-200 ease-brand hover:-translate-y-px hover:shadow-pop active:translate-y-0 active:scale-[0.98] motion-reduce:transform-none ${skin} ${className}`}
     >
       {children}
       <span aria-hidden className={`grid size-8 place-items-center rounded-full transition-transform duration-200 ease-brand group-hover:translate-x-0.5 group-hover:-rotate-45 motion-reduce:transform-none ${dot}`}>

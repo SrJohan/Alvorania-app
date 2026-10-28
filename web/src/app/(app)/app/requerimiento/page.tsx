@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
-import { Card, FileDrop, Notice, Tag } from "@/components/ui/display";
+import { FileDrop } from "@/components/ui/file-drop";
+import { Card, Notice, Tag } from "@/components/ui/display";
 import { uploadLetter } from "@/lib/data/api";
 import { useDemoState } from "@/lib/data/store";
 import { formatDateTime } from "@/lib/format";

@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import type { CSSProperties } from "react";
 import { LinkButton } from "@/components/ui/button";
 import { Accordion, Card, Notice, Tag } from "@/components/ui/display";
 import { Reveal } from "@/components/ui/reveal";
 import { PriceFinder } from "@/components/site/price-finder";
 import { PLANS } from "@/lib/data/plans";
 import { formatEuros } from "@/lib/format";
+import { LateralTransition } from "@/components/site/directional-transition";
 
 export const metadata: Metadata = { title: "Precios" };
 
@@ -24,27 +24,25 @@ const services = [
   ["Revisión de un ejercicio anterior", "10 € por año + 20 % del ahorro conseguido"],
 ];
 
-const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
-
 const Cell = ({ v }: { v: string | boolean }) =>
   typeof v === "string" ? <>{v}</> : v ? <><span aria-hidden>✓</span><span className="sr-only">Incluido</span></> : <><span aria-hidden>–</span><span className="sr-only">No incluido</span></>;
 
 export default function Precios() {
   return (
-    <div className="mx-auto max-w-wide px-4 py-12">
-      <h1 className="anim-rise font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">Precios claros, sin sorpresas</h1>
-      <p className="anim-rise mt-2 max-w-reading text-text-muted" style={delay(90)}>Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
-      <div className="anim-rise mt-4 max-w-reading" style={delay(170)}>
+    <LateralTransition><div className="mx-auto max-w-wide px-4 py-12">
+      <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">Precios claros, sin sorpresas</h1>
+      <p className="mt-2 max-w-reading text-text-muted">Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
+      <div className="mt-4 max-w-reading">
         <Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice>
       </div>
 
-      <div className="anim-rise mt-10" style={{ ...delay(250), "--rise": "24px" } as CSSProperties}><PriceFinder /></div>
+      <div className="anim-swap mt-10"><PriceFinder /></div>
 
       <h2 id="planes" className="mt-16 scroll-mt-24 text-lg font-semibold">Planes para tu renta</h2>
       <div className="mt-4 grid gap-4 md:grid-cols-3">
         {PLANS.map((p, i) => (
-          <Reveal key={p.code} delay={i * 90} className="flex">
-          <Card selected={p.recommended} className="flex w-full flex-col transition-[transform,box-shadow] duration-200 ease-brand hover:-translate-y-1 hover:shadow-pop motion-reduce:transform-none">
+          <Reveal key={p.code} delay={i * 60} className="flex">
+          <Card selected={p.recommended} className="flex w-full flex-col transition-[transform,translate,scale,rotate,box-shadow] duration-200 ease-brand hover:-translate-y-1 hover:shadow-pop motion-reduce:transform-none">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-semibold">{p.name}</h2>
               {p.recommended && <Tag tone="accent">Recomendado</Tag>}
@@ -65,7 +63,7 @@ export default function Precios() {
         <p className="mt-1 max-w-reading">Al terminar el cuestionario te decimos qué plan necesita tu caso y cuánto cuesta en total. Ese es el precio: no hay suplementos después. Si has vendido acciones o fondos necesitarás el plan Completo, y te lo diremos antes de pagar.</p>
       </section></Reveal>
 
-      <Reveal className="mt-12">
+      <div className="mt-12">
       <h2 className="text-lg font-semibold">Comparativa</h2>
       <div className="relative mt-4 overflow-x-auto">
         <table className="w-full min-w-[520px] border-collapse text-sm">
@@ -86,9 +84,9 @@ export default function Precios() {
           </tbody>
         </table>
       </div>
-      </Reveal>
+      </div>
 
-      <Reveal className="mt-12">
+      <div className="mt-12">
       <h2 className="text-lg font-semibold">Otros servicios</h2>
       <dl className="mt-4 divide-y divide-border rounded-lg border border-border">
         {services.map(([k, v]) => (
@@ -98,9 +96,9 @@ export default function Precios() {
         ))}
       </dl>
       <p className="mt-2 text-sm text-text-muted">El análisis de una carta de Hacienda es gratuito.</p>
-      </Reveal>
+      </div>
 
-      <Reveal className="mt-12">
+      <div className="mt-12">
       <h2 className="text-lg font-semibold">Preguntas sobre precios</h2>
       <div className="mt-4 max-w-reading">
         <Accordion items={[
@@ -108,7 +106,7 @@ export default function Precios() {
           { q: "¿Qué pasa si no presento con vosotros?", a: "No pagas nada. El cálculo gratuito es tuyo." },
         ]} />
       </div>
-      </Reveal>
-    </div>
+      </div>
+    </div></LateralTransition>
   );
 }

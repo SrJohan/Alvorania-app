@@ -1,51 +1,59 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Briefcase, FileText, Globe, Mail, type LucideIcon } from "lucide-react";
+import { ViewTransition } from "react";
+import { DirectionalTransition } from "@/components/site/directional-transition";
 import { Tag } from "@/components/ui/display";
+import { Reveal } from "@/components/ui/reveal";
+import { tramiteGroups } from "@/lib/tramites";
 
 export const metadata: Metadata = { title: "Trámites" };
 
-const groups = [
-  { title: "Particulares", items: [
-    { name: "Declaración de la renta", price: "Desde 29 €", href: "/acceder?next=/app/conectar" },
-    { name: "Revisión de ejercicios anteriores", price: "10 € por año", href: "/acceder?next=/app/conectar" },
-  ]},
-  { title: "Hacienda y requerimientos", items: [
-    { name: "Análisis de una carta de Hacienda", price: "Gratis", href: "/acceder?next=/app/requerimiento" },
-    { name: "Respuesta a un requerimiento", price: "Desde 50 €", href: "/acceder?next=/app/requerimiento" },
-  ]},
-  { title: "Autónomos", items: [
-    { name: "Alta de autónomo", price: "A consultar", href: "/asesoria-gestoria" },
-    { name: "Gestoría mensual", price: "Desde 29,90 € al mes", href: "/asesoria-gestoria" },
-  ]},
-  { title: "Internacional", items: [
-    { name: "Modelo 720 (bienes en el extranjero)", price: "A presupuestar", soon: true },
-    { name: "Residencia fiscal y salida de España", price: "A presupuestar", soon: true },
-  ]},
-];
+const groupIcons: Record<string, LucideIcon> = { Particulares: FileText, "Hacienda y requerimientos": Mail, "Autónomos": Briefcase, Internacional: Globe };
+// El grupo de Hacienda se tiñe de lila: es la puerta gratuita (el análisis de la carta no cuesta nada).
+const FREE_GROUP = "Hacienda y requerimientos";
 
 export default function Tramites() {
   return (
-    <div className="mx-auto max-w-content px-4 py-12">
-      <h1 className="text-xl font-bold">Trámites</h1>
-      <p className="mt-2 max-w-reading text-text-muted">Elige el que necesitas. Si no lo ves, escríbenos y lo valoramos.</p>
-      <div className="mt-8 grid gap-8 md:grid-cols-2">
-        {groups.map((g) => (
-          <section key={g.title} aria-labelledby={g.title}>
-            <h2 id={g.title} className="text-lg font-semibold">{g.title}</h2>
-            <ul className="mt-3 divide-y divide-border rounded-lg border border-border">
-              {g.items.map((it) => (
-                <li key={it.name} className="flex items-center justify-between gap-3 p-4">
-                  <div>
-                    {"href" in it && it.href ? <Link href={it.href} className="font-medium hover:underline">{it.name}</Link> : <span className="font-medium">{it.name}</span>}
-                    <p className="text-sm text-text-muted">{it.price}</p>
-                  </div>
-                  {"soon" in it && it.soon && <Tag>Próximamente</Tag>}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
+    <DirectionalTransition lateral>
+      <div className="mx-auto max-w-content px-4 py-12">
+        <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">Trámites</h1>
+        <p className="mt-3 max-w-reading text-text-muted">Elige el que necesitas. Si no lo ves, escríbenos y lo valoramos.</p>
+        <div className="mt-10 grid gap-x-8 gap-y-10 md:grid-cols-2">
+          {tramiteGroups.map((g, i) => {
+            const Icon = groupIcons[g.title] ?? FileText;
+            const free = g.title === FREE_GROUP;
+            return (
+            <Reveal key={g.title} delay={(i % 2) * 60}>
+            <section aria-labelledby={`grupo-${i}`}>
+              <h2 id={`grupo-${i}`} className="flex items-center gap-3 text-lg font-semibold text-ink">
+                <span aria-hidden className="grid size-9 place-items-center rounded-[10px] bg-accent-soft text-accent"><Icon className="size-[18px]" /></span>
+                {g.title}
+              </h2>
+              <ul className={`mt-4 divide-y overflow-hidden rounded-lg border ${free ? "divide-lilac/30 border-lilac/40 bg-accent-soft" : "divide-border border-border"}`}>
+                {g.items.map((it) => (
+                  <li key={it.slug} className="group relative flex flex-col items-start gap-2 p-4 lg:flex-row lg:items-center lg:justify-between lg:gap-3 transition-colors duration-150 hover:bg-surface has-[a:focus-visible]:bg-surface">
+                    <div>
+                      {/* El ::after estira el enlace a toda la fila; su nombre accesible sigue siendo solo el del trámite. */}
+                      <Link href={`/tramites/${it.slug}`} transitionTypes={["nav-forward"]} className="font-medium after:absolute after:inset-0 group-hover:underline">
+                        <ViewTransition name={`tramite-${it.slug}`} share="text-morph" default="none">
+                          <span>{it.name}</span>
+                        </ViewTransition>
+                        {it.soon && <span className="sr-only"> (próximamente)</span>}
+                      </Link>
+                      <p className="mt-0.5 text-sm text-text-muted">{it.summary}</p>
+                      <p className="mt-1 text-sm font-semibold text-ink">{it.price}</p>
+                    </div>
+                    {it.soon && <span aria-hidden><Tag>Próximamente</Tag></span>}
+                  </li>
+                ))}
+              </ul>
+            </section>
+            </Reveal>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </DirectionalTransition>
   );
 }

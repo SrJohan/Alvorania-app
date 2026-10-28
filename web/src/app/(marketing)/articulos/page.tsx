@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ArrowUpRight } from "lucide-react";
 import { PillCta } from "@/components/ui/pill-cta";
 import { ARTICLES_SOURCE, getArticles, type Article } from "@/lib/articles";
+import { LateralTransition } from "@/components/site/directional-transition";
 
 export const metadata: Metadata = {
   title: "Artículos",
@@ -20,7 +21,7 @@ const inkGlow = {
 function ArticleCard({ a, featured = false }: { a: Article; featured?: boolean }) {
   return (
     <article
-      className={`group relative flex flex-col rounded-[24px] p-6 transition-[transform,box-shadow,border-color] duration-200 ease-brand hover:-translate-y-0.5 hover:shadow-pop motion-reduce:transform-none sm:p-8 ${
+      className={`group relative flex flex-col rounded-[24px] p-6 transition-[transform,translate,scale,rotate,box-shadow,border-color] duration-200 ease-brand hover:-translate-y-0.5 hover:shadow-pop motion-reduce:transform-none sm:p-8 ${
         featured ? "bg-surface lg:col-span-2" : "border border-border bg-surface-raised hover:border-lilac"
       }`}
     >
@@ -66,7 +67,7 @@ export default async function Articulos() {
   const after = rest.slice(4);
 
   return (
-    <div className="mx-auto max-w-wide px-4 pt-8 md:pt-12">
+    <LateralTransition><div className="mx-auto max-w-wide px-4 pt-8 md:pt-12">
       <header className="flex flex-col gap-4 border-b border-border pb-8 sm:flex-row sm:items-end sm:justify-between">
         <h1 className={`${headline} text-[40px] leading-[1.05] sm:text-[64px] lg:text-[80px]`}>Guías y artículos</h1>
         <p className="flex items-center gap-2 pb-2 text-sm font-semibold uppercase tracking-[0.08em] text-ink">
@@ -95,6 +96,6 @@ export default async function Articulos() {
           <AdvisorCard />
         </div>
       )}
-    </div>
+    </div></LateralTransition>
   );
 }

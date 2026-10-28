@@ -5,7 +5,7 @@ type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
 
 const base =
-  "inline-flex items-center justify-center gap-2 rounded-pill font-semibold transition-colors duration-150 ease-brand disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 rounded-pill font-semibold transition duration-150 ease-brand active:scale-[0.97] motion-reduce:transform-none disabled:cursor-not-allowed disabled:opacity-50 aria-disabled:cursor-not-allowed aria-disabled:opacity-50";
 const variants: Record<Variant, string> = {
   primary: "bg-accent text-on-accent hover:bg-accent-hover",
   secondary: "border border-border-input bg-bg text-text hover:bg-surface",
@@ -14,7 +14,7 @@ const variants: Record<Variant, string> = {
 };
 const sizes: Record<Size, string> = {
   sm: "h-8 px-3 text-sm",
-  md: "h-10 px-4 text-sm",
+  md: "h-11 px-4 text-sm",
   lg: "h-12 px-6 text-base",
 };
 
@@ -37,7 +37,7 @@ export function Button({ variant = "primary", size = "md", loading, disabled, cl
       className={buttonClass(variant, size, className)}
     >
       {loading && (
-        <span aria-hidden className="size-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
+        <span aria-hidden className="size-4 motion-safe:animate-spin rounded-full border-2 border-current border-t-transparent" />
       )}
       {children}
     </button>

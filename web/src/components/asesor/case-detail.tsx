@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, ErrorState, FileDrop, Notice, ResultCard, Skeleton, StatusBadge, Tag } from "@/components/ui/display";
+import { FileDrop } from "@/components/ui/file-drop";
+import { Card, ErrorState, Notice, ResultCard, Skeleton, StatusBadge, Tag } from "@/components/ui/display";
 import { SelectField, TextField } from "@/components/ui/form";
 import type { CaseStatus } from "@/lib/data/types";
 import { formatDateTime, formatEuros } from "@/lib/format";
@@ -93,7 +94,7 @@ export function CaseDetail() {
       {actionError && <Notice tone="danger">{actionError}</Notice>}
 
       {d.status === "calculado" && d.isAdmin && (
-        <Card>
+        <Card className="anim-swap">
           <h2 className="text-lg font-semibold">Registrar un pago recibido fuera de la web</h2>
           <p className="mt-1 text-sm text-text-muted">Transferencia, Bizum o efectivo. Se emite la factura, se asigna un asesor y se abre la revisión.</p>
           <div className="mt-3 flex flex-wrap items-end gap-3">
@@ -104,7 +105,7 @@ export function CaseDetail() {
       )}
 
       {d.status === "pagado" && d.isAdmin && (
-        <Card>
+        <Card className="anim-swap">
           <h2 className="text-lg font-semibold">Caso pagado sin asesor</h2>
           <p className="mt-1 text-sm text-text-muted">No había ningún asesor libre cuando se pagó.</p>
           <div className="mt-3"><Button loading={busy === "assign"} onClick={() => act("assign", () => adminAssignToMe(id))}>Asignármelo</Button></div>
@@ -148,7 +149,7 @@ export function CaseDetail() {
       </div>
 
       {open && r && (
-        <Card>
+        <Card className="anim-swap">
           <h2 className="text-lg font-semibold">Revisión</h2>
           <ul className="mt-2 text-sm text-text-muted">
             <li>Tu aprobación: {r.advisorApprovedAt ? `dada el ${formatDateTime(r.advisorApprovedAt)}` : "pendiente"}</li>

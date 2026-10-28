@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>web empresas motion proposals — 2026-10-28</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        oklch(0.155 0.006 255);
+      --surface:    oklch(0.195 0.007 255);
+      --surface-2:  oklch(0.235 0.008 255);
+      --paper:      oklch(0.945 0.004 255);
+      --paper-dim:  oklch(0.800 0.006 255);
+      --muted:      oklch(0.680 0.008 255);
+      --faint:      oklch(0.505 0.008 255);
+      --line:       oklch(0.95 0.01 255 / 0.09);
+      --line-strong:oklch(0.95 0.01 255 / 0.16);
+      --accent:     var(--paper);
+      --accent-soft:var(--paper-dim);
+      --accent-tint:color-mix(in oklch, var(--paper) 8%, transparent);
+      --crit: oklch(0.655 0.185 25);
+      --imp:  oklch(0.805 0.125 78);
+      --opp:  oklch(0.745 0.135 152);
+      --t-good: oklch(0.745 0.135 152);
+      --t-mid:  oklch(0.805 0.125 78);
+      --t-slow: oklch(0.655 0.185 25);
+      --dot-ink: oklch(0.15 0.01 255);
+      --display: "Familjen Grotesk", "Hanken Grotesk", system-ui, sans-serif;
+      --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    :root:has(#theme-light:checked) {
+      --ink:        oklch(0.985 0.003 255);
+      --surface:    oklch(0.965 0.004 255);
+      --surface-2:  oklch(0.940 0.005 255);
+      --paper:      oklch(0.180 0.006 255);
+      --paper-dim:  oklch(0.330 0.008 255);
+      --muted:      oklch(0.475 0.010 255);
+      --faint:      oklch(0.640 0.009 255);
+      --line:       oklch(0.180 0.010 255 / 0.12);
+      --line-strong:oklch(0.180 0.010 255 / 0.22);
+      --crit: oklch(0.52 0.185 25);
+      --imp:  oklch(0.58 0.125 70);
+      --opp:  oklch(0.50 0.135 152);
+      --t-good: oklch(0.50 0.135 152);
+      --t-mid:  oklch(0.58 0.125 70);
+      --t-slow: oklch(0.52 0.185 25);
+      --dot-ink: oklch(0.985 0.003 255);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark light; }
+    body { background: var(--ink); color: var(--paper); font-family: var(--sans); margin: 0; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; position: relative; }
+    code { font-family: var(--mono); font-size: 0.86em; background: var(--accent-tint); padding: 1px 5px; border-radius: 4px; }
+    a { color: inherit; }
+    .mono-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* theme switch */
+    .theme-switch { display: flex; justify-content: flex-end; }
+    .theme-switch .seg label { padding: 5px 12px; }
+    #theme-dark:checked ~ .theme-switch label[for="theme-dark"],
+    #theme-light:checked ~ .theme-switch label[for="theme-light"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+
+    /* header */
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 24px; }
+    h1.title { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 48px); line-height: 1.08; letter-spacing: -0.02em; margin: 10px 0 12px; }
+    .lede { max-width: 680px; color: var(--paper-dim); margin: 0 0 14px; }
+    .meta-row { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .stat { display: flex; align-items: baseline; gap: 8px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 14px; text-decoration: none; transition: border-color .2s ease; }
+    .stat:hover { border-color: var(--paper-dim); }
+    .stat b { font-family: var(--display); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .stat span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .stat[data-sev="crit"] b { color: var(--crit); } .stat[data-sev="imp"] b { color: var(--imp); } .stat[data-sev="opp"] b { color: var(--opp); }
+
+    section.block { margin-top: 64px; }
+    h2.sec { font-family: var(--display); font-size: 22px; font-weight: 600; margin: 8px 0 18px; letter-spacing: -0.01em; }
+    .assessment p { font-family: var(--display); font-size: clamp(19px, 2.4vw, 24px); line-height: 1.4; max-width: 860px; margin: 8px 0 0; font-weight: 500; }
+
+    /* lens table */
+    .lens-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .lens-table th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: left; font-weight: 500; padding: 0 14px; }
+    .lens-table td { background: var(--surface); padding: 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: top; transition: border-color .2s ease; }
+    .lens-table td:first-child { border-left: 1px solid var(--line); border-radius: 10px 0 0 10px; }
+    .lens-table td:last-child { border-right: 1px solid var(--line); border-radius: 0 10px 10px 0; }
+    .chip { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--line-strong); border-radius: 100px; padding: 2px 8px; color: var(--muted); white-space: nowrap; }
+    .verdict { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; }
+    .verdict i { width: 9px; height: 9px; border-radius: 50%; background: var(--imp); }
+    .verdict.strong i { background: var(--opp); } .verdict.concern i { background: var(--crit); }
+
+    /* timing diagram */
+    .timing-grid { display: grid; grid-template-columns: 1fr 260px; gap: 28px; align-items: start; }
+    .timing-grid svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+    .z-good { fill: color-mix(in oklch, var(--t-good) 14%, transparent); } .z-mid { fill: color-mix(in oklch, var(--t-mid) 14%, transparent); } .z-slow { fill: color-mix(in oklch, var(--t-slow) 14%, transparent); }
+    .d-good { fill: var(--t-good); } .d-mid { fill: var(--t-mid); } .d-slow { fill: var(--t-slow); }
+    .d-none { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .dn { font-family: var(--mono); font-size: 11px; font-weight: 600; fill: var(--dot-ink); text-anchor: middle; dominant-baseline: central; }
+    .dn.none { fill: var(--muted); }
+    .zl { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--muted); }
+    .key { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+    .key li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+    .key li span:last-child { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .key li span:first-child { font-family: var(--mono); font-weight: 600; }
+    .off { margin-top: 18px; color: var(--paper-dim); font-size: 14.5px; max-width: 820px; }
+
+    /* lens sections */
+    .lens-sec { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line-strong); }
+    .lens-sec__head { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .lens-sec__head h3 { font-family: var(--display); font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+    .lens-sec__verdict { margin: 8px 0 0; }
+    .lens-block { margin-top: 26px; }
+    .lens-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+    .lens-list li { position: relative; padding-left: 26px; font-size: 14.5px; color: var(--paper-dim); }
+    .lens-list li::before { position: absolute; left: 0; top: 0; font-family: var(--mono); }
+    .lens-list.good li::before { content: "✓"; color: var(--opp); }
+    .lens-list.opp li::before { content: "◆"; color: var(--opp); font-size: 11px; top: 3px; }
+    .lens-empty { color: var(--faint); font-style: italic; margin: 10px 0 0; }
+    .lens-take { margin-top: 26px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; color: var(--paper-dim); font-size: 14.5px; }
+    .lens-take b { color: var(--paper); }
+
+    .finding-row { display: grid; grid-template-columns: 1fr 380px; gap: 28px; margin-top: 16px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color .2s ease; }
+    .finding-row:hover { border-color: var(--line-strong); }
+    .find-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .sev { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; border-radius: 100px; padding: 2px 9px; border: 1px solid currentColor; }
+    .finding-row[data-sev="crit"] .sev { color: var(--crit); } .finding-row[data-sev="imp"] .sev { color: var(--imp); }
+    h4.find-title { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 0 10px; line-height: 1.25; }
+    .find-body p { margin: 0 0 10px; font-size: 14.5px; color: var(--paper-dim); }
+    .find-body .label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .fix { background: var(--accent-tint); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .fix p { margin: 0; }
+    .find-loc { font-size: 12.5px; }
+
+    /* recs */
+    .tier-label { display: flex; align-items: center; gap: 12px; margin: 34px 0 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .tier-label::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+    .tier-label.crit { color: var(--crit); } .tier-label.imp { color: var(--imp); } .tier-label.opp { color: var(--opp); }
+    .tier-label em { font-style: normal; color: var(--muted); order: 3; }
+    table.rec { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.rec th { text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 6px 10px; border-bottom: 1px solid var(--line-strong); }
+    table.rec td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--paper-dim); }
+    table.rec td:first-child { color: var(--paper); font-weight: 500; }
+
+    .ref-summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; color: var(--paper-dim); font-size: 14.5px; }
+    .ref-lean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+    .ref-lean div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+    .ref-lean b { display: block; color: var(--paper); margin-bottom: 4px; }
+    footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+    /* ───────────── Demo card (shell) ───────────── */
+    .demo { position: relative; min-width: 0; }
+    .demo__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .demo__meta { min-width: 0; }
+    .demo__title { display: block; font-size: 13.5px; font-weight: 600; color: var(--paper); line-height: 1.3; }
+    .demo__timing { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .demo__controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .demo__loop { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+    .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 100px; overflow: hidden; }
+    .seg label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; cursor: pointer; user-select: none; transition: background 0.15s ease, color 0.15s ease; }
+    .demo input[id$="-a"]:checked ~ .demo__bar .seg label[for$="-a"],
+    .demo input[id$="-l"]:checked ~ .demo__bar .seg label[for$="-l"],
+    .demo input[id$="-d"]:checked ~ .demo__bar .seg label[for$="-d"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+    .demo input:focus-visible ~ .demo__bar .seg { outline: 2px solid var(--paper-dim); outline-offset: 2px; }
+    .demo__stage {
+      --st-bg: var(--surface-2); --st-fg: var(--paper); --st-line: var(--line-strong);
+      --st-dim: color-mix(in oklch, var(--paper) 55%, transparent);
+      background: var(--st-bg); color: var(--st-fg);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 28px 20px; min-height: 190px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .demo input[id$="-l"]:checked ~ .demo__stage { --st-bg: oklch(0.985 0.003 255); --st-fg: oklch(0.180 0.006 255); --st-line: oklch(0.180 0.010 255 / 0.18); --st-dim: oklch(0.180 0.010 255 / 0.45); }
+    .demo input[id$="-d"]:checked ~ .demo__stage { --st-bg: oklch(0.180 0.006 255); --st-fg: oklch(0.985 0.003 255); --st-line: oklch(0.985 0.010 255 / 0.18); --st-dim: oklch(0.985 0.010 255 / 0.50); }
+
+    .ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--st-fg); color: var(--st-bg); font-size: 13px; font-weight: 600; }
+    .ui-card { background: var(--st-bg); border: 1px solid var(--st-line); border-radius: 12px; padding: 14px 16px; min-width: 220px; box-shadow: 0 8px 24px oklch(0 0 0 / 0.12); }
+    .ui-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--st-fg); padding: 6px 0; }
+    .ui-row + .ui-row { border-top: 1px solid var(--st-line); }
+    .ui-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--st-dim); margin-bottom: 4px; }
+    .ui-num { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--st-fg); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; line-height: 1; }
+    .ui-dim { font-size: 12px; color: var(--st-dim); }
+    .ui-ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; }
+    .ui-ico svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .demo__loop { display: none; }
+      [class*="__mt"], [class*="__mt"] * { animation: none !important; transition: none !important; }
+    }
+
+    /* ── per-finding motion (cadence 0 / 60 / 100, 3s loop) ── */
+    @property --n { syntax: "<integer>"; inherits: false; initial-value: 38; }
+    @media (prefers-reduced-motion: no-preference) {
+      /* 1 · envío: el formulario se retira, el aviso entra, el alto no cambia */
+      @keyframes m1f { 0% { opacity: 1; transform: none; } 40% { opacity: 0; transform: translateY(-4px); } 100% { opacity: 0; transform: translateY(-4px); } }
+      @keyframes m1s { 0%, 15% { opacity: 0; transform: translateY(8px); } 60% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+      @keyframes m1c { 0%, 20% { transform: scale(.8); opacity: 0; } 55% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+      .demo-1__mt .fm { animation: m1f 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-1__mt .ok { animation: m1s 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-1__mt .ok .ck { animation: m1c 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 2 · cabecera: el subrayado pasa de un enlace al siguiente */
+      @keyframes m2o { 0%, 20% { transform: scaleX(1); } 50% { transform: scaleX(0); } 100% { transform: scaleX(0); } }
+      @keyframes m2i { 0%, 20% { transform: scaleX(0); } 50% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+      @keyframes m2t { 0%, 20% { opacity: .55; } 50% { opacity: 1; } 100% { opacity: 1; } }
+      @keyframes m2d { 0%, 20% { opacity: 1; } 50% { opacity: .55; } 100% { opacity: .55; } }
+      .demo-2__mt .u1 { animation: m2o 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .u2 { animation: m2i 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .l2 { animation: m2t 3s ease infinite; }
+      .demo-2__mt .l1 { animation: m2d 3s ease infinite; }
+
+      /* 3 · tarjeta de campaña: la cifra cuenta y la barra se llena hasta 38 de 52 */
+      @keyframes m3n { 0% { --n: 0; } 60% { --n: 38; } 100% { --n: 38; } }
+      @keyframes m3b { 0% { transform: scaleX(0); } 60% { transform: scaleX(.73); } 100% { transform: scaleX(.73); } }
+      @keyframes m3p { 0%, 10% { transform: scale(.8); opacity: 0; } 40% { transform: none; opacity: 1; } 100% { transform: none; opacity: 1; } }
+      .demo-3__mt .nm { animation: m3n 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-3__mt .fl { animation: m3b 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-3__mt .pl { animation: m3p 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 4 · de la solución al plan: llega y el plan recibe un aro que se desvanece */
+      @keyframes m4 { 0%, 8% { box-shadow: 0 0 0 4px var(--st-fg); } 55% { box-shadow: 0 0 0 4px transparent; } 100% { box-shadow: 0 0 0 4px transparent; } }
+      .demo-4__mt .tg { animation: m4 3s ease-out infinite; }
+    }
+
+    /* static rendering = 100% state of each keyframe (reduced-motion contract) */
+    .demo-1__mt { width: 260px; }
+    .demo-1__mt .grid { display: grid; }
+    .demo-1__mt .sl { grid-area: 1 / 1; }
+    .demo-1__mt .fm { opacity: 0; transform: translateY(-4px); }
+    .demo-1__mt .fl { display: grid; gap: 6px; }
+    .demo-1__mt .fi { height: 22px; border-radius: 8px; border: 1px solid var(--st-line); }
+    .demo-1__mt .ok { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 600; }
+    .demo-1__mt .ck { width: 24px; height: 24px; border-radius: 50%; background: var(--st-fg); color: var(--st-bg); display: grid; place-items: center; flex-shrink: 0; }
+    .demo-1__mt .ck svg { width: 13px; height: 13px; stroke: currentColor; stroke-width: 3.5; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .demo-2__mt { display: flex; gap: 22px; font-size: 14px; font-weight: 500; }
+    .demo-2__mt .lk { position: relative; padding-bottom: 6px; }
+    .demo-2__mt .u1, .demo-2__mt .u2 { position: absolute; left: 0; right: 0; bottom: 0; height: 2px; background: var(--st-fg); transform-origin: left; }
+    .demo-2__mt .u1 { transform: scaleX(0); }
+    .demo-2__mt .l1 { opacity: .55; }
+    .demo-3__mt { width: 270px; }
+    .demo-3__mt .hd { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 600; }
+    .demo-3__mt .pl { font-size: 11px; font-weight: 600; border-radius: 999px; padding: 2px 8px; background: color-mix(in oklch, var(--st-fg) 12%, transparent); white-space: nowrap; }
+    .demo-3__mt .nm { counter-reset: n var(--n); --n: 38; font-family: var(--display); font-size: 36px; font-weight: 700; letter-spacing: -0.04em; line-height: 1; margin-top: 12px; }
+    .demo-3__mt .nm::before { content: counter(n) " de 52"; }
+    .demo-3__mt .tr { height: 6px; border-radius: 999px; background: var(--st-line); margin: 10px 0 6px; overflow: hidden; }
+    .demo-3__mt .fl { height: 100%; background: var(--st-fg); border-radius: 999px; transform-origin: left; transform: scaleX(.73); }
+    .demo-4__mt { display: flex; align-items: center; gap: 14px; }
+    .demo-4__mt .sv { width: 108px; border: 1px solid var(--st-line); border-radius: 14px; padding: 12px; font-size: 12px; }
+    .demo-4__mt .tg { width: 108px; border: 1px solid var(--st-line); border-radius: 14px; padding: 12px; font-size: 12px; background: var(--st-bg); box-shadow: 0 0 0 4px transparent; }
+    .demo-4__mt .ar { font-size: 18px; color: var(--st-dim); }
+
+    @media (max-width: 860px) {
+      .finding-row { grid-template-columns: 1fr; }
+      .timing-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .lens-table thead { display: none; }
+      .lens-table, .lens-table tbody, .lens-table tr, .lens-table td { display: block; width: 100%; }
+      .lens-table td { border: 1px solid var(--line) !important; border-radius: 0 !important; border-bottom: 0 !important; }
+      .lens-table td:first-child { border-radius: 10px 10px 0 0 !important; } .lens-table td:last-child { border-radius: 0 0 10px 10px !important; border-bottom: 1px solid var(--line) !important; }
+      .ref-lean { grid-template-columns: 1fr; }
+      table.rec thead { display: none; } table.rec, table.rec tbody, table.rec tr, table.rec td { display: block; }
+      table.rec tr { padding: 8px 0; border-bottom: 1px solid var(--line); } table.rec td { border: 0; padding: 2px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <input class="vh" type="radio" name="theme" id="theme-dark" checked>
+  <input class="vh" type="radio" name="theme" id="theme-light">
+  <div class="theme-switch"><div class="seg"><label for="theme-dark">Oscuro</label><label for="theme-light">Claro</label></div></div>
+
+  <header>
+    <div class="eyebrow">Propuestas de movimiento · design-motion-principles</div>
+    <h1 class="title">Empresas: el momento de la conversión es el más brusco, y la cabecera no orienta</h1>
+    <p class="lede">Propuestas para <code>/empresas</code> (<code>empresas/page.tsx</code>, <code>demo-form.tsx</code> y el modo empresa de <code>header.tsx</code>), con la misma metodología que el resto de páginas. Ponderación: Jakub primario, Jhey secundario, Emil selectivo. No se ha tocado código.</p>
+    <div class="meta-row">Next.js 16.4.3 · React 19.3 · solo CSS salvo donde se indica · 28 de octubre de 2026</div>
+    <div class="stats">
+      <a class="stat" href="#rec-crit" data-sev="crit"><b>0</b><span>Críticos</span></a>
+      <a class="stat" href="#rec-imp" data-sev="imp"><b>4</b><span>Importantes</span></a>
+      <a class="stat" href="#rec-opp" data-sev="opp"><b>3</b><span>Oportunidades</span></a>
+      <span class="stat"><b>7</b><span>Propuestas</span></span>
+    </div>
+  </header>
+
+  <section class="block assessment">
+    <div class="mono-label">Valoración general</div>
+    <p>La página hereda el buen sistema de la web (un easing, hovers que animan, FAQ desplegable, fundido de ruta) y no abusa del movimiento. Los fallos están en los dos puntos donde el usuario actúa: el envío del formulario, que reemplaza el contenido de golpe y encoge el bloque 103 px, y la cabecera de empresa, que ofrece anclas pero no dice en cuál estás. Y la tarjeta de la portada, el mejor sitio para una cifra viva, no cuenta nada.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">01 · Resumen por lente</div>
+    <h2 class="sec">Tres lentes, un veredicto cada una</h2>
+    <table class="lens-table">
+      <thead><tr><th>Lente</th><th>Veredicto</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td><b>Jakub Krehel</b><br><span class="chip">Primario</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>Base pulida, pero el envío de la demo y la cabecera de empresa cambian de estado sin transición.</td></tr>
+        <tr><td><b>Jhey Tompkins</b><br><span class="chip">Secundario</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>La tarjeta de campaña no cuenta y las soluciones no se conectan con los planes que les corresponden.</td></tr>
+        <tr><td><b>Emil Kowalski</b><br><span class="chip">Selectivo</span></td><td><span class="verdict strong"><i></i>Sólido</span></td><td>Sin entradas sobre texto. Cuidado: soluciones y planes suman cuatro <code>Reveal</code> iguales, el umbral de uniformidad.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">02 · Dónde caen los tiempos</div>
+    <h2 class="sec">Presupuesto de duración</h2>
+    <div class="timing-grid">
+      <svg viewBox="0 0 660 300" role="img" aria-label="Animaciones de empresas en una escala de 0 a 720 milisegundos">
+        <rect class="z-good" x="40" y="50" width="80.6" height="190"/><rect class="z-good" x="120.6" y="50" width="161.1" height="190"/>
+        <rect class="z-mid" x="281.7" y="50" width="161.1" height="190"/><rect class="z-slow" x="442.8" y="50" width="177.2" height="190"/>
+        <text class="zl" x="44" y="40">Instant.</text><text class="zl" x="124" y="40">Ágil</text><text class="zl" x="285" y="40">Deliberado</text><text class="zl" x="446" y="40">Lento</text>
+        <text class="zl" x="40" y="262">0</text><text class="zl" x="116" y="262">100</text><text class="zl" x="277" y="262">300</text><text class="zl" x="438" y="262">500</text><text class="zl" x="580" y="262">720 ms</text>
+        <circle class="d-none" cx="40" cy="80" r="12"/><text class="dn none" x="40" y="80">7</text>
+        <circle class="d-none" cx="40" cy="116" r="12"/><text class="dn none" x="40" y="116">8</text>
+        <circle class="d-none" cx="40" cy="152" r="12"/><text class="dn none" x="40" y="152">9</text>
+        <circle class="d-good" cx="201" cy="96" r="12"/><text class="dn" x="201" y="96">1</text>
+        <circle class="d-good" cx="217" cy="130" r="12"/><text class="dn" x="217" y="130">2</text>
+        <circle class="d-mid" cx="282" cy="164" r="12"/><text class="dn" x="282" y="164">3</text>
+        <circle class="d-mid" cx="330" cy="198" r="12"/><text class="dn" x="330" y="198">4</text>
+        <circle class="d-slow" cx="427" cy="112" r="12"/><text class="dn" x="427" y="112">5</text>
+        <circle class="d-slow" cx="588" cy="150" r="12"/><text class="dn" x="588" y="150">6</text>
+      </svg>
+      <ol class="key">
+        <li><span>1</span><span>Elevación de tarjeta de plan</span><span>200 ms</span></li>
+        <li><span>2</span><span>Apertura del FAQ</span><span>220 ms</span></li>
+        <li><span>3</span><span>Barra de cabecera → píldora</span><span>300 ms</span></li>
+        <li><span>4</span><span>Fundido de ruta (<code>LateralTransition</code>)</span><span>~360 ms</span></li>
+        <li><span>5</span><span><code>Reveal</code> (con cascada de 60 ms)</span><span>~480 ms</span></li>
+        <li><span>6</span><span>Tarjeta de la portada (<code>anim-rise</code> + 120)</span><span>~680 ms</span></li>
+        <li><span>7</span><span>Envío del formulario</span><span>salta 103 px</span></li>
+        <li><span>8</span><span>Cambio de modo de la cabecera</span><span>sin transición</span></li>
+        <li><span>9</span><span>Sección activa en el menú</span><span>sin indicación</span></li>
+      </ol>
+    </div>
+    <p class="off"><b>Qué desentona:</b> la entrada de la tarjeta de la portada es el movimiento más lento de la página (~680 ms) para algo que no se repite ni comunica. En cambio, el envío de la demo, lo más importante que hace un visitante, no tiene ningún tiempo.</p>
+  </section>
+
+  <!-- ============ JAKUB ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jakub Krehel — Pulido de producción</h3><span class="chip">Primario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Los hovers de plan, botones y filas usan la lista de transición completa y la variante de movimiento reducido. <code>page.tsx:67</code></li>
+        <li>La cabecera deshabilita su propia transición mientras cambia la ruta (<code>settling</code>), para no competir con la transición de vista. <code>header.tsx:35-49</code></li>
+        <li>El FAQ usa el acordeón animado ya existente, y el texto de la portada no se anima al montar.</li>
+        <li>La sección tiene su propio menú y llamada a la acción coherentes entre escritorio y móvil. <code>header.tsx:17-23</code></li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">Al enviar la demo, el formulario desaparece y el bloque se encoge 103 px</h4>
+          <p><span class="label">Qué</span>Medido a 1024 px de ancho: el bloque morado pasa de 352 a 249 px al enviar, porque <code>DemoForm</code> devuelve el aviso en lugar del formulario. El contenido cambia de golpe, la cabecera "Te lo enseñamos con tu caso" se recoloca y el pie de página salta.</p>
+          <p><span class="label">Por qué importa</span>Es el objetivo de la página y ocurre una vez por visita: lo que se ve en ese momento define cómo se siente la marca. Un cambio brusco con salto de layout parece un error.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Apilar formulario y aviso en la misma celda de grid (<code>[grid-area:1/1]</code>) para que el alto lo fije el más alto. El formulario sale con fundido corto (<code>opacity</code> y 4 px, 150 ms, <code>inert</code>) y el aviso entra con rise de 8 px en 220 ms, con un check que aparece con pop de 180 ms (<code>anim-pop</code>). Mover el foco al aviso (<code>tabIndex={-1}</code>). Cuando haya envío real, usar la propiedad <code>loading</code> que ya tiene <code>Button</code> mientras responde.</p></div>
+          <p class="find-loc"><code>demo-form.tsx:11-14</code> · <code>empresas/page.tsx:191-199</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st1" id="st1-a" checked><input class="vh" type="radio" name="st1" id="st1-l"><input class="vh" type="radio" name="st1" id="st1-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Formulario y aviso comparten alto</span><span class="demo__timing">220 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st1-a">Auto</label><label for="st1-l">Claro</label><label for="st1-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-1__mt"><div class="ui-card" style="min-width:0"><div class="grid"><div class="sl fm"><div class="ui-label">Solicitar demo</div><div class="fl"><div class="fi"></div><div class="fi"></div><div class="fi"></div><span class="ui-btn" style="margin-top:4px">Solicitar una demo</span></div></div><div class="sl ok"><span class="ck"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span>Solicitud enviada</span></div></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">La cabecera de empresa enlaza a secciones pero no dice en cuál estás</h4>
+          <p><span class="label">Qué</span>El menú tiene "Soluciones", "Cómo funciona" y "Planes", que son anclas de la propia página, sin estado activo. Además, al pasar entre <code>/empresas</code> y el resto de la web el menú y el logo se sustituyen de golpe mientras la página hace su fundido.</p>
+          <p><span class="label">Por qué importa</span>La página es larga y el menú es su única orientación. Un estado activo es feedback básico, y el cambio de modo debería acompañar a la transición de ruta en lugar de saltar antes.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Detectar la sección visible con <code>IntersectionObserver</code> (marcar el enlace activo con <code>aria-current="location"</code>) y animar un subrayado que aparece con <code>scaleX</code> en 200 ms y el color a <code>text-accent</code>. Para el cambio de modo, un <code>ViewTransition</code> con <code>key</code> por modo (fundido de 150 ms) en el menú y el logo. Sin deslizamientos: son enlaces de la misma jerarquía.</p></div>
+          <p class="find-loc"><code>header.tsx:17-23,59-66</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st2" id="st2-a" checked><input class="vh" type="radio" name="st2" id="st2-l"><input class="vh" type="radio" name="st2" id="st2-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Subrayado de la sección activa</span><span class="demo__timing">200 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st2-a">Auto</label><label for="st2-l">Claro</label><label for="st2-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-2__mt"><span class="lk l1">Soluciones<span class="u1"></span></span><span class="lk l2">Cómo funciona<span class="u2"></span></span><span class="lk l1">Planes</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>Barra de "Solicitar una demo" en móvil.</b> La misma pieza que se aplicó en Autónomos (<code>BarraContratar</code>), parametrizada con texto y destino: entra cuando los botones de la portada salen de pantalla y se oculta al llegar a <code>#demo</code>. En escritorio la cabecera ya lleva el botón. <code>header.tsx:86-88</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jakub:</b> el pulido está en los detalles de hover y en el sistema; faltan los dos cambios de estado que más se notan. Son arreglos acotados y con efecto directo sobre la conversión.</p>
+  </section>
+
+  <!-- ============ JHEY ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jhey Tompkins — Experimentación y deleite</h3><span class="chip">Secundario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>La tarjeta de campaña con "38 de 52" es un buen elemento: explica el servicio de un vistazo y la etiqueta "Ejemplo ilustrativo" evita confusiones. <code>page.tsx:106-122</code></li>
+        <li>La solución "Un beneficio para tu equipo" tiene su propio campo de color lila, que la distingue sin movimiento. <code>page.tsx:130</code></li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jhey</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">La tarjeta de campaña entra en ~680 ms y no cuenta nada</h4>
+          <p><span class="label">Qué</span>La tarjeta entra con <code>anim-rise</code> (560 ms más 120 ms de retraso) y luego "38 de 52" queda fijo. Es el movimiento más lento de la página y no aporta información.</p>
+          <p><span class="label">Por qué importa</span>La cifra es el servicio: una campaña que avanza. Verla llenarse, como una barra, comunica progreso y es un momento que se ve una vez por visita. El rise largo, en cambio, retrasa el elemento más visual de la primera pantalla.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Sustituir el <code>anim-rise</code> por la misma receta de la tarjeta de Autónomos: <code>38</code> cuenta de 0 en ~600 ms (con 300 ms de espera y <code>anim-late</code> para que no se vea el valor final antes), una barra bajo la cifra que se llena hasta el 73 % (<code>scaleX</code>), la etiqueta "Tu equipo" con pop y las filas en cascada de 60 ms. El valor final está en el HTML y se muestra con movimiento reducido. Las cifras son de ejemplo y la etiqueta debe seguir.</p></div>
+          <p class="find-loc"><code>empresas/page.tsx:106-122</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st3" id="st3-a" checked><input class="vh" type="radio" name="st3" id="st3-l"><input class="vh" type="radio" name="st3" id="st3-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Cifra que cuenta y barra que se llena</span><span class="demo__timing">600 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st3-a">Auto</label><label for="st3-l">Claro</label><label for="st3-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-3__mt"><div class="ui-card" style="min-width:0"><div class="hd"><span>Campaña de la renta</span><span class="pl">Tu equipo</span></div><div class="nm"></div><div class="tr"><div class="fl"></div></div><div class="ui-dim">personas ya han presentado su renta</div></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jhey</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">Las dos soluciones y los dos planes no se conectan</h4>
+          <p><span class="label">Qué</span>"Un beneficio para tu equipo" y "Un servicio para tus clientes" corresponden a los planes "Equipo" y "Clientes", dos secciones más abajo. Hoy no hay ninguna relación visible: el visitante tiene que deducirla.</p>
+          <p><span class="label">Por qué importa</span>Es el paso de "me interesa" a "qué cuesta". Una conexión directa acorta ese camino y reduce la duda, igual que se hizo entre el plan y la tabla en Autónomos.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Un enlace "Ver el plan Equipo" / "Ver el plan Clientes" dentro de cada solución, que apunta a <code>#plan-equipo</code> y <code>#plan-clientes</code>. Al llegar, la tarjeta del plan recibe un aro que se desvanece en ~1,2 s con la clase <code>anim-target</code> ya existente (<code>:target</code>, una sola vez, sin JS). Sin movimiento reducido: sin aro.</p></div>
+          <p class="find-loc"><code>empresas/page.tsx:128-139,171-183</code> · <code>globals.css</code> (<code>.anim-target</code>)</p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st4" id="st4-a" checked><input class="vh" type="radio" name="st4" id="st4-l"><input class="vh" type="radio" name="st4" id="st4-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Aro que se desvanece al llegar al plan</span><span class="demo__timing">1,2 s · ease-out · una vez</span></div><div class="demo__controls"><div class="seg"><label for="st4-a">Auto</label><label for="st4-l">Claro</label><label for="st4-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-4__mt"><div class="sv"><div class="ui-label">Solución</div><b>Para tu equipo</b><div class="ui-dim" style="margin-top:4px">Ver el plan →</div></div><span class="ar">→</span><div class="tg"><div class="ui-label">Plan</div><b>Equipo</b><div class="ui-dim" style="margin-top:4px">A presupuestar</div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>Pasos "Así de simple" con barra y encendido por orden.</b> La receta ya aplicada en Autónomos: una barra superior que se dibuja en cascada de 100 ms y el número que pasa de lila a morado, con <code>Reveal</code> y las clases de grupo existentes, una sola vez. <code>empresas/page.tsx:155-166</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jhey:</b> aquí el deleite cabe en dos sitios: la cifra de la campaña y el viaje de la solución al plan. Más que eso, en una página B2B, sería ruido.</p>
+  </section>
+
+  <!-- ============ EMIL ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Emil Kowalski — Restraint y velocidad</h3><span class="chip">Selectivo</span></div>
+    <p class="lens-sec__verdict"><span class="verdict strong"><i></i>Sólido</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Sin entradas ni cascadas sobre texto, listas o el FAQ.</li>
+        <li>"Lo que reciben" (4 tarjetas) no tiene hover: no son clicables y no se les promete acción.</li>
+        <li>Feedback de hover en 150 a 200 ms con variante de movimiento reducido.</li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+      <p class="lens-empty">Sin problemas en este nivel de gravedad.</p>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>Cuatro <code>Reveal</code> iguales.</b> Soluciones (2) y planes (2) usan el mismo patrón, el umbral de uniformidad del skill. Dejar <code>Reveal</code> en las soluciones, que son lo primero tras la portada, y en el bloque final de la demo; quitarlo de los planes, que ya tienen elevación al pasar el ratón y ahora la conexión desde las soluciones. Tope de tres usos por página. <code>empresas/page.tsx:129,173</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Emil:</b> añadir solo feedback y cifras con sentido. El formulario y la cabecera deben responder rápido (150 a 220 ms) y no hacer nada más.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">06 · Recomendaciones combinadas</div>
+    <h2 class="sec">Qué proponer, en orden</h2>
+
+    <div class="tier-label crit" id="rec-crit">Críticos · hay que arreglarlos <em>0</em></div>
+    <table class="rec"><tbody><tr><td class="lens-empty">Ninguno.</td></tr></tbody></table>
+
+    <div class="tier-label imp" id="rec-imp">Importantes · conviene arreglarlos <em>4</em></div>
+    <table class="rec"><thead><tr><th>Propuesta</th><th>Dónde</th><th>Movimiento</th></tr></thead><tbody>
+      <tr><td>Envío de la demo sin salto de layout</td><td><code>demo-form.tsx</code></td><td>Formulario y aviso apilados; salida 150 ms, entrada 220 ms, check con pop, foco al aviso</td></tr>
+      <tr><td>Cabecera de empresa orienta y cambia de modo con suavidad</td><td><code>header.tsx</code></td><td>Sección activa con subrayado 200 ms; <code>ViewTransition</code> por modo</td></tr>
+      <tr><td>Tarjeta de campaña que cuenta</td><td><code>empresas/page.tsx</code> (portada)</td><td>Conteo 600 ms, barra al 73 %, sustituye al <code>anim-rise</code> de 680 ms</td></tr>
+      <tr><td>Solución enlaza al plan que le corresponde</td><td><code>empresas/page.tsx</code></td><td>Enlace a <code>#plan-*</code> con aro <code>anim-target</code> de 1,2 s</td></tr>
+    </tbody></table>
+
+    <div class="tier-label opp" id="rec-opp">Oportunidades · se pueden mejorar <em>3</em></div>
+    <table class="rec"><thead><tr><th>Mejora</th><th>Dónde</th><th>Impacto</th></tr></thead><tbody>
+      <tr><td>Barra "Solicitar una demo" en móvil</td><td>página</td><td>Medio, reutiliza <code>BarraContratar</code></td></tr>
+      <tr><td>Pasos con barra y encendido por orden</td><td><code>empresas/page.tsx:155</code></td><td>Medio, consistente con Autónomos</td></tr>
+      <tr><td>Tope de tres <code>Reveal</code> por página</td><td><code>empresas/page.tsx:129,173</code></td><td>Bajo, evita la uniformidad</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">07 · Resumen de lentes</div>
+    <div class="ref-summary">
+      <b>Lente más usada: Jakub Krehel, con Jhey para la cifra y la conexión de planes.</b> Es una página de conversión: la prioridad es que el envío y la orientación funcionen sin brusquedades.
+      <div class="ref-lean">
+        <div><b>Seguir más a Emil</b>Hacer solo el formulario y la sección activa; dejar la tarjeta sin conteo.</div>
+        <div><b>Seguir más a Jakub</b>Empezar por el envío de la demo, que es lo único medido como defecto.</div>
+        <div><b>Seguir más a Jhey</b>Añadir la barra de progreso del 73 % y el aro de la solución al plan.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>web · /empresas · 0 críticos · 4 importantes · 3 oportunidades · propuestas sin aplicar · 2026-10-28</footer>
+</div>
+</body>
+</html>

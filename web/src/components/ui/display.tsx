@@ -1,6 +1,5 @@
-"use client";
 import { Plus } from "lucide-react";
-import { useId, useRef, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import type { CaseStatus } from "@/lib/data/types";
 import { formatEuros } from "@/lib/format";
 import { buttonClass } from "./button";
@@ -41,7 +40,7 @@ export const StatusBadge = ({ status }: { status: CaseStatus }) => <Tag tone={st
 export function Notice({ children, tone = "accent", title }: { children: ReactNode; tone?: Tone; title?: string }) {
   const role = tone === "danger" ? "alert" : "status";
   return (
-    <div role={role} className={`rounded-md px-4 py-3 text-sm ${tones[tone]}`}>
+    <div role={role} className={`anim-swap rounded-md px-4 py-3 text-sm ${tones[tone]}`}>
       {title && <p className="font-semibold">{title}</p>}
       <div>{children}</div>
     </div>
@@ -49,7 +48,7 @@ export function Notice({ children, tone = "accent", title }: { children: ReactNo
 }
 
 export function Skeleton({ className = "" }: { className?: string }) {
-  return <div aria-hidden className={`animate-pulse rounded-md bg-border ${className}`} />;
+  return <div aria-hidden className={`motion-safe:animate-pulse rounded-md bg-border ${className}`} />;
 }
 
 export function EmptyState({ title, text, action }: { title: string; text: string; action?: ReactNode }) {
@@ -96,7 +95,7 @@ export function Stepper({ steps, current }: { steps: string[]; current: number }
           const cur = i === current;
           return (
             <li key={s} aria-current={cur ? "step" : undefined} className={`flex items-center gap-2 text-sm ${cur ? "font-semibold text-text" : "text-text-muted"}`}>
-              <span className={`grid size-7 place-items-center rounded-full border-2 text-xs font-semibold ${done ? "border-success bg-success text-on-accent" : cur ? "border-accent text-accent" : "border-border-input"}`}>
+              <span className={`grid size-7 place-items-center rounded-full border-2 text-xs font-semibold transition-colors duration-200 ${done ? "border-success bg-success text-on-accent" : cur ? "border-accent text-accent" : "border-border-input"}`}>
                 {done ? <>✓<span className="sr-only"> completado</span></> : i + 1}
               </span>
               {s}
@@ -132,51 +131,14 @@ export function Accordion({ items }: { items: { q: string; a: ReactNode }[] }) {
   return (
     <div className="divide-y divide-border rounded-lg border border-border">
       {items.map((it) => (
-        <details key={it.q} className="group p-4">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 font-semibold">
+        <details key={it.q} className="group">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 p-4 font-semibold">
             {it.q}
             <Plus aria-hidden className="size-4 shrink-0 text-accent transition-transform duration-200 group-open:rotate-45 motion-reduce:transition-none" />
           </summary>
-          <div className="mt-2 text-text-muted">{it.a}</div>
+          <div className="px-4 pb-4 text-text-muted">{it.a}</div>
         </details>
       ))}
-    </div>
-  );
-}
-
-export function FileDrop({
-  onFile, busy, error, accept = ".pdf,.jpg,.jpeg,.png", maxMb = 20, label = "Sube tu documento",
-}: { onFile: (f: File) => void; busy?: boolean; error?: string; accept?: string; maxMb?: number; label?: string }) {
-  const ref = useRef<HTMLInputElement>(null);
-  const inputId = useId();
-  const [drag, setDrag] = useState(false);
-  const [localError, setLocalError] = useState("");
-  const pick = (f?: File) => {
-    if (!f) return;
-    const okType = /\.(pdf|jpe?g|png)$/i.test(f.name);
-    if (!okType) return setLocalError("Formato no admitido. Usa PDF, JPG o PNG.");
-    if (f.size > maxMb * 1024 * 1024) return setLocalError(`El archivo supera los ${maxMb} MB.`);
-    setLocalError("");
-    onFile(f);
-  };
-  const msg = error || localError;
-  return (
-    <div>
-      <div
-        onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
-        onDragLeave={() => setDrag(false)}
-        onDrop={(e) => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files[0]); }}
-        className={`rounded-lg border-2 border-dashed p-8 text-center ${drag ? "border-accent bg-accent-soft" : "border-border-input bg-surface"}`}
-      >
-        <p className="font-semibold">{label}</p>
-        <p className="text-sm text-text-muted">Arrastra el archivo aquí o elígelo. PDF, JPG o PNG, hasta {maxMb} MB.</p>
-        <input ref={ref} type="file" accept={accept} className="sr-only" id={inputId} onChange={(e) => pick(e.target.files?.[0])} />
-        <label htmlFor={inputId} className={`${buttonClass("secondary", "md", "mt-3 cursor-pointer")} ${busy ? "pointer-events-none opacity-50" : ""}`}>
-          {busy ? "Subiendo…" : "Elegir archivo"}
-        </label>
-        {busy && <div role="progressbar" aria-label="Subiendo archivo" className="mx-auto mt-3 h-1.5 w-48 overflow-hidden rounded-pill bg-border"><div className="h-full w-1/2 animate-pulse bg-accent" /></div>}
-      </div>
-      {msg && <p role="alert" className="mt-2 text-sm text-danger">{msg}</p>}
     </div>
   );
 }

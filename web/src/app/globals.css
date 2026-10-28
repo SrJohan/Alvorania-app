@@ -81,11 +81,47 @@ html { scroll-behavior: smooth; }
 body { background: var(--color-bg); color: var(--color-text); font-family: var(--font-sans); }
 h1, h2, .font-display { font-family: var(--font-display); letter-spacing: -0.035em; }
 :focus-visible { outline: 2px solid var(--color-focus-ring); outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+
+/* Los <details> se abren con transición; donde no hay soporte de ::details-content se abren de golpe, como antes. */
+:root { interpolate-size: allow-keywords; }
+details::details-content { block-size: 0; overflow: clip; opacity: 0; transition: block-size 220ms cubic-bezier(.2,.8,.2,1), opacity 220ms cubic-bezier(.2,.8,.2,1), content-visibility 220ms allow-discrete; }
+details[open]::details-content { block-size: auto; opacity: 1; }
 
 @keyframes rise { from { opacity: 0; transform: translateY(var(--rise, 16px)); } to { opacity: 1; transform: none; } }
 .anim-rise { animation: rise 560ms cubic-bezier(.2,.8,.2,1) backwards; animation-delay: var(--d, 0ms); }
-.anim-swap { --rise: 12px; animation: rise 380ms cubic-bezier(.2,.8,.2,1) backwards; animation-delay: var(--d, 0ms); }
-[data-reveal] { transition: opacity 640ms cubic-bezier(.2,.8,.2,1), transform 640ms cubic-bezier(.2,.8,.2,1); transition-delay: var(--d, 0ms); }
-[data-reveal="hidden"] { opacity: 0; transform: translateY(22px); }
-@media (prefers-reduced-motion: reduce) { .anim-rise, .anim-swap { animation: none; } [data-reveal] { transition: none; } [data-reveal="hidden"] { opacity: 1; transform: none; } }
+.anim-swap { --rise: 12px; animation: rise 220ms cubic-bezier(.2,.8,.2,1) backwards; animation-delay: var(--d, 0ms); }
+@keyframes indeterminate { from { transform: translateX(-100%); } to { transform: translateX(250%); } }
+.anim-indeterminate { animation: indeterminate 1.2s cubic-bezier(.4,0,.2,1) infinite; }
+@keyframes pop { from { opacity: 0; transform: scale(.8); } to { opacity: 1; transform: none; } }
+.anim-pop { animation: pop 180ms cubic-bezier(.2,.8,.2,1) backwards; }
+@keyframes fill { from { transform: scaleX(0); } to { transform: scaleX(var(--to, 1)); } }
+.anim-fill { animation: fill 600ms cubic-bezier(.2,.8,.2,1) 300ms both; transform: scaleX(var(--to, 1)); }
+@keyframes late { 0%, 66% { opacity: 0; } 100% { opacity: 1; } }
+.anim-late { animation: late 450ms linear both; }
+@keyframes target-ring { from { box-shadow: 0 0 0 4px var(--color-accent); } to { box-shadow: 0 0 0 4px transparent; } }
+.anim-target:target { animation: target-ring 1.2s ease-out; }
+[data-reveal] { transition: opacity 420ms cubic-bezier(.2,.8,.2,1), transform 420ms cubic-bezier(.2,.8,.2,1); transition-delay: var(--d, 0ms); }
+[data-reveal="hidden"] { opacity: 0; transform: translateY(14px); }
+@media (prefers-reduced-motion: reduce) { .anim-rise, .anim-swap, .anim-pop, .anim-late, .anim-fill, .anim-indeterminate, .anim-target:target { animation: none; } [data-reveal] { transition: none; } [data-reveal="hidden"] { opacity: 1; transform: none; } }
+
+/* View transitions: deslizamiento al entrar/salir de un detalle y morph del título compartido. */
+@keyframes vt-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes vt-slide { from { translate: var(--slide-offset); } to { translate: 0; } }
+::view-transition-old(.nav-forward) { --slide-offset: -40px; animation: 150ms ease-in both vt-fade reverse, 400ms ease-in-out both vt-slide reverse; }
+::view-transition-new(.nav-forward) { --slide-offset: 40px; animation: 210ms ease-out 150ms both vt-fade, 400ms ease-in-out both vt-slide; }
+::view-transition-old(.nav-back) { --slide-offset: 40px; animation: 150ms ease-in both vt-fade reverse, 400ms ease-in-out both vt-slide reverse; }
+::view-transition-new(.nav-back) { --slide-offset: -40px; animation: 210ms ease-out 150ms both vt-fade, 400ms ease-in-out both vt-slide; }
+@keyframes vt-rise { from { translate: 0 10px; } to { translate: 0 0; } }
+::view-transition-old(.fade-out) { animation: 120ms ease-in both vt-fade reverse; }
+::view-transition-new(.fade-in) { animation: 200ms ease-out 90ms both vt-fade, 260ms ease-out 90ms both vt-rise; }
+::view-transition-group(.text-morph) { animation-duration: 400ms; }
+::view-transition-old(.text-morph) { display: none; }
+::view-transition-new(.text-morph) { animation: none; object-fit: none; object-position: left top; }
+@media (prefers-reduced-motion: reduce) { ::view-transition-old(*), ::view-transition-new(*), ::view-transition-group(*) { animation-duration: 0s !important; animation-delay: 0s !important; } }
+
+/* Indicador compartido del selector de caso. */
+::view-transition-group(.case-indicator) { animation-duration: 300ms; animation-timing-function: cubic-bezier(.2,.8,.2,1); }
+::view-transition-old(.case-indicator), ::view-transition-new(.case-indicator) { animation: none; height: 100%; }
+:root:active-view-transition-type(case-select)::view-transition-old(root) { display: none; }
+:root:active-view-transition-type(case-select)::view-transition-new(root) { animation: none; }

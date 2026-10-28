@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>web motion audit — 2026-10-28</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        oklch(0.155 0.006 255);
+      --surface:    oklch(0.195 0.007 255);
+      --surface-2:  oklch(0.235 0.008 255);
+      --paper:      oklch(0.945 0.004 255);
+      --paper-dim:  oklch(0.800 0.006 255);
+      --muted:      oklch(0.680 0.008 255);
+      --faint:      oklch(0.505 0.008 255);
+      --line:       oklch(0.95 0.01 255 / 0.09);
+      --line-strong:oklch(0.95 0.01 255 / 0.16);
+      --accent:     var(--paper);
+      --accent-soft:var(--paper-dim);
+      --accent-tint:color-mix(in oklch, var(--paper) 8%, transparent);
+      --crit: oklch(0.655 0.185 25);
+      --imp:  oklch(0.805 0.125 78);
+      --opp:  oklch(0.745 0.135 152);
+      --t-good: oklch(0.745 0.135 152);
+      --t-mid:  oklch(0.805 0.125 78);
+      --t-slow: oklch(0.655 0.185 25);
+      --dot-ink: oklch(0.15 0.01 255);
+      --display: "Familjen Grotesk", "Hanken Grotesk", system-ui, sans-serif;
+      --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    :root:has(#theme-light:checked) {
+      --ink:        oklch(0.985 0.003 255);
+      --surface:    oklch(0.965 0.004 255);
+      --surface-2:  oklch(0.940 0.005 255);
+      --paper:      oklch(0.180 0.006 255);
+      --paper-dim:  oklch(0.330 0.008 255);
+      --muted:      oklch(0.475 0.010 255);
+      --faint:      oklch(0.640 0.009 255);
+      --line:       oklch(0.180 0.010 255 / 0.12);
+      --line-strong:oklch(0.180 0.010 255 / 0.22);
+      --crit: oklch(0.52 0.185 25);
+      --imp:  oklch(0.58 0.125 70);
+      --opp:  oklch(0.50 0.135 152);
+      --t-good: oklch(0.50 0.135 152);
+      --t-mid:  oklch(0.58 0.125 70);
+      --t-slow: oklch(0.52 0.185 25);
+      --dot-ink: oklch(0.985 0.003 255);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark light; }
+    body { background: var(--ink); color: var(--paper); font-family: var(--sans); margin: 0; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; position: relative; }
+    code { font-family: var(--mono); font-size: 0.86em; background: var(--accent-tint); padding: 1px 5px; border-radius: 4px; }
+    a { color: inherit; }
+    .mono-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* theme switch */
+    .theme-switch { display: flex; justify-content: flex-end; }
+    .theme-switch .seg label { padding: 5px 12px; }
+    #theme-dark:checked ~ .theme-switch label[for="theme-dark"],
+    #theme-light:checked ~ .theme-switch label[for="theme-light"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+
+    /* header */
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 24px; }
+    h1.title { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 48px); line-height: 1.08; letter-spacing: -0.02em; margin: 10px 0 12px; }
+    .lede { max-width: 680px; color: var(--paper-dim); margin: 0 0 14px; }
+    .meta-row { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .stat { display: flex; align-items: baseline; gap: 8px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 14px; text-decoration: none; transition: border-color .2s ease; }
+    .stat:hover { border-color: var(--paper-dim); }
+    .stat b { font-family: var(--display); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .stat span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .stat[data-sev="crit"] b { color: var(--crit); } .stat[data-sev="imp"] b { color: var(--imp); } .stat[data-sev="opp"] b { color: var(--opp); }
+
+    section.block { margin-top: 64px; }
+    h2.sec { font-family: var(--display); font-size: 22px; font-weight: 600; margin: 8px 0 18px; letter-spacing: -0.01em; }
+    .assessment p { font-family: var(--display); font-size: clamp(19px, 2.4vw, 24px); line-height: 1.4; max-width: 860px; margin: 8px 0 0; font-weight: 500; }
+
+    /* lens table */
+    .lens-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .lens-table th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: left; font-weight: 500; padding: 0 14px; }
+    .lens-table td { background: var(--surface); padding: 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: top; transition: border-color .2s ease; }
+    .lens-table td:first-child { border-left: 1px solid var(--line); border-radius: 10px 0 0 10px; }
+    .lens-table td:last-child { border-right: 1px solid var(--line); border-radius: 0 10px 10px 0; }
+    .chip { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--line-strong); border-radius: 100px; padding: 2px 8px; color: var(--muted); white-space: nowrap; }
+    .verdict { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; }
+    .verdict i { width: 9px; height: 9px; border-radius: 50%; background: var(--imp); }
+    .verdict.strong i { background: var(--opp); } .verdict.concern i { background: var(--crit); }
+
+    /* timing diagram */
+    .timing-grid { display: grid; grid-template-columns: 1fr 260px; gap: 28px; align-items: start; }
+    .timing-grid svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+    .z-good { fill: color-mix(in oklch, var(--t-good) 14%, transparent); } .z-mid { fill: color-mix(in oklch, var(--t-mid) 14%, transparent); } .z-slow { fill: color-mix(in oklch, var(--t-slow) 14%, transparent); }
+    .d-good { fill: var(--t-good); } .d-mid { fill: var(--t-mid); } .d-slow { fill: var(--t-slow); }
+    .d-none { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .dn { font-family: var(--mono); font-size: 11px; font-weight: 600; fill: var(--dot-ink); text-anchor: middle; dominant-baseline: central; }
+    .dn.none { fill: var(--muted); }
+    .zl { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--muted); }
+    .key { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+    .key li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+    .key li span:last-child { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .key li span:first-child { font-family: var(--mono); font-weight: 600; }
+    .off { margin-top: 18px; color: var(--paper-dim); font-size: 14.5px; max-width: 820px; }
+
+    /* lens sections */
+    .lens-sec { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line-strong); }
+    .lens-sec__head { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .lens-sec__head h3 { font-family: var(--display); font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+    .lens-sec__verdict { margin: 8px 0 0; }
+    .lens-block { margin-top: 26px; }
+    .lens-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+    .lens-list li { position: relative; padding-left: 26px; font-size: 14.5px; color: var(--paper-dim); }
+    .lens-list li::before { position: absolute; left: 0; top: 0; font-family: var(--mono); }
+    .lens-list.good li::before { content: "✓"; color: var(--opp); }
+    .lens-list.opp li::before { content: "◆"; color: var(--opp); font-size: 11px; top: 3px; }
+    .lens-empty { color: var(--faint); font-style: italic; margin: 10px 0 0; }
+    .lens-take { margin-top: 26px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; color: var(--paper-dim); font-size: 14.5px; }
+    .lens-take b { color: var(--paper); }
+
+    .finding-row { display: grid; grid-template-columns: 1fr 380px; gap: 28px; margin-top: 16px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color .2s ease; }
+    .finding-row:hover { border-color: var(--line-strong); }
+    .find-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .sev { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; border-radius: 100px; padding: 2px 9px; border: 1px solid currentColor; }
+    .finding-row[data-sev="crit"] .sev { color: var(--crit); } .finding-row[data-sev="imp"] .sev { color: var(--imp); }
+    h4.find-title { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 0 10px; line-height: 1.25; }
+    .find-body p { margin: 0 0 10px; font-size: 14.5px; color: var(--paper-dim); }
+    .find-body .label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .fix { background: var(--accent-tint); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .fix p { margin: 0; }
+    .find-loc { font-size: 12.5px; }
+
+    /* recs */
+    .tier-label { display: flex; align-items: center; gap: 12px; margin: 34px 0 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .tier-label::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+    .tier-label.crit { color: var(--crit); } .tier-label.imp { color: var(--imp); } .tier-label.opp { color: var(--opp); }
+    .tier-label em { font-style: normal; color: var(--muted); order: 3; }
+    table.rec { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.rec th { text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 6px 10px; border-bottom: 1px solid var(--line-strong); }
+    table.rec td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--paper-dim); }
+    table.rec td:first-child { color: var(--paper); font-weight: 500; }
+
+    .ref-summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; color: var(--paper-dim); font-size: 14.5px; }
+    .ref-lean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+    .ref-lean div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+    .ref-lean b { display: block; color: var(--paper); margin-bottom: 4px; }
+    footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+    /* ───────────── Demo card (shell) ───────────── */
+    .demo { position: relative; min-width: 0; }
+    .demo__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .demo__meta { min-width: 0; }
+    .demo__title { display: block; font-size: 13.5px; font-weight: 600; color: var(--paper); line-height: 1.3; }
+    .demo__timing { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .demo__controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .demo__loop { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+    .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 100px; overflow: hidden; }
+    .seg label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; cursor: pointer; user-select: none; transition: background 0.15s ease, color 0.15s ease; }
+    .demo input[id$="-a"]:checked ~ .demo__bar .seg label[for$="-a"],
+    .demo input[id$="-l"]:checked ~ .demo__bar .seg label[for$="-l"],
+    .demo input[id$="-d"]:checked ~ .demo__bar .seg label[for$="-d"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+    .demo input:focus-visible ~ .demo__bar .seg { outline: 2px solid var(--paper-dim); outline-offset: 2px; }
+    .demo__stage {
+      --st-bg: var(--surface-2); --st-fg: var(--paper); --st-line: var(--line-strong);
+      --st-dim: color-mix(in oklch, var(--paper) 55%, transparent);
+      background: var(--st-bg); color: var(--st-fg);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 28px 20px; min-height: 190px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .demo input[id$="-l"]:checked ~ .demo__stage { --st-bg: oklch(0.985 0.003 255); --st-fg: oklch(0.180 0.006 255); --st-line: oklch(0.180 0.010 255 / 0.18); --st-dim: oklch(0.180 0.010 255 / 0.45); }
+    .demo input[id$="-d"]:checked ~ .demo__stage { --st-bg: oklch(0.180 0.006 255); --st-fg: oklch(0.985 0.003 255); --st-line: oklch(0.985 0.010 255 / 0.18); --st-dim: oklch(0.985 0.010 255 / 0.50); }
+
+    .ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--st-fg); color: var(--st-bg); font-size: 13px; font-weight: 600; }
+    .ui-card { background: var(--st-bg); border: 1px solid var(--st-line); border-radius: 12px; padding: 14px 16px; min-width: 220px; box-shadow: 0 8px 24px oklch(0 0 0 / 0.12); }
+    .ui-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--st-fg); padding: 6px 0; }
+    .ui-row + .ui-row { border-top: 1px solid var(--st-line); }
+    .ui-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--st-dim); margin-bottom: 4px; }
+    .ui-num { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--st-fg); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; line-height: 1; }
+    .ui-dim { font-size: 12px; color: var(--st-dim); }
+    .ui-ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; }
+    .ui-ico svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .demo__loop { display: none; }
+      [class*="__mt"], [class*="__mt"] * { animation: none !important; transition: none !important; }
+    }
+
+    /* ── per-finding motion (cadence 0 / 60 / 100, 3s loop) ── */
+    @media (prefers-reduced-motion: no-preference) {
+      /* 1 · menú móvil: entra con opacity + translateY + blur */
+      @keyframes m1 { 0% { opacity: 0; transform: translateY(-8px); filter: blur(4px); } 60% { opacity: 1; transform: none; filter: blur(0); } 100% { opacity: 1; transform: none; filter: blur(0); } }
+      .demo-1__mt { animation: m1 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 2 · acordeón: el contenido se revela y el + gira a la vez */
+      @keyframes m2 { 0% { clip-path: inset(0 0 100% 0); opacity: 0; } 60% { clip-path: inset(0); opacity: 1; } 100% { clip-path: inset(0); opacity: 1; } }
+      @keyframes m2i { 0% { transform: rotate(0); } 60% { transform: rotate(45deg); } 100% { transform: rotate(45deg); } }
+      .demo-2__mt .b { animation: m2 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .ic { animation: m2i 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 3 · spinner: un giro mientras hay movimiento; con reduce se queda quieto */
+      @keyframes m3 { 0% { transform: rotate(0); } 60% { transform: rotate(360deg); } 100% { transform: rotate(360deg); } }
+      .demo-3__mt .ui-ring { animation: m3 3s linear infinite; }
+
+      /* 4 · cabecera: solo propiedades concretas, radio constante */
+      @keyframes m4 { 0% { background-color: transparent; box-shadow: 0 0 0 transparent; } 60% { background-color: var(--st-bg); box-shadow: 0 10px 28px oklch(0 0 0 / 0.18); } 100% { background-color: var(--st-bg); box-shadow: 0 10px 28px oklch(0 0 0 / 0.18); } }
+      .demo-4__mt .bar { animation: m4 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 5 · resaltado deslizante: solo transform */
+      @keyframes m5 { 0% { transform: translateX(-104px); } 60% { transform: none; } 100% { transform: none; } }
+      .demo-5__mt .hl { animation: m5 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 6 · aviso: entra con rise corto */
+      @keyframes m6 { 0% { opacity: 0; transform: translateY(-6px); } 60% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+      .demo-6__mt .nt { animation: m6 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 7 · panel de precio: un solo bloque, el precio sube con 60 ms de retraso */
+      @keyframes m7 { 0% { opacity: 0; transform: translateY(8px); } 60% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+      @keyframes m7p { 0%, 8% { opacity: 0; transform: translateY(60%); } 60% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+      .demo-7__mt .pn { animation: m7 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-7__mt .pr { animation: m7p 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 8 · barra indeterminada: desliza por transform */
+      @keyframes m8 { 0% { transform: translateX(-100%); } 60% { transform: translateX(100%); } 100% { transform: translateX(100%); } }
+      .demo-8__mt .fl { animation: m8 3s cubic-bezier(.4,0,.2,1) infinite; }
+    }
+
+    /* static rendering = 100% state of each keyframe (reduced-motion contract) */
+    .demo-2__mt .ic { transform: rotate(45deg); }
+    .demo-4__mt .bar { background-color: var(--st-bg); box-shadow: 0 10px 28px oklch(0 0 0 / 0.18); border-radius: 999px; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; gap: 26px; border: 1px solid var(--st-line); }
+    .demo-5__mt { position: relative; display: flex; gap: 8px; }
+    .demo-5__mt .cd { width: 96px; height: 64px; border-radius: 14px; border: 1px solid var(--st-line); display: flex; align-items: center; justify-content: center; font-size: 12px; position: relative; z-index: 1; }
+    .demo-5__mt .hl { position: absolute; top: 0; left: 104px; width: 96px; height: 64px; border-radius: 14px; background: color-mix(in oklch, var(--st-fg) 14%, transparent); }
+    .demo-6__mt { width: 100%; max-width: 300px; }
+    .demo-6__mt .nt { border-radius: 10px; padding: 10px 14px; font-size: 13px; background: oklch(0.63 0.19 25 / 0.18); color: var(--st-fg); border: 1px solid oklch(0.63 0.19 25 / 0.4); }
+    .demo-7__mt .pr-wrap { overflow: hidden; padding-bottom: 2px; }
+    .demo-8__mt .tr { width: 220px; height: 6px; border-radius: 999px; background: var(--st-line); overflow: hidden; }
+    .demo-8__mt .fl { width: 40%; height: 100%; border-radius: 999px; background: var(--st-fg); transform: translateX(100%); }
+
+    @media (max-width: 860px) {
+      .finding-row { grid-template-columns: 1fr; }
+      .timing-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .lens-table thead { display: none; }
+      .lens-table, .lens-table tbody, .lens-table tr, .lens-table td { display: block; width: 100%; }
+      .lens-table td { border: 1px solid var(--line) !important; border-radius: 0 !important; border-bottom: 0 !important; }
+      .lens-table td:first-child { border-radius: 10px 10px 0 0 !important; } .lens-table td:last-child { border-radius: 0 0 10px 10px !important; border-bottom: 1px solid var(--line) !important; }
+      .ref-lean { grid-template-columns: 1fr; }
+      table.rec thead { display: none; } table.rec, table.rec tbody, table.rec tr, table.rec td { display: block; }
+      table.rec tr { padding: 8px 0; border-bottom: 1px solid var(--line); } table.rec td { border: 0; padding: 2px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <input class="vh" type="radio" name="theme" id="theme-dark" checked>
+  <input class="vh" type="radio" name="theme" id="theme-light">
+  <div class="theme-switch"><div class="seg"><label for="theme-dark">Oscuro</label><label for="theme-light">Claro</label></div></div>
+
+  <header>
+    <div class="eyebrow">Auditoría de movimiento · design-motion-principles</div>
+    <h1 class="title">Gestoría online: el movimiento es sobrio y coherente, pero la home no se mueve y hay huecos en menú, FAQ y estados</h1>
+    <p class="lede">Web de gestoría fiscal (renta, requerimientos, autónomos) con parte de marketing, área de cliente y panel de asesor. Alcance: <code>web/src/components</code> y la home <code>(marketing)/page.tsx</code>, con <code>globals.css</code> y la página de precios solo cuando comparten código.</p>
+    <div class="meta-row">Next.js 16.4.3 · React 19.3 · Tailwind 4 · solo CSS, sin librería de animación · 28 de octubre de 2026</div>
+    <div class="stats">
+      <a class="stat" href="#rec-crit" data-sev="crit"><b>3</b><span>Críticos</span></a>
+      <a class="stat" href="#rec-imp" data-sev="imp"><b>5</b><span>Importantes</span></a>
+      <a class="stat" href="#rec-opp" data-sev="opp"><b>7</b><span>Oportunidades</span></a>
+      <span class="stat"><b>15</b><span>Hallazgos</span></span>
+    </div>
+  </header>
+
+  <section class="block assessment">
+    <div class="mono-label">Valoración general</div>
+    <p>La base está bien hecha: un solo easing de marca, hovers de 150 a 200 ms con variante de movimiento reducido y sin los vicios típicos (ni rebotes, ni desenfoques por todas partes, ni escalados al pasar el ratón). Lo que falla son los cambios de estado que saltan, sobre todo el menú móvil y el desplegable de preguntas frecuentes, un tratamiento incompleto de "reducir movimiento" en animaciones infinitas, y una home que, a diferencia de la página de precios, no tiene ningún momento de movimiento.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">01 · Resumen por lente</div>
+    <h2 class="sec">Tres lentes, un veredicto cada una</h2>
+    <table class="lens-table">
+      <thead><tr><th>Lente</th><th>Veredicto</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td><b>Jakub Krehel</b><br><span class="chip">Primario</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>Hovers y easing pulidos, pero hay entradas y salidas que no existen (menú, FAQ, avisos) y un <code>transition-all</code> en la cabecera.</td></tr>
+        <tr><td><b>Emil Kowalski</b><br><span class="chip">Secundario</span></td><td><span class="verdict strong"><i></i>Sólido</span></td><td>Duraciones casi siempre bajo 300 ms y transiciones interrumpibles. Preocupan el panel de precio (700 ms hasta el botón) y la barra de subida.</td></tr>
+        <tr><td><b>Jhey Tompkins</b><br><span class="chip">Selectivo</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>No hay problemas, pero tampoco momentos de deleite donde caben: el resultado del cálculo y el recorrido de pasos.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">02 · Dónde caen los tiempos</div>
+    <h2 class="sec">Presupuesto de duración</h2>
+    <div class="timing-grid">
+      <svg viewBox="0 0 660 300" role="img" aria-label="Animaciones del proyecto situadas en una escala de 0 a 720 milisegundos">
+        <rect class="z-good" x="40" y="50" width="80.6" height="190"/><rect class="z-good" x="120.6" y="50" width="161.1" height="190"/>
+        <rect class="z-mid" x="281.7" y="50" width="161.1" height="190"/><rect class="z-slow" x="442.8" y="50" width="177.2" height="190"/>
+        <text class="zl" x="44" y="40">Instantáneo</text><text class="zl" x="124" y="40">Ágil</text><text class="zl" x="285" y="40">Deliberado</text><text class="zl" x="446" y="40">Lento</text>
+        <text class="zl" x="40" y="262">0</text><text class="zl" x="118" y="262">100</text><text class="zl" x="279" y="262">300</text><text class="zl" x="440" y="262">500</text><text class="zl" x="600" y="262">720 ms</text>
+        <circle class="d-none" cx="40" cy="80" r="12"/><text class="dn none" x="40" y="80">8</text>
+        <circle class="d-none" cx="40" cy="116" r="12"/><text class="dn none" x="40" y="116">9</text>
+        <circle class="d-good" cx="201" cy="96" r="12"/><text class="dn" x="201" y="96">1</text>
+        <circle class="d-mid" cx="282" cy="132" r="12"/><text class="dn" x="282" y="132">2</text>
+        <circle class="d-mid" cx="346" cy="168" r="12"/><text class="dn" x="346" y="168">4</text>
+        <circle class="d-mid" cx="378" cy="204" r="12"/><text class="dn" x="378" y="204">3</text>
+        <circle class="d-slow" cx="491" cy="110" r="12"/><text class="dn" x="491" y="110">5</text>
+        <circle class="d-slow" cx="556" cy="152" r="12"/><text class="dn" x="556" y="152">6</text>
+        <circle class="d-slow" cx="604" cy="194" r="12"/><text class="dn" x="604" y="194">7</text>
+      </svg>
+      <ol class="key">
+        <li><span>1</span><span>Hover lift y PillCta</span><span>200 ms</span></li>
+        <li><span>2</span><span>Cabecera → píldora</span><span>300 ms</span></li>
+        <li><span>3</span><span>Resaltado de precios</span><span>420 ms</span></li>
+        <li><span>4</span><span>Cambio de detalle (<code>anim-swap</code>)</span><span>380 ms</span></li>
+        <li><span>5</span><span><code>anim-rise</code> (precios)</span><span>560 ms</span></li>
+        <li><span>6</span><span><code>Reveal</code> al hacer scroll</span><span>640 ms</span></li>
+        <li><span>7</span><span>Panel de precio completo</span><span>~700 ms</span></li>
+        <li><span>8</span><span>Menú móvil</span><span>sin transición</span></li>
+        <li><span>9</span><span>Contenido del FAQ</span><span>sin transición</span></li>
+      </ol>
+    </div>
+    <p class="off"><b>Qué desentona:</b> los dos extremos. Lo más usado (menú, FAQ) no tiene tiempo alguno, mientras que el panel de precio tarda ~700 ms en dejar el botón visible porque encadena cinco retrasos de hasta 320 ms. El resto está en rango; Reveal (640 ms) es largo pero aparece una sola vez por bloque, que Jakub tolera.</p>
+  </section>
+
+  <!-- ============ JAKUB ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jakub Krehel — Pulido de producción</h3><span class="chip">Primario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Un único easing de marca (<code>--ease-brand</code>) usado en casi todos los componentes. <code>globals.css:77</code></li>
+        <li>Todos los hovers con transform llevan <code>motion-reduce:transform-none</code> y duran 150 a 200 ms. <code>pill-cta.tsx:17</code>, <code>precios/page.tsx:81</code></li>
+        <li><code>Reveal</code> es mejora progresiva: sin JS o con movimiento reducido no oculta nada, y solo oculta lo que está bajo el pliegue. <code>reveal.tsx:13-16</code></li>
+        <li>El botón <code>PillCta</code> hunde con <code>active:scale-[0.98]</code> y la flecha gira al pasar el ratón. <code>pill-cta.tsx:17-20</code></li>
+        <li>La cabecera se encoge en píldora al hacer scroll, con un detalle visual propio. <code>header.tsx:16</code></li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="crit">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Crítico</span><span class="chip">Jakub</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">El menú móvil aparece y desaparece de golpe</h4>
+          <p><span class="label">Qué</span>El panel se monta con <code>{open && ...}</code>: no tiene entrada ni salida. El icono ☰/✕ también cambia sin transición.</p>
+          <p><span class="label">Por qué importa</span>Es la navegación principal en móvil, la zona más repetida del marketing. Sin salida, el menú "desaparece" y el usuario pierde la referencia.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Mantener el panel montado, posicionado en absoluto bajo la cabecera, y alternar <code>opacity</code>, <code>translateY(-8px)</code> y <code>visibility</code>. Entrada 200 ms con <code>ease-brand</code>; salida más sutil (4 px, 150 ms). Añadir <code>inert</code> cuando está cerrado. Cruzar ☰ y ✕ con rotación y opacidad en 150 ms.</p></div>
+          <p class="find-loc"><code>header.tsx:47-56</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st1" id="st1-a" checked><input class="vh" type="radio" name="st1" id="st1-l"><input class="vh" type="radio" name="st1" id="st1-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Entrada del menú con rise corto</span><span class="demo__timing">200 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st1-a">Auto</label><label for="st1-l">Claro</label><label for="st1-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-1__mt"><div class="ui-card"><div class="ui-label">Menú móvil</div><div class="ui-row"><span>Precios</span></div><div class="ui-row"><span>Trámites</span></div><div class="ui-row"><span>Autónomos</span></div><div class="ui-row"><span class="ui-btn" style="width:100%">Empieza gratis</span></div></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="crit">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Crítico</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">En el FAQ el icono gira pero el contenido salta</h4>
+          <p><span class="label">Qué</span>El <code>+</code> rota a 45° en 200 ms, pero el texto de <code>&lt;details&gt;</code> aparece y desaparece sin transición. El icono promete un movimiento que el contenido no cumple.</p>
+          <p><span class="label">Por qué importa</span>Es la última sección de la home antes del cierre, y el acordeón se usa también en el resto de la web. Es un hueco de movimiento en UI primaria.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Animar <code>::details-content</code> (<code>block-size</code> y <code>opacity</code>, 220 ms, <code>ease-brand</code>) con <code>interpolate-size: allow-keywords</code> en <code>:root</code>. Es CSS reciente: confirma el soporte en tus navegadores objetivo; donde no exista, cae al comportamiento actual sin romper nada.</p></div>
+          <p class="find-loc"><code>display.tsx:131-145</code> · usado en <code>page.tsx:149</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st2" id="st2-a" checked><input class="vh" type="radio" name="st2" id="st2-l"><input class="vh" type="radio" name="st2" id="st2-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Contenido y + sincronizados</span><span class="demo__timing">220 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st2-a">Auto</label><label for="st2-l">Claro</label><label for="st2-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-2__mt"><div class="ui-card" style="width:270px"><div class="ui-row"><b>¿Tengo que pagar para ver mi resultado?</b><span class="ui-ico"><svg class="ic" viewBox="0 0 24 24" style="display:block"><path d="M12 5v14M5 12h14"/></svg></span></div><div class="b ui-dim" style="padding-top:6px">No. El cálculo es gratis y no pide tarjeta.</div></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="crit">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Crítico</span><span class="chip">Jakub</span><span class="chip">Accesibilidad</span></div>
+          <h4 class="find-title">"Reducir movimiento" no detiene las animaciones infinitas</h4>
+          <p><span class="label">Qué</span>La regla pone <code>animation-duration: .01ms</code> pero no <code>animation-iteration-count: 1</code>. Un <code>animate-spin</code> o <code>animate-pulse</code> sigue repitiéndose, ahora a una velocidad que puede parpadear. No lo he probado en un navegador.</p>
+          <p><span class="label">Por qué importa</span>La accesibilidad no es opcional en este skill, y quien activa la preferencia es justo quien más sufre un parpadeo. Afecta al spinner de los botones, a los esqueletos y a la barra de subida.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Añadir <code>animation-iteration-count: 1 !important</code> a la regla de <code>globals.css:84</code>, y cambiar <code>animate-spin</code> y <code>animate-pulse</code> por <code>motion-safe:animate-spin</code> y <code>motion-safe:animate-pulse</code>. Con movimiento reducido el spinner queda como anillo fijo junto al texto de estado.</p></div>
+          <p class="find-loc"><code>globals.css:84</code> · <code>button.tsx:40</code> · <code>display.tsx:52,177</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st3" id="st3-a" checked><input class="vh" type="radio" name="st3" id="st3-l"><input class="vh" type="radio" name="st3" id="st3-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Giro solo con movimiento permitido</span><span class="demo__timing">con reduce: anillo fijo · sin bucle</span></div><div class="demo__controls"><div class="seg"><label for="st3-a">Auto</label><label for="st3-l">Claro</label><label for="st3-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-3__mt"><span class="ui-btn"><span class="ui-ring"></span>Guardando…</span></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">La cabecera usa <code>transition-all</code> y el radio se anima de 0 a 999 px</h4>
+          <p><span class="label">Qué</span><code>transition-all duration-300</code> anima cualquier propiedad que cambie: <code>max-width</code>, el fondo, la sombra, el desenfoque y también <code>border-radius</code> (de cuadrado a píldora, con formas intermedias raras).</p>
+          <p><span class="label">Por qué importa</span>Es pulido de producción: <code>transition-all</code> arrastra propiedades que no querías animar, y el <code>backdrop-blur</code> se repinta a cada fotograma. No lo he medido.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Lista explícita: <code>transition-[background-color,box-shadow,max-width,backdrop-filter]</code> y dejar <code>rounded-pill</code> fijo en ambos estados (con fondo transparente arriba no se ve). Mantener 300 ms con <code>ease-brand</code>.</p></div>
+          <p class="find-loc"><code>header.tsx:32-34</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st4" id="st4-a" checked><input class="vh" type="radio" name="st4" id="st4-l"><input class="vh" type="radio" name="st4" id="st4-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Fondo y sombra, radio constante</span><span class="demo__timing">300 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st4-a">Auto</label><label for="st4-l">Claro</label><label for="st4-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-4__mt"><div class="bar"><b style="font-size:13px">Gestoría</b><span class="ui-dim">Precios · Trámites</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">El resaltado de precios persigue a las tarjetas al redimensionar</h4>
+          <p><span class="label">Qué</span>El resaltado anima <code>transform</code>, <code>width</code> y <code>height</code> en 420 ms. Un <code>ResizeObserver</code> vuelve a medir al cambiar el ancho, así que al girar el móvil o cambiar el tamaño de la ventana la forma "llega tarde" a su sitio.</p>
+          <p><span class="label">Por qué importa</span>Anchura y altura son propiedades de layout. Entre tarjetas de una misma fila no cambian, así que solo animan cuando no deberían.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Dejar solo <code>transition-transform</code> y aplicar width/height sin transición. Bajar a 300 ms (el viaje entre extremos sigue siendo legible).</p></div>
+          <p class="find-loc"><code>price-finder.tsx:105-110</code> · <code>useSelectedBox</code> <code>:67-83</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st5" id="st5-a" checked><input class="vh" type="radio" name="st5" id="st5-l"><input class="vh" type="radio" name="st5" id="st5-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Resaltado deslizante solo por transform</span><span class="demo__timing">300 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st5-a">Auto</label><label for="st5-l">Claro</label><label for="st5-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-5__mt"><span class="hl"></span><span class="cd">Renta</span><span class="cd">Hacienda</span><span class="cd">Países</span></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span></div>
+          <h4 class="find-title">Avisos, errores y estados aparecen sin transición</h4>
+          <p><span class="label">Qué</span><code>Notice</code> de error, los paneles condicionales del asesor (cobro, asignación, revisión), el borde del <code>FileDrop</code> al arrastrar y el círculo del <code>Stepper</code> cambian de golpe. El <code>Button</code> con <code>transition-colors</code> no tiene feedback de pulsación, a diferencia de <code>PillCta</code>.</p>
+          <p><span class="label">Por qué importa</span>Un error que salta puede pasar desapercibido, y el asesor ve paneles que cambian de sitio tras cada acción sin pista de qué ha cambiado.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Reutilizar <code>.anim-swap</code> (ya existe en <code>globals.css:88</code>) en los <code>Notice</code> y paneles condicionales, bajándolo a ~220 ms. Añadir <code>transition-colors duration-150</code> a <code>FileDrop</code> y al círculo del <code>Stepper</code>.</p></div>
+          <p class="find-loc"><code>case-detail.tsx:93,95,106,150</code> · <code>display.tsx:41-49,99,169</code> · <code>button.tsx:8</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st6" id="st6-a" checked><input class="vh" type="radio" name="st6" id="st6-l"><input class="vh" type="radio" name="st6" id="st6-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Aviso con entrada corta</span><span class="demo__timing">220 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st6-a">Auto</label><label for="st6-l">Claro</label><label for="st6-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-6__mt"><div class="nt">No se ha podido completar la acción. Inténtalo de nuevo.</div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li>Cruzar el icono ☰/✕ con rotación, escala y opacidad en lugar de cambiar el carácter. <code>header.tsx:47-48</code></li>
+        <li>Añadir <code>transition-colors</code> al enlace "Iniciar sesión", que es el único de la cabecera que salta. <code>header.tsx:41</code></li>
+        <li>Pulsación con <code>active:scale-[0.97]</code> en el <code>Button</code> base. <code>button.tsx:8</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jakub:</b> el sistema de hovers es refinado y consistente; lo que falta son las entradas y salidas que acompañan a un cambio de estado. Con tres arreglos (menú, FAQ, reducir movimiento) la web pasaría de "cuidada" a "sin fisuras".</p>
+  </section>
+
+  <!-- ============ EMIL ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Emil Kowalski — Restraint y velocidad</h3><span class="chip">Secundario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict strong"><i></i>Sólido</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>La selección de precios usa transiciones CSS con estado (<code>has-[:checked]</code>), no keyframes: se puede interrumpir si el usuario cambia de opción a mitad. <code>price-finder.tsx:118</code></li>
+        <li>Sin animaciones en acciones de teclado ni en elementos de alta frecuencia; el radio nativo se navega con flechas sin retraso.</li>
+        <li>No hay <code>scale(0)</code>, ni muelles con rebote, ni <code>hover:scale-*</code> repetido: pasa la puerta anti-slop.</li>
+        <li>Los hovers de tablas y filas son de 150 ms. <code>precios/page.tsx:81,95</code></li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">Elegir una opción tarda ~700 ms en mostrar el botón</h4>
+          <p><span class="label">Qué</span>Al cambiar de opción, cinco elementos suben con retrasos de 70, 110, 190, 260 y 320 ms y 380 ms de duración. El botón no está del todo asentado hasta ~700 ms. Son keyframes: una segunda pulsación los reinicia.</p>
+          <p><span class="label">Por qué importa</span>Comparar opciones se repite varias veces en una visita. Una cascada que dura más que cualquier hover hace que cada clic se sienta lento.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Un solo bloque que entra en ~180 ms. Dejar únicamente el precio con su subida (la parte que sí aporta) con 60 ms de retraso. El resto sin retrasos.</p></div>
+          <p class="find-loc"><code>price-finder.tsx:135-149</code> · <code>globals.css:86-88</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st7" id="st7-a" checked><input class="vh" type="radio" name="st7" id="st7-l"><input class="vh" type="radio" name="st7" id="st7-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Bloque único + precio con 60 ms</span><span class="demo__timing">180 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st7-a">Auto</label><label for="st7-l">Claro</label><label for="st7-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-7__mt"><div class="ui-card pn"><div class="ui-label">Tu renta</div><div class="pr-wrap"><div class="ui-num pr">49 €</div></div><div class="ui-dim" style="margin:4px 0 10px">al año, IVA incluido</div><span class="ui-btn">Calcular mi renta</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">La barra de subida es un <code>animate-pulse</code> fijo al 50 %</h4>
+          <p><span class="label">Qué</span>El <code>progressbar</code> muestra una barra al 50 % que parpadea. No indica avance real y es un indicador pulsante, que este skill marca siempre.</p>
+          <p><span class="label">Por qué importa</span>El pulso transmite "actividad" pero se confunde con un progreso a medias. Si la subida tarda, el usuario ve la misma barra detenida a la mitad.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Barra indeterminada: un segmento del 40 % que desliza por <code>transform: translateX</code> en un contenedor con <code>overflow-hidden</code>. Con movimiento reducido, segmento fijo y el texto "Subiendo…" que ya existe en el botón.</p></div>
+          <p class="find-loc"><code>display.tsx:177</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st8" id="st8-a" checked><input class="vh" type="radio" name="st8" id="st8-l"><input class="vh" type="radio" name="st8" id="st8-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Barra indeterminada por transform</span><span class="demo__timing">cíclica · ease-in-out</span></div><div class="demo__controls"><div class="seg"><label for="st8-a">Auto</label><label for="st8-l">Claro</label><label for="st8-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-8__mt"><div class="tr"><div class="fl"></div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li>Ajustar <code>Reveal</code> a ~420 ms y 14 px de recorrido (hoy 640 ms y 22 px) y usarlo solo en bloques clave. Se usa 7 veces en precios con el mismo patrón, el umbral que el skill marca como uniformidad. <code>globals.css:89-90</code>, <code>precios/page.tsx</code></li>
+        <li>Fuera del alcance pero conectado: los <code>h1</code> y párrafos de precios entran con <code>anim-rise</code> (560 ms más retrasos hasta 250 ms). Es movimiento en texto estático que retrasa la lectura; mejor sin animar. <code>precios/page.tsx:35-37</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Emil:</b> la web respeta la regla de la frecuencia casi siempre. La excepción es el panel de precio, donde la cascada castiga justo la acción que el usuario repite.</p>
+  </section>
+
+  <!-- ============ JHEY ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jhey Tompkins — Experimentación y deleite</h3><span class="chip">Selectivo</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>El icono de la opción elegida gira -6° y crece un 10 %, un gesto pequeño y propio que no se repite en otros sitios. <code>price-finder.tsx:121</code></li>
+        <li>El precio sube desde una máscara con <code>overflow-hidden</code>: es el único "momento" de movimiento con intención. <code>price-finder.tsx:141</code></li>
+        <li>La flecha de <code>PillCta</code> gira -45° al hover, un micro-detalle de marca. <code>pill-cta.tsx:20</code></li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+      <p class="lens-empty">Sin problemas en este nivel de gravedad.</p>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>La home tiene cero movimiento de entrada o scroll.</b> Reutilizar <code>Reveal</code> en dos sitios: los cuatro pasos de "Así de simple" (una cascada de 60 ms entre pasos, una sola vez) y el bloque final "Empieza por tu resultado". Dejar fuera hero, promesas y FAQ para no caer en el patrón de "fade en todo". <code>page.tsx:123-134,152-160</code></li>
+        <li>Las tarjetas de situación: que el icono responda al hover (fondo a <code>bg-accent</code> y texto <code>text-on-accent</code>, 150 ms) además del lift que ya tienen. <code>page.tsx:103-109</code></li>
+        <li>El resultado del cálculo es el momento más valioso y poco frecuente. Contar el importe de 0 al valor en ~600 ms con <code>requestAnimationFrame</code>, con el valor final accesible desde el primer instante y sin conteo con movimiento reducido. <code>display.tsx:75-87</code></li>
+        <li>El <code>Stepper</code> y el <code>Timeline</code>: al completar un paso, el check aparece con escala 0.9 a 1 y la línea entre pasos se llena con <code>scaleX</code>. <code>display.tsx:89-129</code></li>
+        <li>Transiciones entre rutas con View Transitions: <code>viewTransition</code> no está activado en <code>next.config.ts</code>. Para listado a detalle de trámites y pasos del flujo de cliente. Es el trabajo de la skill <code>vercel-react-view-transitions</code>.</li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jhey:</b> la web es correcta pero contenida. Los momentos poco frecuentes (el resultado, completar un paso, la portada) no tienen ninguna recompensa de movimiento. Ahí caben los detalles, y solo ahí.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">06 · Recomendaciones combinadas</div>
+    <h2 class="sec">Qué arreglar, en orden</h2>
+
+    <div class="tier-label crit" id="rec-crit">Críticos · hay que arreglarlos <em>3</em></div>
+    <table class="rec"><thead><tr><th>Problema</th><th>Archivo</th><th>Arreglo</th></tr></thead><tbody>
+      <tr><td>Menú móvil sin entrada ni salida</td><td><code>header.tsx:47-56</code></td><td>Panel siempre montado, opacity + translateY + visibility, 200/150 ms, <code>inert</code></td></tr>
+      <tr><td>FAQ: el contenido salta</td><td><code>display.tsx:131-145</code></td><td><code>::details-content</code> con <code>interpolate-size</code>, 220 ms</td></tr>
+      <tr><td>"Reducir movimiento" no detiene bucles infinitos</td><td><code>globals.css:84</code></td><td><code>animation-iteration-count: 1</code> y <code>motion-safe:</code> en spin y pulse</td></tr>
+    </tbody></table>
+
+    <div class="tier-label imp" id="rec-imp">Importantes · conviene arreglarlos <em>5</em></div>
+    <table class="rec"><thead><tr><th>Problema</th><th>Archivo</th><th>Arreglo</th></tr></thead><tbody>
+      <tr><td><code>transition-all</code> y radio animado en cabecera</td><td><code>header.tsx:32</code></td><td>Lista explícita de propiedades; <code>rounded-pill</code> fijo</td></tr>
+      <tr><td>Resaltado de precios persigue a las tarjetas</td><td><code>price-finder.tsx:105</code></td><td>Solo <code>transition-transform</code>, 300 ms</td></tr>
+      <tr><td>Avisos y estados sin transición</td><td><code>display.tsx</code>, <code>case-detail.tsx</code></td><td>Reutilizar <code>.anim-swap</code> a ~220 ms; <code>transition-colors</code></td></tr>
+      <tr><td>Cascada de ~700 ms en el panel de precio</td><td><code>price-finder.tsx:135-149</code></td><td>Bloque único de ~180 ms; precio con 60 ms</td></tr>
+      <tr><td>Barra de subida pulsante al 50 %</td><td><code>display.tsx:177</code></td><td>Barra indeterminada por <code>translateX</code></td></tr>
+    </tbody></table>
+
+    <div class="tier-label opp" id="rec-opp">Oportunidades · se pueden mejorar <em>7</em></div>
+    <table class="rec"><thead><tr><th>Mejora</th><th>Dónde</th><th>Impacto</th></tr></thead><tbody>
+      <tr><td>Reveals selectivos en la home</td><td><code>page.tsx:123-160</code></td><td>Alto: es la mayor carencia de dinamismo</td></tr>
+      <tr><td>Icono de la tarjeta de situación reacciona al hover</td><td><code>page.tsx:103</code></td><td>Medio</td></tr>
+      <tr><td>Conteo del importe en <code>ResultCard</code></td><td><code>display.tsx:75</code></td><td>Alto: es el momento clave del producto</td></tr>
+      <tr><td>Check y línea de progreso en <code>Stepper</code> / <code>Timeline</code></td><td><code>display.tsx:89-129</code></td><td>Medio</td></tr>
+      <tr><td>Pulsación <code>scale(0.97)</code>, transición en "Iniciar sesión", icono de menú</td><td><code>button.tsx:8</code>, <code>header.tsx:41,48</code></td><td>Bajo, rápido de hacer</td></tr>
+      <tr><td>Afinar <code>Reveal</code>; quitar <code>anim-rise</code> del texto de precios</td><td><code>globals.css:86-90</code></td><td>Medio</td></tr>
+      <tr><td>View Transitions entre rutas</td><td><code>next.config.ts</code></td><td>Alto, pero es trabajo aparte</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">07 · Resumen de lentes</div>
+    <div class="ref-summary">
+      <b>Lente más usada: Jakub Krehel (pulido de producción).</b> La web es de cara al cliente y el pulido define su percepción de calidad; casi todos los hallazgos críticos son entradas y salidas que faltan.
+      <div class="ref-lean">
+        <div><b>Seguir más a Emil</b>Recortar la cascada del panel de precio, quitar <code>anim-rise</code> del texto y no animar el panel del asesor más allá de 150 ms.</div>
+        <div><b>Seguir más a Jakub</b>Cerrar los huecos de menú, FAQ y avisos antes de añadir movimiento nuevo.</div>
+        <div><b>Seguir más a Jhey</b>Subir el contador del resultado y los reveals de la home, pensados como pocos momentos con intención.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>web · 3 críticos · 5 importantes · 7 oportunidades · 2026-10-28</footer>
+</div>
+</body>
+</html>

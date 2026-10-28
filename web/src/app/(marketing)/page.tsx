@@ -1,9 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowRight, BadgeCheck, Briefcase, CalendarClock, Calculator, FileText, Globe, Mail, PiggyBank, RotateCcw, ShieldCheck, UserCheck,
 } from "lucide-react";
 import { Accordion } from "@/components/ui/display";
 import { PillCta } from "@/components/ui/pill-cta";
+import { LateralTransition } from "@/components/site/directional-transition";
+import { ServicesPanel } from "@/components/site/services-panel";
 
 const START = "/acceder?next=/app/conectar";
 
@@ -59,18 +62,35 @@ const inkGlow = {
   backgroundImage: "radial-gradient(at 100% 0%, var(--color-bright) 0, transparent 55%), radial-gradient(at 0% 100%, var(--color-ink-raised) 0, transparent 60%)",
 };
 
-const lift = "transition-[transform,background-color,box-shadow] duration-200 ease-brand hover:-translate-y-0.5 hover:shadow-pop active:translate-y-0 motion-reduce:transform-none";
+// La foto del hero ya trae el lila a la izquierda; aquí solo se disuelve arriba y abajo en el degradado de la página.
+const photoFade = {
+  maskImage: "linear-gradient(to bottom, transparent 0%, #000 14%, #000 62%, transparent 100%)",
+  WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, #000 14%, #000 62%, transparent 100%)",
+};
+
+// En el bloque final la foto entra desde la derecha y se funde con el morado; el tramo cubre el lila claro de la propia foto.
+const inkFade = {
+  maskImage: "linear-gradient(to right, transparent 0%, #000 34%)",
+  WebkitMaskImage: "linear-gradient(to right, transparent 0%, #000 34%)",
+};
+
+const lift = "transition-[transform,translate,scale,rotate,background-color,box-shadow] duration-200 ease-brand hover:-translate-y-0.5 hover:shadow-pop active:translate-y-0 motion-reduce:transform-none";
 
 export default function Home() {
   return (
-    <>
+    <LateralTransition><div>
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px]" style={heroWash} />
-      <section className="mx-auto flex max-w-wide flex-col gap-8 px-4 pt-8 md:pt-12 xl:flex-row xl:items-start xl:justify-between xl:pt-6">
-        <h1 className={`${headline} text-[34px] leading-[1.08] sm:text-[56px] sm:leading-[1.05] lg:text-[72px]`}>
+      {/* Sin `relative` a propósito: en xl la foto se ancla al contenedor de la página y ocupa todo el ancho. */}
+      <section className="mx-auto flex max-w-wide flex-col px-4 pt-8 md:pt-12 xl:min-h-[480px] xl:flex-row xl:items-start xl:justify-between xl:pt-6">
+        <h1 className={`${headline} relative z-10 text-[34px] leading-[1.08] sm:text-[56px] sm:leading-[1.05] lg:text-[72px]`}>
           Tu renta, revisada<br />por un experto.
         </h1>
 
-        <div className="inline-flex flex-col gap-4 self-start rounded-[20px] border border-border bg-surface-raised p-4 shadow-pop xl:mt-4">
+        <div aria-hidden className="relative -mx-4 mt-6 h-[320px] sm:h-[420px] xl:absolute xl:inset-x-0 xl:top-0 xl:mx-0 xl:mt-0 xl:h-[660px]" style={photoFade}>
+          <Image src="/home/revisando-papeles.webp" alt="" fill sizes="100vw" loading="eager" fetchPriority="high" className="object-cover object-[78%_40%]" />
+        </div>
+
+        <div className="relative z-10 -mt-20 inline-flex flex-col gap-4 self-start rounded-[20px] border border-border bg-surface-raised p-4 shadow-pop xl:mt-[330px]">
           <div className="flex items-center gap-3">
             <span aria-hidden className="grid size-11 place-items-center rounded-full bg-accent-soft text-accent"><UserCheck className="size-5" /></span>
             <div>
@@ -82,7 +102,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section aria-labelledby="situacion" className="mx-auto mt-8 max-w-wide px-4">
+      <section aria-labelledby="situacion" className="relative mx-auto mt-8 max-w-wide px-4">
         <div className="rounded-[24px] p-5 sm:p-8" style={fieldStyle}>
           <div className="flex items-center gap-3">
             <div className="flex -space-x-2" aria-hidden>
@@ -120,6 +140,11 @@ export default function Home() {
         <p className="mt-3 text-sm text-text-muted sm:text-right">Cálculo gratis · Revisión por un asesor · Nada se presenta sin tu confirmación</p>
       </section>
 
+      <section aria-labelledby="servicios" className="mx-auto mt-24 max-w-wide px-4">
+        <h2 id="servicios" className={`${headline} mb-8 max-w-2xl text-[34px] leading-[1.1] sm:text-[44px]`}>Elige tu trámite y mira cómo lo llevamos.</h2>
+        <ServicesPanel />
+      </section>
+
       <section aria-labelledby="como" className="mx-auto mt-24 max-w-wide px-4">
         <h2 id="como" className={`${headline} text-[34px] leading-[1.1] sm:text-[44px]`}>Así de simple, de principio a fin.</h2>
         <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
@@ -150,14 +175,19 @@ export default function Home() {
       </section>
 
       <section className="mx-auto mt-24 max-w-wide px-4">
-        <div className="flex flex-col items-start justify-between gap-6 rounded-[24px] bg-ink p-8 text-on-ink md:flex-row md:items-center md:p-12" style={inkGlow}>
-          <div>
-            <h2 className="font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.06em] sm:text-[44px]">Empieza por tu resultado.</h2>
-            <p className="mt-2 text-on-ink-muted">Tarda unos minutos y no necesitas tarjeta.</p>
+        <div className="relative overflow-hidden rounded-[24px] bg-ink text-on-ink md:min-h-[420px]" style={inkGlow}>
+          <div aria-hidden className="relative h-[240px] md:absolute md:inset-y-0 md:right-0 md:h-auto md:w-1/2" style={inkFade}>
+            <Image src="/home/sofa-tablet.webp" alt="" fill sizes="(min-width: 768px) 50vw, 100vw" className="object-cover object-[100%_50%]" />
           </div>
-          <PillCta href={START} tone="light">Calcular gratis</PillCta>
+          <div className="relative flex flex-col items-start gap-6 p-8 md:min-h-[420px] md:max-w-[52%] md:justify-center md:p-12">
+            <div>
+              <h2 className="font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.06em] sm:text-[44px]">Empieza por tu resultado.</h2>
+              <p className="mt-2 text-on-ink-muted">Tarda unos minutos y no necesitas tarjeta.</p>
+            </div>
+            <PillCta href={START} tone="light">Calcular gratis</PillCta>
+          </div>
         </div>
       </section>
-    </>
+    </div></LateralTransition>
   );
 }

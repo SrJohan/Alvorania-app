@@ -19,14 +19,20 @@ export function LogoMark({ className = "size-8", tone = "brand" }: { className?:
   );
 }
 
-/** Logo completo: símbolo y nombre en minúsculas, como en la maqueta. El nombre accesible es "Alvorania". */
-export function Logo({ size = "md", tone = "brand" }: { size?: "sm" | "md"; tone?: "brand" | "light" }) {
+/** Logo completo: símbolo y nombre en minúsculas, como en la maqueta. `empresas` añade "· EMPRESAS" (logo de la sección de empresas). */
+export function Logo({ size = "md", tone = "brand", empresas }: { size?: "sm" | "md"; tone?: "brand" | "light"; empresas?: boolean }) {
   return (
-    <span className="inline-flex items-center gap-2" aria-label="Alvorania" role="img">
+    <span className="inline-flex items-center gap-2" aria-label={empresas ? "Alvorania Empresas" : "Alvorania"} role="img">
       <LogoMark className={size === "sm" ? "size-7" : "size-8"} tone={tone} />
       <span aria-hidden className={`font-extrabold tracking-[-0.07em] ${size === "sm" ? "text-xl" : "text-2xl"} ${tone === "light" ? "text-on-ink" : "text-[#39177d]"}`}>
         alvorania
       </span>
+      {empresas && (
+        <span aria-hidden className="anim-swap inline-flex items-center gap-2">
+          <span className="size-1.5 rounded-full bg-lilac" />
+          <span className={`font-bold uppercase tracking-[0.06em] ${size === "sm" ? "text-xs" : "text-sm"} ${tone === "light" ? "text-on-ink-muted" : "text-text-muted"}`}>Empresas</span>
+        </span>
+      )}
     </span>
   );
 }

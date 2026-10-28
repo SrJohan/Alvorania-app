@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, Notice, Tag } from "@/components/ui/display";
 import { Checkbox } from "@/components/ui/form";
-import { FileDrop } from "@/components/ui/display";
+import { FileDrop } from "@/components/ui/file-drop";
 import { createCase, recordConsent, setDataSource } from "@/lib/data/api";
 import { getState, useDemoState } from "@/lib/data/store";
 
