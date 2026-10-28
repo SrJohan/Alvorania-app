@@ -60,7 +60,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               const active = path === n.href;
               return (
                 <li key={n.href} className="shrink-0">
-                  <Link href={n.href} aria-current={active ? "page" : undefined}
+                  <Link href={n.href} aria-current={active ? "page" : undefined} transitionTypes={[nav.findIndex((m) => m.href === n.href) > nav.findIndex((m) => m.href === path) ? "nav-forward" : "nav-back"]}
                     className={`block whitespace-nowrap rounded-md px-3 py-2.5 text-sm ${active ? "bg-accent-soft font-semibold text-on-accent-soft" : "text-text hover:bg-border"}`}>
                     {n.label}
                   </Link>

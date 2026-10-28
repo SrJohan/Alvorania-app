@@ -40,14 +40,14 @@ export default function Caso() {
 
   const items: TimelineItem[] = [
     { title: "Datos y cuestionario", state: calc ? "done" : "current", detail: calc ? undefined : "Termina el cuestionario para ver tu resultado.",
-      action: !calc && <LinkButton href="/app/cuestionario" size="sm">Continuar</LinkButton> },
+      action: !calc && <LinkButton href="/app/cuestionario" transitionTypes={["nav-forward"]} size="sm">Continuar</LinkButton> },
     { title: "Resultado calculado", state: calc ? "done" : "pending", detail: calc ? `${calc.resultCents < 0 ? "A devolver" : "A pagar"} ${formatEuros(Math.abs(calc.resultCents))}` : undefined },
     { title: "Plan contratado", state: r ? "done" : calc ? "current" : "pending", detail: plan ? `Plan ${plan.name}` : undefined,
-      action: calc && !r && <LinkButton href="/app/plan" size="sm">Elegir plan</LinkButton> },
+      action: calc && !r && <LinkButton href="/app/plan" transitionTypes={["nav-forward"]} size="sm">Elegir plan</LinkButton> },
     { title: "Revisión del asesor", state: r?.advisorApprovedAt ? "done" : r ? "current" : "pending", detail: r?.advisorApprovedAt ? `Aprobada el ${formatDateTime(r.advisorApprovedAt)}` : r?.status === "cambios_pedidos" ? "Tu asesor te ha pedido cambios." : r ? `${r.advisorName} está revisando tu declaración.` : undefined },
     { title: "Tu aprobación", state: r?.userApprovedAt ? "done" : r?.advisorApprovedAt ? "current" : "pending",
       detail: r?.userApprovedAt ? `Dada el ${formatDateTime(r.userApprovedAt)}` : undefined,
-      action: r?.advisorApprovedAt && !r.userApprovedAt && <LinkButton href="/app/revision" size="sm">Revisar y aprobar</LinkButton> },
+      action: r?.advisorApprovedAt && !r.userApprovedAt && <LinkButton href="/app/revision" transitionTypes={["nav-forward"]} size="sm">Revisar y aprobar</LinkButton> },
     { title: "Presentada ante Hacienda", state: c.status === "presentado" ? "done" : "pending", detail: c.aeatReference ? `Justificante ${c.aeatReference}` : undefined },
   ];
 
@@ -80,7 +80,7 @@ export default function Caso() {
           <blockquote className="mt-2 rounded-md bg-surface px-4 py-3">{r.notes}</blockquote>
           <p className="mt-3 text-sm">Corrige lo que haga falta en el cuestionario, vuelve a calcular y avísale.</p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <LinkButton href="/app/cuestionario" variant="secondary">Ir al cuestionario</LinkButton>
+            <LinkButton href="/app/cuestionario" transitionTypes={["nav-forward"]} variant="secondary">Ir al cuestionario</LinkButton>
             <Button loading={resubmitting} onClick={async () => { setResubmitting(true); setDocError(""); try { await clientResubmit(); } catch (e) { setDocError((e as Error).message); } setResubmitting(false); }}>Ya lo he corregido</Button>
           </div>
         </Card>

@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Card, EmptyState, Notice, ResultCard, Skeleton, Tag } from "@/components/ui/display";
 import { runCalculation } from "@/lib/data/api";
@@ -64,7 +64,7 @@ export default function Resultado() {
         <h1 className="text-xl font-bold">Tu resultado de la renta {c!.taxYear}</h1>
       </div>
 
-      <ResultCard cents={calc.resultCents} savingsCents={calc.savingsCents} stale={stale} />
+      <ResultCard cents={calc.resultCents} savingsCents={calc.savingsCents} stale={stale} count />
 
       {calc.approximate && (
         <Notice title="Es una estimación">
@@ -75,8 +75,9 @@ export default function Resultado() {
       <Card>
         <h2 className="text-lg font-semibold">Deducciones</h2>
         <ul className="mt-3 divide-y divide-border">
-          {calc.deductions.map((d) => (
-            <li key={d.code} className="flex flex-wrap items-start justify-between gap-2 py-3">
+          {calc.deductions.map((d, i) => (
+            // Entran en cascada justo después de que la cifra termine de contar.
+            <li key={d.code} className="anim-swap flex flex-wrap items-start justify-between gap-2 py-3" style={{ "--d": `${400 + Math.min(i, 6) * 50}ms` } as CSSProperties}>
               <div>
                 <p className="font-medium">{d.label}</p>
                 {d.hint && <p className="text-sm text-text-muted">{d.hint}</p>}
@@ -109,7 +110,7 @@ export default function Resultado() {
 
       <div className="flex flex-wrap gap-3">
         {stale && <Button variant="secondary" onClick={() => runCalculation()}>Volver a calcular</Button>}
-        <LinkButton href={paid ? "/app/caso" : "/app/plan"} size="lg">{paid ? "Ir a mi caso" : "Que lo revise un asesor"}</LinkButton>
+        <LinkButton href={paid ? "/app/caso" : "/app/plan"} transitionTypes={["nav-forward"]} size="lg">{paid ? "Ir a mi caso" : "Que lo revise un asesor"}</LinkButton>
       </div>
       <p className="text-sm text-text-muted">Calcular es gratis. Solo pagas si decides que un asesor presente tu declaración.</p>
     </div>

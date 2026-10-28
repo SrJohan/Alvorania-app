@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import type { CaseStatus } from "@/lib/data/types";
 import { formatEuros } from "@/lib/format";
 import { buttonClass } from "./button";
+import { CountUp } from "./count-up";
 
 export function Card({ children, selected, className = "" }: { children: ReactNode; selected?: boolean; className?: string }) {
   return (
@@ -71,14 +72,14 @@ export function ErrorState({ title = "Algo ha salido mal", text, onRetry }: { ti
   );
 }
 
-export function ResultCard({ cents, savingsCents, stale }: { cents: number; savingsCents: number; stale?: boolean }) {
+export function ResultCard({ cents, savingsCents, stale, count }: { cents: number; savingsCents: number; stale?: boolean; count?: boolean }) {
   const refund = cents < 0;
   const zero = cents === 0;
   const tone = zero ? "bg-surface text-text" : refund ? "bg-success-soft text-on-success-soft" : "bg-warning-soft text-on-warning-soft";
   return (
     <div role="status" className={`rounded-lg p-6 ${tone}`}>
       <p className="text-base font-medium">{zero ? "Sin cuota" : refund ? "A devolver" : "A pagar"}</p>
-      <p className="text-display font-bold">{formatEuros(Math.abs(cents))}</p>
+      <p className="text-display font-bold">{count ? <CountUp cents={Math.abs(cents)} /> : formatEuros(Math.abs(cents))}</p>
       {savingsCents > 0 && <p className="mt-1 text-sm">Ahorras {formatEuros(savingsCents)} con deducciones que el borrador de Hacienda no suele incluir.</p>}
       {stale && <p className="mt-2 text-sm font-semibold">Has cambiado datos desde este cálculo. Vuelve a calcular.</p>}
     </div>
@@ -99,7 +100,11 @@ export function Stepper({ steps, current }: { steps: string[]; current: number }
                 {done ? <>✓<span className="sr-only"> completado</span></> : i + 1}
               </span>
               {s}
-              {i < steps.length - 1 && <span aria-hidden className="ml-1 h-0.5 w-6 bg-border" />}
+              {i < steps.length - 1 && (
+                <span aria-hidden className="ml-1 h-0.5 w-6 overflow-hidden bg-border">
+                  <span className={`block h-full origin-left bg-success transition-[scale] duration-200 ease-brand motion-reduce:transition-none ${done ? "scale-x-100" : "scale-x-0"}`} />
+                </span>
+              )}
             </li>
           );
         })}

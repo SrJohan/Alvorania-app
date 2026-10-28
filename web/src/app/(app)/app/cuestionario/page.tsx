@@ -62,7 +62,7 @@ export default function Cuestionario() {
       if (Object.keys(e).length || foral) return;
       if (step === STEPS.length - 1) {
         setBusy(true);
-        router.push("/app/resultado");
+        router.push("/app/resultado", { transitionTypes: ["nav-forward"] });
         return;
       }
     }
@@ -82,6 +82,8 @@ export default function Cuestionario() {
           <div role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm text-on-danger-soft">Revisa los campos marcados.</div>
         )}
 
+        {/* Al cambiar de paso el bloque se vuelve a montar y entra con el ascenso corto; escribir no lo dispara. */}
+        <div key={step} className="anim-swap space-y-5">
         {step === 0 && (
           <>
             <SelectField label="Comunidad donde resides" value={a.ccaa} onChange={(e) => set("ccaa", e.target.value)} options={CCAA} placeholder="Elige una" error={errors.ccaa} />
@@ -140,6 +142,7 @@ export default function Cuestionario() {
             {a.donations > 0 && <Checkbox checked={a.donationsRecurrent} onChange={(e) => set("donationsRecurrent", e.target.checked)} label="Dono a la misma entidad desde hace tres años o más." />}
           </>
         )}
+        </div>
 
         <div className="flex gap-3">
           {step > 0 && <Button type="button" variant="secondary" onClick={() => go(-1)}>Atrás</Button>}

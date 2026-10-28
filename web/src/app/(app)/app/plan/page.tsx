@@ -38,7 +38,7 @@ export default function Plan() {
     setBusy(true);
     try {
       await checkout(selected);
-      router.push("/app/caso");
+      router.push("/app/caso", { transitionTypes: ["nav-forward"] });
     } catch (e) {
       setBusy(false);
       setError(e instanceof Error && e.message ? e.message : "No hemos podido procesar el pago. No se ha cobrado nada. Inténtalo de nuevo.");

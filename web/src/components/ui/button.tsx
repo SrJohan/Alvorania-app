@@ -45,10 +45,10 @@ export function Button({ variant = "primary", size = "md", loading, disabled, cl
 }
 
 export function LinkButton({
-  href, variant = "primary", size = "md", className = "", children,
-}: { href: string; variant?: Variant; size?: Size; className?: string; children: ReactNode }) {
+  href, variant = "primary", size = "md", className = "", transitionTypes, children,
+}: { href: string; variant?: Variant; size?: Size; className?: string; transitionTypes?: string[]; children: ReactNode }) {
   return (
-    <Link href={href} className={buttonClass(variant, size, className)}>
+    <Link href={href} transitionTypes={transitionTypes} className={buttonClass(variant, size, className)}>
       {children}
     </Link>
   );

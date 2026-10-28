@@ -31,7 +31,7 @@ export default function Revision() {
       <div className="space-y-4">
         <h1 className="text-xl font-bold">Declaración presentada</h1>
         <Notice tone="success" title="Todo listo">Justificante: <strong>{c.aeatReference}</strong>. Presentada el {c.submittedAt && formatDateTime(c.submittedAt)}.</Notice>
-        <LinkButton href="/app/caso" variant="secondary">Volver a mi caso</LinkButton>
+        <LinkButton href="/app/caso" transitionTypes={["nav-back"]} variant="secondary">Volver a mi caso</LinkButton>
       </div>
     );
   }

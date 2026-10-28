@@ -1,5 +1,6 @@
 "use client";
 import { useId, useRef, useState } from "react";
+import { CloudUpload } from "lucide-react";
 import { buttonClass } from "./button";
 
 export function FileDrop({
@@ -24,8 +25,9 @@ export function FileDrop({
         onDragOver={(e) => { e.preventDefault(); setDrag(true); }}
         onDragLeave={() => setDrag(false)}
         onDrop={(e) => { e.preventDefault(); setDrag(false); pick(e.dataTransfer.files[0]); }}
-        className={`rounded-lg border-2 border-dashed p-8 text-center transition-colors duration-150 ${drag ? "border-accent bg-accent-soft" : "border-border-input bg-surface"}`}
+        className={`rounded-[20px] border-2 border-dashed p-6 text-center transition-colors duration-150 ${drag ? "border-accent bg-accent-soft" : "border-border-input bg-surface-raised"}`}
       >
+        <span aria-hidden className="mx-auto mb-3 grid size-11 place-items-center rounded-full bg-accent-soft text-accent"><CloudUpload className="size-5" /></span>
         <p className="font-semibold">{label}</p>
         <p className="text-sm text-text-muted">Arrastra el archivo aquí o elígelo. PDF, JPG o PNG, hasta {maxMb} MB.</p>
         <input ref={ref} type="file" accept={accept} className="sr-only" id={inputId} onChange={(e) => pick(e.target.files?.[0])} />
