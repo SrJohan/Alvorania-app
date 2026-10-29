@@ -231,3 +231,61 @@ describe("F2 · continuidad del asesor entre años", () => {
     await fails(as(A, () => q("select pick_advisor($1)", [A])));
   });
 });
+
+describe("0007 · endurecimiento de permisos", () => {
+  const E = "00000000-0000-0000-0000-00000000000e";
+  let caseE: string;
+  let reviewE: string;
+  beforeAll(async () => {
+    await db.query("insert into auth.users (id, email) values ($1, 'e@example.com')", [E]);
+    caseE = (await q("insert into cases (user_id, advisor_id, case_type, tax_year, status) values ($1, $2, 'renta', 2025, 'en_revision') returning id", [E, ADV]))[0].id as string;
+    await q("insert into questionnaire_answers (case_id, answers) values ($1, '{\"a\":1}')", [caseE]);
+    reviewE = (await q("insert into reviews (case_id, advisor_id) values ($1, $2) returning id", [caseE, ADV]))[0].id as string;
+  });
+
+  it("un asesor no puede escribir la aprobación del cliente por la API", async () => {
+    await q("update reviews set advisor_approved_at = now() where id = $1", [reviewE]);
+    // Sin política de escritura RLS no deja ver la fila para actualizarla; el trigger cubre cualquier política futura.
+    for (const who of [ADV, ADMIN]) {
+      const r = await as(who, () => db.query("update reviews set user_approved_at = now() where id = $1", [reviewE])) as { affectedRows: number };
+      expect(r.affectedRows).toBe(0);
+    }
+    await fails(as(ADV, () => db.query("insert into reviews (case_id, advisor_id, advisor_approved_at, user_approved_at) values ($1, $2, now(), now())", [caseE, ADV])));
+    expect((await q("select user_approved_at from reviews where id = $1", [reviewE]))[0].user_approved_at).toBeNull();
+    await q("update reviews set advisor_approved_at = null where id = $1", [reviewE]);
+  });
+
+  it("el servidor (service role) sí puede registrar la aprobación", async () => {
+    await as(null, () => db.query("update reviews set status = 'pendiente' where id = $1", [reviewE]));
+  });
+
+  it("un asesor solo ve su perfil y los de sus clientes", async () => {
+    const seen = (await as(ADV, () => q("select id from profiles")) as { id: string }[]).map((r) => r.id).sort();
+    expect(seen).toEqual([A, B, E, ADV].sort());
+    const other = (await as(OTHER_ADV, () => q("select id from profiles")) as { id: string }[]).map((r) => r.id);
+    expect(other).toEqual([OTHER_ADV]);
+    expect((await as(ADMIN, () => q("select id from profiles")) as unknown[]).length).toBeGreaterThanOrEqual(6);
+  });
+
+  it("un asesor no cambia casos ni escribe en ellos por la API", async () => {
+    const r = await as(ADV, () => db.query("update cases set status = 'cerrado' where id = $1", [caseE])) as { affectedRows: number };
+    expect(r.affectedRows).toBe(0);
+    await fails(as(ADV, () => db.query("insert into messages (case_id, sender_id, sender_kind, body) values ($1, $2, 'advisor', 'x')", [caseE, ADV])));
+    await fails(as(ADV, () => db.query("insert into calculations (case_id, rules_snapshot, input, output, result_amount_cents, engine_version) values ($1, '{}', '{}', '{}', 0, 'x')", [caseE])));
+  });
+
+  it("nadie mueve un caso a otro cliente", async () => {
+    await fails(q("update cases set user_id = $1 where id = $2", [B, caseE]), /owner/);
+  });
+
+  it("el cliente edita sus datos mientras el caso está abierto, no después de la aprobación del asesor", async () => {
+    let r = await as(E, () => db.query("update questionnaire_answers set answers = '{\"a\":2}' where case_id = $1", [caseE])) as { affectedRows: number };
+    expect(r.affectedRows).toBe(1);
+    await q("update cases set status = 'pendiente_aprobacion' where id = $1", [caseE]);
+    r = await as(E, () => db.query("update questionnaire_answers set answers = '{\"a\":3}' where case_id = $1", [caseE])) as { affectedRows: number };
+    expect(r.affectedRows).toBe(0);
+    await fails(as(E, () => db.query("insert into tax_data (case_id, source) values ($1, 'manual')", [caseE])));
+    const d = await as(E, () => db.query("delete from questionnaire_answers where case_id = $1", [caseE])) as { affectedRows: number };
+    expect(d.affectedRows).toBe(0);
+  });
+});

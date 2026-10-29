@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Las pruebas e2e compilan en su propia carpeta para no pisar el servidor de desarrollo.
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
+  // Solo en desarrollo: abrir la demo desde un móvil de la misma wifi (http://192.168.x.x:3000).
+  allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
   /* config options here */
   cacheComponents: true,
   partialPrefetching: true,

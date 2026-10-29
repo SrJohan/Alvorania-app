@@ -114,7 +114,7 @@ export async function saveAnswers(input: unknown, step: number): Promise<ActionR
     const { sb, user } = await requireUser();
     const answers = answersDraftSchema.parse(input);
     const c = await myRentaCase(user.id);
-    if (["presentado", "cerrado", "cancelado"].includes(c.status)) throw new AppError("Este caso ya no admite cambios.", "conflict");
+    if (["pendiente_aprobacion", "presentado", "cerrado", "cancelado"].includes(c.status)) throw new AppError("Este caso ya no admite cambios.", "conflict");
     const { error } = await sb.from("questionnaire_answers").upsert(
       { case_id: c.id, version: 1, answers: { ...answers, __step: stepSchema.parse(step) } },
       { onConflict: "case_id,version" },
