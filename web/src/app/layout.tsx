@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: { default: "Alvorania · Tu renta, sin complicaciones", template: "%s · Alvorania" },
+  title: { default: "Alvorania · Tu renta, a la vista", template: "%s · Alvorania" },
   description: "Calcula tu renta gratis. Un asesor la revisa y nada se presenta sin tu confirmación.",
 };
 

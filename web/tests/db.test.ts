@@ -3,6 +3,7 @@ import { btree_gist } from "@electric-sql/pglite/contrib/btree_gist";
 import fs from "node:fs";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
+import { PLANS } from "@/lib/data/plans";
 
 // Postgres en memoria que imita lo que Supabase aporta: esquema auth, auth.uid() y los roles authenticated / service_role.
 const A = "00000000-0000-0000-0000-00000000000a";
@@ -180,6 +181,15 @@ describe("integridad", () => {
     expect((await q("select count(*)::int n from tax_rules where kind = 'paquete' and reviewed_at is null"))[0].n).toBe(1);
     const pkg = (await q("select rule from tax_rules where kind = 'paquete'"))[0].rule as { territorios: Record<string, unknown> };
     expect(Object.keys(pkg.territorios).sort()).toEqual(["Andalucía", "Cataluña", "Madrid"]);
+  });
+  it("los precios de la base coinciden con los de la web (+20 % de 0008)", async () => {
+    const plans = Object.fromEntries((await q("select code, price_cents from plans")).map((r) => [r.code, r.price_cents]));
+    for (const p of PLANS) expect(plans[p.code], p.code).toBe(p.priceCents);
+    expect(plans).toMatchObject({ STANDARD: 3588, PREMIUM: 7188 });
+    const services = Object.fromEntries((await q("select code, price_cents, success_fee_bps from services")).map((r) => [r.code, r]));
+    expect(services.requerimiento_basico.price_cents).toBe(6000);
+    expect(services.requerimiento_complejo.price_cents).toBe(28680);
+    expect(services.rectificativa_ejercicio).toMatchObject({ price_cents: 1200, success_fee_bps: 2000 });
   });
   it("importes negativos y rangos de fechas inválidos se rechazan", async () => {
     await fails(q("insert into payments (user_id, type, amount_cents, status) values ($1, 'plan', -1, 'succeeded')", [A]));

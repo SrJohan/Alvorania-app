@@ -17,9 +17,9 @@ const rows: { label: string; values: [string | boolean, string | boolean, string
 ];
 
 const services = [
-  ["Respuesta a un requerimiento básico", "50 €"],
-  ["Respuesta a un requerimiento complejo", "Desde 239 €"],
-  ["Revisión de un ejercicio anterior", "10 € por año + 20 % del ahorro conseguido"],
+  ["Respuesta a un requerimiento básico", "60 €"],
+  ["Respuesta a un requerimiento complejo", "Desde 286,80 €"],
+  ["Revisión de un ejercicio anterior", "12 € por año + 20 % del ahorro conseguido"],
 ];
 
 const Cell = ({ v }: { v: string | boolean }) =>
@@ -30,8 +30,8 @@ export default function Precios() {
     <LateralTransition><div className="mx-auto max-w-wide px-4 py-12">
       <div className="anim-swap"><PriceFinder
         intro={<>
-          <h1 className="font-display text-[38px] font-semibold leading-[1.05] tracking-[-0.06em] text-ink sm:text-[56px] lg:text-[64px]">Precios claros,<br />sin sorpresas</h1>
-          <p className="mt-4 max-w-reading text-lg text-text">Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
+          <h1 className="font-display text-[38px] font-semibold leading-[1.05] tracking-[-0.06em] text-ink sm:text-[56px] lg:text-[64px]">Lo que cuesta,<br />antes de empezar</h1>
+          <p className="mt-4 max-w-reading text-lg text-text">Calcular es gratis. Solo pagas si quieres que tu gestor revise y presente tu renta, y el precio no cambia después. Precios de ejemplo, IVA incluido.</p>
         </>}
         notice={<Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice>}
       /></div>

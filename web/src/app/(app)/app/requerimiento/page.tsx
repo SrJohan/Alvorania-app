@@ -8,8 +8,8 @@ import { formatDateTime } from "@/lib/format";
 
 const prices = [
   ["Análisis de la carta", "Gratis"],
-  ["Respuesta a un requerimiento básico", "50 €"],
-  ["Respuesta a un requerimiento complejo", "Desde 239 €"],
+  ["Respuesta a un requerimiento básico", "60 €"],
+  ["Respuesta a un requerimiento complejo", "Desde 286,80 €"],
 ];
 
 export default function Requerimiento() {

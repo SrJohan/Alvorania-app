@@ -12,7 +12,7 @@ import { AppError, run, type ActionResult } from "./errors";
 import { messageSchema, planCodeSchema, safeFileName, uploadSchema, uuidSchema } from "./validation";
 
 const BUCKET = "case-documents";
-const PRICE_CENTS = { PRO: 2900, LIVE: 5900, FULL: 11900 } as const; // mismos precios de ejemplo que el catálogo
+const PRICE_CENTS = { PRO: 3480, LIVE: 7080, FULL: 14280 } as const; // mismos precios de ejemplo que el catálogo
 
 export type AdvisorCaseDetail = {
   id: string;

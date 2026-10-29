@@ -9,7 +9,7 @@ test.describe("F1 precio cerrado antes de pagar", () => {
     await page.getByRole("link", { name: "Que lo revise un asesor" }).click();
     await expect(page.getByRole("radio", { name: /Esencial/ })).toBeEnabled();
     await expect(page.getByText(/Precio cerrado\./)).toBeVisible();
-    await expect(page.getByRole("button", { name: "Pagar 59,00 €" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Pagar 70,80 €" })).toBeVisible();
   });
 
   test("F1-H2 venta de acciones: solo el plan Completo, explicado antes de pagar", async ({ page }) => {
@@ -22,9 +22,9 @@ test.describe("F1 precio cerrado antes de pagar", () => {
     await expect(page.getByRole("radio", { name: /Esencial/ })).toBeDisabled();
     await expect(page.getByRole("radio", { name: /Acompañado/ })).toBeDisabled();
     await expect(page.getByRole("radio", { name: /Completo/ })).toBeChecked();
-    await expect(page.getByRole("button", { name: "Pagar 119,00 €" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Pagar 142,80 €" })).toBeVisible();
     await page.getByLabel(/Autorizo a la gestoría a presentar/).check();
-    await page.getByRole("button", { name: "Pagar 119,00 €" }).click();
+    await page.getByRole("button", { name: "Pagar 142,80 €" }).click();
     await expect(page.getByRole("heading", { name: "Renta 2025" })).toBeVisible();
   });
 });
@@ -45,13 +45,13 @@ test.describe("Precios: entrada por caso", () => {
     await page.goto("/precios");
     await expect(page.getByRole("radio", { name: /particular/i })).toBeVisible();
     await expect(page.getByText("Primero dinos quién eres")).toBeVisible();
-    await expect(page.getByRole("radio", { name: /Hacer mi renta/ })).toHaveCount(0); // bloqueado: inert lo saca del árbol accesible
+    await expect(page.getByRole("radio", { name: /La renta de este año/ })).toHaveCount(0); // bloqueado: inert lo saca del árbol accesible
     await page.getByRole("radio", { name: /particular/i }).check({ force: true });
-    await page.getByRole("radio", { name: /Me ha escrito Hacienda/ }).check({ force: true });
+    await page.getByRole("radio", { name: /Una carta de Hacienda/ }).check({ force: true });
     await expect(page.getByRole("heading", { name: /Entiende qué te piden/ })).toBeVisible();
     await expect(page.getByRole("link", { name: "Subir mi carta" })).toHaveAttribute("href", /requerimiento/);
-    await page.getByRole("radio", { name: /Pagué de más/ }).check({ force: true });
-    await expect(page.getByText("10 € por año", { exact: true })).toBeVisible();
+    await page.getByRole("radio", { name: /Revisar años anteriores/ }).check({ force: true });
+    await expect(page.getByText("12 € por año", { exact: true })).toBeVisible();
   });
 
   test("PRE-H3 autónomo ve sus casos y el plan que encaja", async ({ page }) => {
@@ -59,7 +59,7 @@ test.describe("Precios: entrada por caso", () => {
     await page.getByRole("radio", { name: /autónomo/i }).check({ force: true });
     await page.getByRole("radio", { name: /Contabilidad y facturación/ }).check({ force: true });
     await expect(page.getByText("Encaja contigo")).toBeVisible();
-    await expect(page.getByText("59,90 €").first()).toBeVisible();
+    await expect(page.getByText("71,88 €").first()).toBeVisible();
   });
 
   test("PRE-H2 se puede elegir con el teclado", async ({ page }) => {
@@ -77,7 +77,7 @@ test.describe("Precios: movimiento", () => {
     await expect(page.getByRole("heading", { name: "Preguntas sobre precios" })).toBeVisible();
     expect(await page.locator("[data-reveal='hidden']").count()).toBe(0);
     await page.getByRole("radio", { name: /particular/i }).check({ force: true });
-    await page.getByRole("radio", { name: /Vivo entre países/ }).check({ force: true });
+    await page.getByRole("radio", { name: /Mi vida está entre dos países/ }).check({ force: true });
     await expect(page.getByRole("heading", { name: /Trámites internacionales/ })).toBeVisible();
   });
 });

@@ -16,7 +16,7 @@ const services: Service[] = [
   {
     name: "Renta", Icon: FileText, href: START, cta: "Calcular mi renta",
     text: "Ves el resultado antes de pagar nada. Un asesor la revisa y tú das el visto bueno.",
-    sample: { title: "Renta · individual", tag: "Lista para tu visto bueno", figure: "+634 €", label: "a devolver", rows: [["Deducciones detectadas", "14"], ["Revisión", "Asesor fiscal"]], note: "Se presenta cuando tú lo confirmas" },
+    sample: { title: "Renta · individual", tag: "Lista para tu visto bueno", figure: "+418 €", label: "a devolver", rows: [["Deducciones aplicadas", "5"], ["Revisión", "Tu gestor"]], note: "Se presenta cuando tú lo confirmas" },
   },
   {
     name: "Autónomos", Icon: Briefcase, href: "/asesoria-gestoria", cta: "Ver el servicio",
@@ -31,7 +31,7 @@ const services: Service[] = [
   {
     name: "Años anteriores", Icon: RotateCcw, href: START, cta: "Revisar mis años",
     text: "Miramos tus últimos cuatro ejercicios y reclamamos lo que pagaste de más.",
-    sample: { title: "Revisión de 4 ejercicios", tag: "Posible devolución", figure: "412 €", label: "recuperables", rows: [["Ejercicios revisados", "4"], ["Reclamación", "La presentamos nosotros"]], note: "Sin compromiso hasta ver la cifra" },
+    sample: { title: "Revisión de 4 ejercicios", tag: "Posible devolución", figure: "386 €", label: "recuperables", rows: [["Ejercicios revisados", "4"], ["Reclamación", "La presentamos nosotros"]], note: "Sin compromiso hasta ver la cifra" },
   },
   {
     name: "Vivo en el extranjero", tab: "Extranjero", Icon: Globe, href: "/tramites", cta: "Ver trámites",

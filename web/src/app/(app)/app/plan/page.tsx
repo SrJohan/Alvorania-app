@@ -64,7 +64,7 @@ export default function Plan() {
           <label key={p.code} className={ok ? "cursor-pointer" : "cursor-not-allowed opacity-60"}>
             <input type="radio" name="plan" value={p.code} checked={selected === p.code} disabled={!ok} onChange={() => setSelected(p.code)} className="peer sr-only" />
             <div className={`h-full rounded-lg p-5 shadow-card peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring ${selected === p.code ? "border-2 border-accent bg-accent-soft p-[19px]" : "border border-border bg-surface-raised"}`}>
-              <div className="flex items-center justify-between"><span className="text-lg font-semibold">{p.name}</span>{p.recommended && <Tag tone="accent">Recomendado</Tag>}</div>
+              <div className="flex items-center justify-between"><span className="text-lg font-semibold">{p.name}</span>{p.recommended && <Tag tone="accent">El más elegido</Tag>}</div>
               <p className="mt-2 text-xl font-bold">{formatEuros(p.priceCents)}<span className="text-sm font-normal text-text-muted"> al año</span></p>
               <p className="mt-2 text-sm">{p.blurb}</p>
               {!ok && <p className="mt-2 text-sm font-semibold">No cubre tu caso</p>}

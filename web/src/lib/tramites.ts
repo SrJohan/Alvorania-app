@@ -14,14 +14,14 @@ export const tramiteGroups: { title: string; items: Tramite[] }[] = [
     {
       slug: "declaracion-renta", name: "Declaración de la renta", href: START, cta: "Calcular mi renta",
       summary: "Calculas tu resultado gratis y, si quieres, un asesor revisa tu declaración y la presenta por ti.",
-      price: "Desde 29 € al año", priceNote: "Calcular es gratis. Si quieres que la presentemos, ves el precio cerrado antes de pagar.",
+      price: "Desde 34,80 € al año", priceNote: "Calcular es gratis. Si quieres que la presentemos, ves el precio cerrado antes de pagar.",
       includes: ["Cálculo de tu resultado, sin tarjeta", "Revisión por un asesor antes de presentar", "Presentación ante Hacienda cuando tú la apruebas", "Seguimiento en tu panel"],
       need: ["Tus datos fiscales del ejercicio", "Unas respuestas sobre tu situación: hijos, hipoteca, aportaciones y donativos"],
     },
     {
       slug: "revision-ejercicios", name: "Revisión de ejercicios anteriores", href: START, cta: "Revisar mis años",
       summary: "Un asesor revisa tus declaraciones de los últimos cuatro años y, si encuentra dinero a tu favor, lo reclama por ti.",
-      price: "10 € por año + 20 % del ahorro", priceNote: "El 20 % se calcula solo sobre lo que consigamos ahorrarte.",
+      price: "12 € por año + 20 % del ahorro", priceNote: "El 20 % se calcula solo sobre lo que consigamos ahorrarte.",
       includes: ["Revisión de hasta cuatro ejercicios anteriores", "Reclamación ante Hacienda si hay dinero a tu favor"],
       need: ["Tus datos fiscales de los años que quieras revisar"],
     },
@@ -37,7 +37,7 @@ export const tramiteGroups: { title: string; items: Tramite[] }[] = [
     {
       slug: "respuesta-requerimiento", name: "Respuesta a un requerimiento", href: LETTER, cta: "Subir mi carta",
       summary: "Un asesor redacta la respuesta a Hacienda y la presenta por ti.",
-      price: "Desde 50 €", priceNote: "50 € si el requerimiento es básico y desde 239 € si es complejo. Te decimos cuál es el tuyo antes de empezar.",
+      price: "Desde 60 €", priceNote: "60 € si el requerimiento es básico y desde 286,80 € si es complejo. Te decimos cuál es el tuyo antes de empezar.",
       includes: ["Análisis de la carta", "Respuesta redactada por un asesor", "Presentación ante Hacienda"],
       need: ["La carta de Hacienda", "Los documentos que pida la carta"],
     },
@@ -52,7 +52,7 @@ export const tramiteGroups: { title: string; items: Tramite[] }[] = [
     {
       slug: "gestoria-mensual", name: "Gestoría mensual", href: "/asesoria-gestoria", cta: "Ver los planes",
       summary: "Un gestor lleva tus impuestos trimestrales y anuales mientras tú te dedicas a tu negocio.",
-      price: "Desde 29,90 € al mes", priceNote: "Plan Estándar, con un compromiso mínimo de 3 meses.",
+      price: "Desde 35,88 € al mes", priceNote: "Plan Estándar, con un compromiso mínimo de 3 meses.",
       includes: ["Modelos trimestrales 130 y 303", "Declaración anual", "Consultas por email"],
     },
   ]},

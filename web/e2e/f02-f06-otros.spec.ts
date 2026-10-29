@@ -53,7 +53,7 @@ test.describe("F02 regresiones", () => {
 test.describe("F04 autónomos y F05 trámites (páginas informativas)", () => {
   test("F04-H1 la página de autónomos lleva a empezar", async ({ page }) => {
     await page.goto("/asesoria-gestoria");
-    await expect(page.getByRole("heading", { name: "Gestoría para autónomos" })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /Tú a lo tuyo/ })).toBeVisible();
     await page.getByRole("link", { name: /Contratar Premium/ }).click();
     await expect(page).toHaveURL(/\/acceder/);
   });

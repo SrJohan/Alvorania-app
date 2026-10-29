@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Gestoría para autónomos" };
 const START = "/acceder?next=/app/conectar";
 
 const facts = [
-  ["Desde 29,90 €", "al mes"],
+  ["Desde 35,88 €", "al mes"],
   ["3 meses", "de compromiso mínimo; después cancelas sin penalización"],
   ["Un asesor", "revisa cada modelo antes de presentarlo"],
 ];
@@ -33,7 +33,7 @@ const compare: { label: string; values: [string | boolean, string | boolean] }[]
   { label: "Consultas por email", values: [true, true] },
   { label: "Contabilidad y facturación", values: [false, true] },
   { label: "Asesor asignado por chat", values: [false, true] },
-  { label: "Precio", values: ["29,90 € al mes", "59,90 € al mes"] },
+  { label: "Precio", values: ["35,88 € al mes", "71,88 € al mes"] },
   { label: "Compromiso mínimo", values: ["3 meses", "3 meses"] },
 ];
 
@@ -63,8 +63,8 @@ export default function Autonomos() {
     <LateralTransition><div className="mx-auto max-w-wide px-4 py-12">
       <section className="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
-          <h1 className={`${headline} text-[34px] leading-[1.08] sm:text-[56px] sm:leading-[1.05] lg:text-[72px]`}>Gestoría para autónomos</h1>
-          <p className="mt-3 max-w-reading text-lg text-text-muted">Olvídate de los plazos trimestrales. Un asesor lleva tus impuestos y tú te dedicas a tu negocio.</p>
+          <h1 className={`${headline} text-[34px] leading-[1.08] sm:text-[56px] sm:leading-[1.05] lg:text-[72px]`}>Tú a lo tuyo.<br />Los trimestres, nuestros.</h1>
+          <p className="mt-3 max-w-reading text-lg text-text-muted">Tu gestor prepara el 130 y el 303 cada trimestre, te avisa antes de cada plazo y te pregunta lo que haga falta.</p>
           <dl className="mt-8 grid gap-4 sm:grid-cols-3">
             {facts.map(([k, v]) => (
               <div key={k}>
@@ -74,7 +74,7 @@ export default function Autonomos() {
             ))}
           </dl>
           <div id="hero-cta" className="mt-8 flex flex-wrap items-center gap-3">
-            <PillCta href={START}>Contratar ahora</PillCta>
+            <PillCta href={START}>Empezar con mi gestor</PillCta>
             <LinkButton href="#planes" variant="ghost">Ver los planes</LinkButton>
           </div>
         </div>
@@ -137,9 +137,9 @@ export default function Autonomos() {
         <div className="flex flex-col items-start justify-between gap-6 rounded-[24px] bg-ink p-8 text-on-ink md:flex-row md:items-center md:p-12" style={inkGlow}>
           <div>
             <h2 className="font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.06em] sm:text-[44px]">Despreocúpate de los plazos.</h2>
-            <p className="mt-2 text-on-ink-muted">Desde 29,90 € al mes, con un asesor que revisa cada modelo.</p>
+            <p className="mt-2 text-on-ink-muted">Desde 35,88 € al mes, con un asesor que revisa cada modelo.</p>
           </div>
-          <PillCta href={START} tone="light">Contratar ahora</PillCta>
+          <PillCta href={START} tone="light">Empezar con mi gestor</PillCta>
         </div>
         </Reveal>
       </section>

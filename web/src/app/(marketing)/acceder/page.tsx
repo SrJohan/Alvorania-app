@@ -24,9 +24,9 @@ const fieldStyle = {
 };
 
 const promises = [
-  { Icon: Calculator, text: "Cálculo gratis" },
-  { Icon: UserCheck, text: "Revisión por un asesor" },
-  { Icon: ShieldCheck, text: "Nada se presenta sin tu confirmación" },
+  { Icon: Calculator, text: "Gratis hasta que decidas" },
+  { Icon: UserCheck, text: "Tu gestor, con nombre" },
+  { Icon: ShieldCheck, text: "Tus datos viajan cifrados y solo los ve tu gestor" },
 ];
 
 export default function Acceder() {

@@ -158,7 +158,7 @@ export function PlanesYTabla({ plans, compare }: { plans: Plan[]; compare: Row[]
           >
             <Reveal delay={i * 60} className="flex w-full">
               <Card selected={p.rec} className="flex w-full flex-col transition-[transform,translate,scale,rotate,box-shadow] duration-200 ease-brand hover:-translate-y-1 hover:shadow-pop motion-reduce:transform-none">
-                <div className="flex items-center justify-between"><h3 className="text-lg font-semibold">{p.name}</h3>{p.rec && <Tag tone="accent">Recomendado</Tag>}</div>
+                <div className="flex items-center justify-between"><h3 className="text-lg font-semibold">{p.name}</h3>{p.rec && <Tag tone="accent">El más elegido</Tag>}</div>
                 <p className="mt-3 text-xl font-bold">{p.price}<span className="text-sm font-normal text-text-muted"> al mes</span></p>
                 <ul className="mt-4 flex-1 space-y-1 text-sm">{p.list.map((l) => <li key={l} className="flex gap-2"><Check aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />{l}</li>)}</ul>
                 <p className="mt-4 text-sm text-text-muted">Compromiso mínimo de 3 meses.</p>
@@ -195,7 +195,7 @@ export function PlanesYTabla({ plans, compare }: { plans: Plan[]; compare: Row[]
 }
 
 /** Barra de contratar en móvil: entra cuando los botones de la portada salen de pantalla y se va al llegar al cierre. */
-export function BarraContratar({ href = START, label = "Contratar desde 29,90 € al mes", endId = "cierre" }: { href?: string; label?: string; endId?: string }) {
+export function BarraContratar({ href = START, label = "Contratar desde 35,88 € al mes", endId = "cierre" }: { href?: string; label?: string; endId?: string }) {
   const bar = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

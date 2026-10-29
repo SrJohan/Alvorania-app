@@ -17,8 +17,8 @@ export default function Tramites() {
   return (
     <DirectionalTransition lateral>
       <div className="mx-auto max-w-content px-4 py-12">
-        <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">Trámites</h1>
-        <p className="mt-3 max-w-reading text-text-muted">Elige el que necesitas. Si no lo ves, escríbenos y lo valoramos.</p>
+        <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">¿Qué quieres resolver?</h1>
+        <p className="mt-3 max-w-reading text-text-muted">Si no lo ves aquí, escríbenos: probablemente también lo llevamos.</p>
         <div className="mt-10 grid gap-x-8 gap-y-10 md:grid-cols-2">
           {tramiteGroups.map((g, i) => {
             const Icon = groupIcons[g.title] ?? FileText;

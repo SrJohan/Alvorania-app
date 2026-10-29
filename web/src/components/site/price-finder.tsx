@@ -26,15 +26,15 @@ const profiles: { id: Profile; label: string }[] = [
 ];
 
 const hacienda: Option = {
-  id: "hacienda", Icon: Mail, title: "Me ha escrito Hacienda", text: "Sube la carta y te explicamos qué piden y cómo responder.", chip: "Análisis gratis · desde 50 €",
+  id: "hacienda", Icon: Mail, title: "Una carta de Hacienda", text: "Súbela y te decimos qué piden y qué plazo tienes.", chip: "Análisis gratis · desde 60 €",
   detail: {
     title: "Entiende qué te piden antes de decidir nada",
     text: "Sube la carta y te explicamos gratis qué reclaman y qué plazo tienes. Si prefieres no ocuparte, un asesor redacta y presenta la respuesta.",
-    price: "Gratis", priceNote: "el análisis. La respuesta, desde 50 €", cta: { label: "Subir mi carta", href: "/acceder?next=/app/requerimiento" },
+    price: "Gratis", priceNote: "el análisis. La respuesta, desde 60 €", cta: { label: "Subir mi carta", href: "/acceder?next=/app/requerimiento" },
   },
 };
 const otra: Option = {
-  id: "otra", Icon: MessageCirclePlus, title: "Mi caso es otro", text: "Cuéntanos qué necesitas y vemos si podemos ayudarte.", chip: "Te decimos el precio antes",
+  id: "otra", Icon: MessageCirclePlus, title: "Lo mío es otra cosa", text: "Cuéntanoslo y te decimos si podemos ayudarte.", chip: "Te decimos el precio antes",
   detail: {
     title: "Si no lo ves aquí, lo valoramos",
     text: "Mira la lista de trámites. Si lo que buscas no está, escríbenos y te decimos si podemos hacerlo y cuánto costaría antes de empezar.",
@@ -45,7 +45,7 @@ const otra: Option = {
 const options: Record<Profile, Option[]> = {
   particular: [
     {
-      id: "renta", Icon: FileText, title: "Hacer mi renta", text: "Calcula gratis y decide después si la presentamos.", chip: `Desde ${fromPrice}/año`,
+      id: "renta", Icon: FileText, title: "La renta de este año", text: "Mira lo que te sale antes de decidir nada.", chip: `Desde ${fromPrice}/año`,
       detail: {
         title: "Tu renta, calculada gratis y revisada por una persona",
         text: "Respondes unas preguntas y ves tu resultado sin pagar y sin tarjeta. Si quieres que la presentemos, un asesor con nombre la revisa y nada sale sin tu visto bueno.",
@@ -53,16 +53,16 @@ const options: Record<Profile, Option[]> = {
       },
     },
     {
-      id: "pasadas", Icon: RotateCcw, title: "Pagué de más otros años", text: "Revisamos tus últimos 4 años y reclamamos lo que te corresponda.", chip: "10 € por año + 20 % del ahorro",
+      id: "pasadas", Icon: RotateCcw, title: "Revisar años anteriores", text: "Si te tocaba devolución en los últimos 4 años, la reclamamos.", chip: "12 € por año + 20 % del ahorro",
       detail: {
         title: "Recupera lo que pagaste de más",
-        text: "Un asesor revisa tus declaraciones de los últimos cuatro años. Si encuentra dinero a tu favor, lo reclama por ti. Pagas 10 € por cada año revisado y el 20 % de lo que consigamos ahorrarte.",
-        price: "10 € por año", priceNote: "+ 20 % del ahorro conseguido", cta: { label: "Revisar mis años", href: START },
+        text: "Un asesor revisa tus declaraciones de los últimos cuatro años. Si encuentra dinero a tu favor, lo reclama por ti. Pagas 12 € por cada año revisado y el 20 % de lo que consigamos ahorrarte.",
+        price: "12 € por año", priceNote: "+ 20 % del ahorro conseguido", cta: { label: "Revisar mis años", href: START },
       },
     },
     hacienda,
     {
-      id: "paises", Icon: Globe, title: "Vivo entre países", text: "Residencia fiscal, modelo 720 y otros trámites internacionales.", chip: "A presupuestar",
+      id: "paises", Icon: Globe, title: "Mi vida está entre dos países", text: "Residencia fiscal, bienes fuera y otros trámites internacionales.", chip: "A presupuestar",
       detail: {
         title: "Trámites internacionales, caso a caso",
         text: "La residencia fiscal, la salida de España o el modelo 720 dependen de cada situación. Los presupuestamos uno a uno y todavía no se tramitan online.",
@@ -159,7 +159,7 @@ function Result({ o }: { o: Option }) {
         <p className="mt-4 max-w-reading text-lg text-text-muted">{d.text}{renta && " El precio es cerrado: lo ves antes de pagar."}</p>
         <div className={`mt-12 grid gap-6 md:gap-4 ${renta ? "md:grid-cols-3" : "md:max-w-3xl md:grid-cols-2"}`}>
           {renta
-            ? PLANS.map((p, i) => <PlanSheet key={p.code} name={p.name} price={formatEuros(p.priceCents)} period="al año, IVA incluido" blurb={p.blurb} list={p.features} on={p.name === pick} stamp="Recomendado" tilt={tilts[i]} href={START} />)
+            ? PLANS.map((p, i) => <PlanSheet key={p.code} name={p.name} price={formatEuros(p.priceCents)} period="al año, IVA incluido" blurb={p.blurb} list={p.features} on={p.name === pick} stamp="El más elegido" tilt={tilts[i]} href={START} />)
             : AUTONOMO_PLANS.map((p, i) => <PlanSheet key={p.name} name={p.name} price={p.price} period="al mes, IVA incluido" list={p.list} on={p.name === pick} stamp="Encaja contigo" tilt={tilts[i]} href={d.cta.href} />)}
         </div>
         <p className="mt-8 text-sm text-text-muted">
@@ -191,7 +191,7 @@ function Result({ o }: { o: Option }) {
   );
 }
 
-/** Precios como una frase que se completa: "Soy particular", "¿Qué necesitas?" y el precio en una hoja del expediente. Cada parte se desbloquea con la anterior. */
+/** Precios como una frase que se completa: "Soy particular", "¿Qué te trae por aquí?" y el precio en una hoja del expediente. Cada parte se desbloquea con la anterior. */
 export function PriceFinder({ intro, notice }: { intro: ReactNode; notice?: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [choice, setChoice] = useState<string | null>(null);
@@ -241,7 +241,7 @@ export function PriceFinder({ intro, notice }: { intro: ReactNode; notice?: Reac
       {notice &&<div className="mt-4 max-w-reading">{notice}</div>}
 
       <section ref={step2} aria-labelledby="necesitas" className="mt-20 scroll-mt-24">
-        <h2 id="necesitas" className={`${sentence} ${profile ? "text-ink" : "text-text-muted"}`}>¿Qué necesitas?</h2>
+        <h2 id="necesitas" className={`${sentence} ${profile ? "text-ink" : "text-text-muted"}`}>¿Qué te trae por aquí?</h2>
         <div className="mt-8">
           <Locked open={!!profile} message="Primero dinos quién eres">
             <fieldset key={profile ?? "none"} aria-labelledby="necesitas" className="anim-swap flex flex-wrap gap-3">

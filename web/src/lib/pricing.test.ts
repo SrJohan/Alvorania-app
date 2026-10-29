@@ -39,6 +39,6 @@ describe("F1 · precio cerrado según el caso", () => {
   });
 
   it("el precio cerrado es el del plan, IVA incluido, sin extras", () => {
-    expect(closedPrice("LIVE")).toEqual({ planCode: "LIVE", totalCents: 5900, extras: 0 });
+    expect(closedPrice("LIVE")).toEqual({ planCode: "LIVE", totalCents: 7080, extras: 0 });
   });
 });
