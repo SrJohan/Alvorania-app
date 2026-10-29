@@ -165,10 +165,13 @@ test.describe("F01 particular presenta la renta con revisión", () => {
 
   test("F01-E8 solo teclado: acceso y primer paso", async ({ page }) => {
     await page.goto("/acceder?next=/app/conectar");
+    await page.getByRole("button", { name: "Crea una" }).press("Enter");
     await page.getByLabel("Nombre completo").focus();
     await page.keyboard.type("Teclado Uno");
     await page.keyboard.press("Tab");
     await page.keyboard.type("teclado@example.test");
+    await page.keyboard.press("Tab");
+    await page.keyboard.type("clave-de-teclado-1");
     await page.keyboard.press("Enter");
     await expect(page.getByRole("heading", { name: "Tus datos fiscales" })).toBeVisible();
   });
@@ -186,9 +189,9 @@ test.describe("F01 particular presenta la renta con revisión", () => {
 
   test("F01-N1 email inválido en el acceso", async ({ page }) => {
     await page.goto("/acceder");
-    await page.getByLabel("Nombre completo").fill("Ana");
     await page.getByLabel("Correo electrónico").fill("ana@");
-    await page.getByRole("button", { name: "Continuar" }).click();
+    await page.getByLabel("Contraseña", { exact: true }).fill("lo-que-sea");
+    await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page.getByText(/Introduce un email válido/)).toBeVisible();
   });
 

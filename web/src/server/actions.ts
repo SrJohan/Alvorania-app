@@ -9,13 +9,13 @@ import { FORAL_CCAA } from "@/lib/tax/rules";
 import type { DemoState } from "@/lib/data/types";
 import { clientIp, rateLimit, requireCaseAccess, requireStaff, requireUser } from "./authz";
 import { notify } from "./email";
-import { magicLinkError } from "./auth-errors";
+import { passwordAuthError } from "./auth-errors";
 import { AppError, run, type ActionResult } from "./errors";
 import { assertPlanCoversCase } from "./pricing-guard";
 import { loadState } from "./state";
 import { priceIdForPlan, stripe } from "./stripe";
 import {
-  answersDraftSchema, answersSchema, consentKindSchema, emailSchema, messageSchema, nameSchema, planCodeSchema, safeFileName, stepSchema, uploadSchema, uuidSchema,
+  answersDraftSchema, answersSchema, consentKindSchema, emailSchema, messageSchema, nameSchema, newPasswordSchema, passwordSchema, planCodeSchema, safeFileName, stepSchema, uploadSchema, uuidSchema,
 } from "./validation";
 
 const BUCKET = "case-documents";
@@ -29,21 +29,38 @@ async function myRentaCase(userId: string) {
 
 // ---------- sesión ----------
 
-export async function requestMagicLink(input: { email: string; fullName: string; next?: string }): Promise<ActionResult<{ sent: true }>> {
+/** Límites por IP y por correo (hasheado) compartidos por entrar y crear cuenta: frenan la fuerza bruta de contraseñas. */
+async function limitPasswordAuth(email: string) {
+  await rateLimit(`pwd:ip:${await clientIp()}`, 20, 600);
+  await rateLimit(`pwd:email:${createHash("sha256").update(email).digest("hex").slice(0, 32)}`, 8, 600);
+}
+
+export async function signInWithPassword(input: { email: string; password: string }): Promise<ActionResult> {
   return run(async () => {
     const email = emailSchema.parse(input.email);
-    const fullName = nameSchema.parse(input.fullName);
-    const ip = await clientIp();
-    await rateLimit(`login:ip:${ip}`, 10, 600);
-    // Se guarda un hash, no el email: la tabla de límites no debe contener datos personales.
-    await rateLimit(`login:email:${createHash("sha256").update(email).digest("hex").slice(0, 32)}`, 3, 600);
+    const password = passwordSchema.parse(input.password);
+    await limitPasswordAuth(email);
     const sb = await supabaseForUser();
-    const { error } = await sb.auth.signInWithOtp({
+    const { error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) throw passwordAuthError(error);
+  });
+}
+
+/** `signed-in` si el proyecto no exige confirmar el correo; `check-email` si sí (o si el correo ya existía: no se revela). */
+export async function signUpWithPassword(input: { email: string; password: string; fullName: string }): Promise<ActionResult<{ status: "signed-in" | "check-email" }>> {
+  return run(async () => {
+    const email = emailSchema.parse(input.email);
+    const password = newPasswordSchema.parse(input.password);
+    const fullName = nameSchema.parse(input.fullName);
+    await limitPasswordAuth(email);
+    const sb = await supabaseForUser();
+    const { data, error } = await sb.auth.signUp({
       email,
-      options: { emailRedirectTo: `${publicEnv.siteUrl}/auth/callback`, data: { full_name: fullName }, shouldCreateUser: true },
+      password,
+      options: { emailRedirectTo: `${publicEnv.siteUrl}/auth/callback`, data: { full_name: fullName } },
     });
-    if (error) throw magicLinkError(error);
-    return { sent: true as const };
+    if (error) throw passwordAuthError(error);
+    return { status: data.session ? ("signed-in" as const) : ("check-email" as const) };
   });
 }
 

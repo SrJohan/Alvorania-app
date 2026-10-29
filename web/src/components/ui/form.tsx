@@ -1,5 +1,6 @@
 "use client";
-import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
+import { useId, useState, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 const control =
   "h-10 w-full rounded-md border bg-bg px-3 text-base text-text placeholder:text-text-muted disabled:opacity-60 read-only:bg-surface";
@@ -38,6 +39,36 @@ export function TextField({ label, help, error, className = "", ...rest }: TextP
           className={`${control} ${invalid ? "border-danger" : "border-border-input"} ${className}`}
           {...rest}
         />
+      )}
+    </Field>
+  );
+}
+
+/** Contraseña con botón para mostrarla u ocultarla (útil sobre todo en el móvil, donde se teclea mal). */
+export function PasswordField({ label, help, error, className = "", ...rest }: Omit<TextProps, "type">) {
+  const [shown, setShown] = useState(false);
+  return (
+    <Field label={label} help={help} error={error}>
+      {({ id, describedBy, invalid }) => (
+        <div className="relative">
+          <input
+            id={id}
+            type={shown ? "text" : "password"}
+            aria-describedby={describedBy}
+            aria-invalid={invalid || undefined}
+            className={`${control} pr-12 ${invalid ? "border-danger" : "border-border-input"} ${className}`}
+            {...rest}
+          />
+          <button
+            type="button"
+            onClick={() => setShown((v) => !v)}
+            aria-label={shown ? "Ocultar contraseña" : "Mostrar contraseña"}
+            aria-pressed={shown}
+            className="absolute inset-y-0 right-1 grid w-10 place-items-center rounded-md text-text-muted transition-colors duration-150 hover:text-ink"
+          >
+            {shown ? <EyeOff aria-hidden className="size-5" /> : <Eye aria-hidden className="size-5" />}
+          </button>
+        </div>
       )}
     </Field>
   );

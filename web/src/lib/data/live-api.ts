@@ -41,10 +41,15 @@ async function mutate<T>(fn: () => Promise<ActionResult<T>>): Promise<T> {
   return data;
 }
 
-export async function signIn(email: string, fullName: string): Promise<"signed-in" | "check-email"> {
-  const next = new URLSearchParams(window.location.search).get("next") ?? undefined;
-  unwrap(await actions.requestMagicLink({ email, fullName, next }));
-  return "check-email";
+export async function signIn(email: string, password: string): Promise<void> {
+  unwrap(await actions.signInWithPassword({ email, password }));
+  await refreshState();
+}
+
+export async function signUp(input: { fullName: string; email: string; password: string }): Promise<"signed-in" | "check-email"> {
+  const { status } = unwrap(await actions.signUpWithPassword(input));
+  if (status === "signed-in") await refreshState();
+  return status;
 }
 
 export async function signOut() {

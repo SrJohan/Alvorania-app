@@ -41,6 +41,9 @@ export const answersSchema = answersBase.refine((a) => a.childrenUnder3 <= a.chi
 
 export const emailSchema = z.string().trim().toLowerCase().email().max(254);
 export const nameSchema = z.string().trim().min(2).max(120);
+// 72: límite de bytes de bcrypt, que es lo que usa Supabase; más largo se truncaría en silencio.
+export const newPasswordSchema = z.string().min(8).max(72);
+export const passwordSchema = z.string().min(1).max(72);
 export const planCodeSchema = z.enum(["PRO", "LIVE", "FULL"]);
 export const consentKindSchema = z.enum(["terms", "privacy", "aeat_data_access", "mandate_presentacion"]);
 export const stepSchema = z.number().int().min(0).max(5);

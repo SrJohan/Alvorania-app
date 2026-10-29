@@ -3,6 +3,7 @@
 // Cambiar la implementación por la real no debería tocar ninguna pantalla.
 import { calculate, type Answers } from "@/lib/tax/engine";
 import { coversCase, requiredPlan } from "@/lib/pricing";
+import { accounts } from "./accounts";
 import { planByCode } from "./plans";
 import { getState, newCase, update } from "./store";
 import type { PlanCode } from "./types";
@@ -11,9 +12,20 @@ const delay = (ms = 350) => new Promise((r) => setTimeout(r, ms));
 const now = () => new Date().toISOString();
 const id = () => crypto.randomUUID();
 
-export async function signIn(email: string, fullName: string): Promise<"signed-in" | "check-email"> {
+export async function signIn(email: string, password: string): Promise<void> {
   await delay();
-  update((s) => ({ ...s, user: { email, fullName: fullName || email.split("@")[0] } }));
+  const fullName = await accounts(window.localStorage).verify(email, password);
+  if (fullName === null) throw new Error("Correo o contraseña incorrectos.");
+  update((s) => ({ ...s, user: { email: email.trim().toLowerCase(), fullName } }));
+}
+
+export async function signUp(input: { fullName: string; email: string; password: string }): Promise<"signed-in" | "check-email"> {
+  await delay();
+  const email = input.email.trim().toLowerCase();
+  if (!(await accounts(window.localStorage).register(email, input.fullName, input.password))) {
+    throw new Error("Ya existe una cuenta con ese correo. Entra con tu contraseña.");
+  }
+  update((s) => ({ ...s, user: { email, fullName: input.fullName } }));
   return "signed-in";
 }
 

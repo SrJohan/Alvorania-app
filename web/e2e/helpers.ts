@@ -37,11 +37,14 @@ export async function a11y(page: Page) {
   return r.violations.map((v) => `${v.id} (${v.impact}): ${v.nodes.length} nodos — ${v.help}`);
 }
 
-export async function signIn(page: Page, name = "Ana Prueba", email = "ana@example.test") {
+/** Crea una cuenta nueva (cada prueba parte de un navegador vacío) y entra en el flujo. */
+export async function signIn(page: Page, name = "Ana Prueba", email = "ana@example.test", password = "clave-de-prueba-1") {
   await page.goto("/acceder?next=/app/conectar");
+  await page.getByRole("button", { name: "Crea una" }).click();
   await page.getByLabel("Nombre completo").fill(name);
   await page.getByLabel("Correo electrónico").fill(email);
-  await page.getByRole("button", { name: "Continuar" }).click();
+  await page.getByLabel("Contraseña", { exact: true }).fill(password);
+  await page.getByRole("button", { name: "Crear cuenta" }).click();
   await expect(page.getByRole("heading", { name: "Tus datos fiscales" })).toBeVisible();
 }
 
