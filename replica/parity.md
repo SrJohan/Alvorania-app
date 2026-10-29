@@ -1,13 +1,13 @@
 # Paridad con TaxDown
 
-Fecha: 2026-10-26 · Build: 5027ea6 + matriz actualizada · Herramientas: `replica/tools/parity.mjs` y `replica/tools/layout-diff.mjs`, puertos a Node de `parity.py` e `imgdiff.py` (no hay Python en este equipo), con los mismos pesos y el mismo algoritmo.
+Fecha: 2026-10-29 · Build: 4594977 + matriz actualizada (empresas y artículos; la estructura de pantallas es la medida del 26-10) · Herramientas: `replica/tools/parity.mjs` y `replica/tools/layout-diff.mjs`, puertos a Node de `parity.py` e `imgdiff.py` (no hay Python en este equipo), con los mismos pesos y el mismo algoritmo.
 
 ## Resultado
 
 | | puntuación |
 | --- | --- |
-| **Total** (80 % funciones + 20 % estructura) | **47,4 / 100** |
-| Funciones | 53,4 (34 contadas; **6 de 13 imprescindibles** hechas) |
+| **Total** (80 % funciones + 20 % estructura) | **48,5 / 100** |
+| Funciones | 54,8 (34 contadas; **6 de 13 imprescindibles** hechas) |
 | Estructura de pantallas | 23,3 (8 comparaciones) |
 
 **Veredicto: no se puede lanzar.** Quedan 7 imprescindibles a medias y un bug S2 abierto (BUG-004). No hay ningún S1.
@@ -18,7 +18,6 @@ Ninguna función está en «no» entre las imprescindibles: las 7 que faltan est
 
 | área | puntuación | funciones |
 | --- | --- | --- |
-| b2b | 0 | 1 |
 | ayudas | 0 | 2 |
 | producto | 0 | 1 |
 | autónomos | 16,7 | 3 |
@@ -27,7 +26,8 @@ Ninguna función está en «no» entre las imprescindibles: las 7 que faltan est
 | notificaciones | 50 | 1 |
 | requerimientos | 50 | 3 |
 | internacional | 50 | 1 |
-| marketing | 66,7 | 5 |
+| b2b | 50 | 1 |
+| marketing | 72,2 | 5 |
 | pagos | 75 | 2 |
 | onboarding | 75 | 2 |
 | seguimiento, cuenta, confianza | 100 | 1 cada una |
@@ -36,9 +36,9 @@ Ninguna función está en «no» entre las imprescindibles: las 7 que faltan est
 
 Imprescindibles (a medias):
 
-1. **Cálculo del resultado** · motor de demostración con la escala general; faltan deducciones autonómicas y reglas revisadas por un fiscalista.
-2. **Optimización con deducciones** · solo pensiones, donativos e hipoteca anterior a 2013.
-3. **Cuestionario guiado** · 4 pasos básicos; faltan alquiler, inversiones, discapacidad y varios pagadores.
+1. **Cálculo del resultado** · motor 2025 con escalas estatal y de Madrid, Cataluña y Andalucía (cifras AEAT); el resto de comunidades como estimación; falta la firma de un fiscalista.
+2. **Optimización con deducciones** · pensiones, donativos, hipoteca, maternidad, guardería, SMI y alquiler autonómico en 3 comunidades; faltan el resto de deducciones autonómicas.
+3. **Cuestionario guiado** · 6 pasos; faltan ascendientes, inmuebles y actividades.
 4. **Selección de plan y pago** · Stripe escrito y con la lógica probada, sin configurar ni probar en real.
 5. **Revisión por un experto** · panel `/asesor` mínimo; falta «pedir cambios» al cliente.
 6. **Presentación ante Hacienda** · el asesor registra el justificante; la presentación la hace tu gestoría a mano (decisión de arquitectura).
@@ -46,7 +46,7 @@ Imprescindibles (a medias):
 
 Deberías tener: rectificativa de 4 años, fuera de plazo, borrador de respuesta a requerimientos, autónomos (alta, 130/303, suscripción), chat con IA, chat en tiempo real o WhatsApp, notificaciones probadas.
 
-Podrías tener: blog y glosario propios, ayudas, página de empresas, encuesta de trámites, trámites internacionales.
+Podrías tener: blog propio (hoy /articulos muestra el RSS de Gestoría eMadrid), glosario, ayudas, envío real del formulario de demo de empresas, encuesta de trámites, trámites internacionales.
 
 Fuera a propósito (no puntúan): acuerdos con bancos, la acreditación de la AEAT (la tramitas tú), la IA entrenada con 800.000 declaraciones, y la marca, testimonios y cifras de TaxDown.
 
@@ -61,7 +61,7 @@ Mismo tamaño de ventana (1440×900 y 390×844), parte visible al cargar. Solo p
 | S04 Trámites | 17,8 | 8,4 | ellos: cabecera grande con ilustración y tarjetas numeradas; nosotros: listas por categoría |
 | S05 Autónomos | 24,5 | 23,0 | composición propia |
 
-Capturas en `replica/screens/` (original) y `replica/clone-screens/` (clon); mapas de diferencias en `replica/diffs/` (rojo = zona distinta).
+Capturas del clon en `replica/clone-screens/` y mapas de diferencias en `replica/diffs/` (rojo = zona distinta).
 
 Cómo leer la cifra: este medidor compara la densidad de bordes celda a celda, así que un desplazamiento lateral de los márgenes baja mucho la nota aunque los bloques sean los mismos. Es el caso del inicio. En el resto de pantallas sí es estructura distinta. Las capturas del clon salen del servidor de desarrollo y muestran el indicador «N» de Next abajo a la izquierda, que resta un poco.
 
@@ -84,8 +84,8 @@ La app de TaxDown no se ha usado (no hay cuenta), así que esta parte compara lo
 
 ## Las cinco cosas que construir ahora
 
-1. **Motor de cálculo real** para el ejercicio 2025: tramos estatales y autonómicos y deducciones de 1 a 3 comunidades, revisado y firmado por un fiscalista. Cierra 2 imprescindibles.
-2. **Cuestionario completo**: alquiler, inversiones, discapacidad y varios pagadores. Cierra 1 imprescindible y alimenta al motor.
+1. **Motor de cálculo**: deducciones autonómicas de las comunidades que faltan y firma de un fiscalista (`reviewed_at`). Cierra 2 imprescindibles.
+2. **Cuestionario completo**: ascendientes, inmuebles y actividades. Cierra 1 imprescindible y alimenta al motor.
 3. **Stripe en modo test de punta a punta**: productos, webhook con `stripe listen` y tarjeta `4242…`. Cierra 1 imprescindible.
 4. **Panel de asesor completo**: pedir cambios al cliente, subir la declaración en PDF y ver los documentos del caso. Cierra 1 imprescindible.
 5. **Correo por Resend en Supabase** (BUG-004, S2): es lo único que bloquea el veredicto aparte de los imprescindibles.

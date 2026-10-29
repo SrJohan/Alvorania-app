@@ -27,8 +27,8 @@ Gestión y cancelación de suscripción,cuenta,should,yes,yes,cancelar con un cl
 Aviso de seguridad y cifrado,confianza,should,yes,yes,texto; el cifrado real llega con el backend
 Trámites internacionales (Beckham 149/151/210/720/721/7p/residencia),internacional,could,yes,partial,solo listado Próximamente
 Reseñas y casos de éxito propios,marketing,could,yes,no,contenido propio
-Página para empresas,b2b,could,yes,no,
-Blog y contenido SEO propio,marketing,could,yes,no,redactado desde cero
+Página para empresas,b2b,could,yes,partial,portada /empresas con formulario de demo; el formulario aún no envía a ningún sitio
+Blog y contenido SEO propio,marketing,could,yes,partial,/articulos muestra las noticias de Gestoría eMadrid por RSS; falta contenido propio redactado desde cero
 Glosario fiscal y páginas de deducciones,marketing,could,yes,no,redactado desde cero
 Ayuda al alquiler en Madrid,ayudas,could,yes,no,
 Pack para familias,ayudas,could,yes,no,
