@@ -153,9 +153,10 @@ export function SiteFooter() {
         <div>
           <p className="font-semibold">Legal</p>
           <ul className="mt-2 space-y-1 text-on-ink-muted">
-            <li>Aviso legal (pendiente)</li>
-            <li>Política de privacidad (pendiente)</li>
-            <li>Condiciones del servicio (pendiente)</li>
+            <li><Link href="/aviso-legal" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Aviso legal</Link></li>
+            <li><Link href="/privacidad" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Política de privacidad</Link></li>
+            <li><Link href="/cookies" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Política de cookies</Link></li>
+            <li><Link href="/condiciones" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Condiciones del servicio</Link></li>
           </ul>
         </div>
       </div>
