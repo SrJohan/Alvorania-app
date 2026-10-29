@@ -14,3 +14,9 @@ export const PLANS: Plan[] = [
 ];
 
 export const planByCode = (c: string) => PLANS.find((p) => p.code === c) ?? null;
+
+// Planes mensuales para autónomos: los usan la página de autónomos y la de precios.
+export const AUTONOMO_PLANS = [
+  { name: "Estándar", price: "29,90 €", list: ["Modelos trimestrales 130 y 303", "Declaración anual", "Consultas por email"] },
+  { name: "Premium", price: "59,90 €", list: ["Todo lo de Estándar", "Contabilidad y facturación", "Asesor asignado por chat"], rec: true },
+];

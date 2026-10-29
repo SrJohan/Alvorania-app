@@ -6,15 +6,11 @@ import { PillCta } from "@/components/ui/pill-cta";
 import { Reveal } from "@/components/ui/reveal";
 import { BarraContratar, ExampleCard, PlanesYTabla, PlazosVivos } from "@/components/site/autonomos-live";
 import { LateralTransition } from "@/components/site/directional-transition";
+import { AUTONOMO_PLANS } from "@/lib/data/plans";
 
 export const metadata: Metadata = { title: "Gestoría para autónomos" };
 
 const START = "/acceder?next=/app/conectar";
-
-const plans = [
-  { name: "Estándar", price: "29,90 €", list: ["Modelos trimestrales 130 y 303", "Declaración anual", "Consultas por email"] },
-  { name: "Premium", price: "59,90 €", list: ["Todo lo de Estándar", "Contabilidad y facturación", "Asesor asignado por chat"], rec: true },
-];
 
 const facts = [
   ["Desde 29,90 €", "al mes"],
@@ -103,7 +99,7 @@ export default function Autonomos() {
 
       <section aria-labelledby="planes" className="mt-24 scroll-mt-24">
         <h2 id="planes" className={`${headline} text-[34px] leading-[1.1] sm:text-[44px]`}>Elige tu plan</h2>
-        <PlanesYTabla plans={plans} compare={compare} />
+        <PlanesYTabla plans={AUTONOMO_PLANS} compare={compare} />
       </section>
 
       <section aria-labelledby="plazos" className="mt-24">

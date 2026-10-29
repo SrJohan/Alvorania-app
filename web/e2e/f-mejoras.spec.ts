@@ -41,11 +41,12 @@ test.describe("F2 asesor con nombre", () => {
 });
 
 test.describe("Precios: entrada por caso", () => {
-  test("PRE-H1 elegir un caso cambia el precio y el siguiente paso", async ({ page }) => {
+  test("PRE-H1 los pasos se desbloquean en orden y el caso cambia el precio", async ({ page }) => {
     await page.goto("/precios");
-    await expect(page.getByRole("heading", { name: "¿Qué quieres hacer?" })).toBeVisible();
-    await expect(page.getByRole("radio", { name: /Hacer mi renta/ })).toBeChecked();
-    await expect(page.getByRole("heading", { name: /Tu renta, calculada gratis/ })).toBeVisible();
+    await expect(page.getByRole("radio", { name: /particular/i })).toBeVisible();
+    await expect(page.getByText("Primero dinos quién eres")).toBeVisible();
+    await expect(page.getByRole("radio", { name: /Hacer mi renta/ })).toHaveCount(0); // bloqueado: inert lo saca del árbol accesible
+    await page.getByRole("radio", { name: /particular/i }).check({ force: true });
     await page.getByRole("radio", { name: /Me ha escrito Hacienda/ }).check({ force: true });
     await expect(page.getByRole("heading", { name: /Entiende qué te piden/ })).toBeVisible();
     await expect(page.getByRole("link", { name: "Subir mi carta" })).toHaveAttribute("href", /requerimiento/);
@@ -53,11 +54,19 @@ test.describe("Precios: entrada por caso", () => {
     await expect(page.getByText("10 € por año", { exact: true })).toBeVisible();
   });
 
+  test("PRE-H3 autónomo ve sus casos y el plan que encaja", async ({ page }) => {
+    await page.goto("/precios");
+    await page.getByRole("radio", { name: /autónomo/i }).check({ force: true });
+    await page.getByRole("radio", { name: /Contabilidad y facturación/ }).check({ force: true });
+    await expect(page.getByText("Encaja contigo")).toBeVisible();
+    await expect(page.getByText("59,90 €").first()).toBeVisible();
+  });
+
   test("PRE-H2 se puede elegir con el teclado", async ({ page }) => {
     await page.goto("/precios");
-    await page.getByRole("radio", { name: /Hacer mi renta/ }).focus();
+    await page.getByRole("radio", { name: /particular/i }).focus();
     await page.keyboard.press("ArrowRight");
-    await expect(page.getByRole("radio", { name: /Me ha escrito Hacienda/ })).toBeChecked();
+    await expect(page.getByRole("radio", { name: /autónomo/i })).toBeChecked();
   });
 });
 
@@ -67,6 +76,7 @@ test.describe("Precios: movimiento", () => {
     await page.goto("/precios");
     await expect(page.getByRole("heading", { name: "Preguntas sobre precios" })).toBeVisible();
     expect(await page.locator("[data-reveal='hidden']").count()).toBe(0);
+    await page.getByRole("radio", { name: /particular/i }).check({ force: true });
     await page.getByRole("radio", { name: /Vivo entre países/ }).check({ force: true });
     await expect(page.getByRole("heading", { name: /Trámites internacionales/ })).toBeVisible();
   });

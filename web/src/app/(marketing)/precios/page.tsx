@@ -1,10 +1,8 @@
 import type { Metadata } from "next";
-import { LinkButton } from "@/components/ui/button";
-import { Accordion, Card, Notice, Tag } from "@/components/ui/display";
+import { Accordion, Notice } from "@/components/ui/display";
 import { Reveal } from "@/components/ui/reveal";
 import { PriceFinder } from "@/components/site/price-finder";
 import { PLANS } from "@/lib/data/plans";
-import { formatEuros } from "@/lib/format";
 import { LateralTransition } from "@/components/site/directional-transition";
 
 export const metadata: Metadata = { title: "Precios" };
@@ -30,41 +28,20 @@ const Cell = ({ v }: { v: string | boolean }) =>
 export default function Precios() {
   return (
     <LateralTransition><div className="mx-auto max-w-wide px-4 py-12">
-      <h1 className="font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink sm:text-[56px]">Precios claros, sin sorpresas</h1>
-      <p className="mt-2 max-w-reading text-text-muted">Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
-      <div className="mt-4 max-w-reading">
-        <Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice>
-      </div>
-
-      <div className="anim-swap mt-10"><PriceFinder /></div>
-
-      <h2 id="planes" className="mt-16 scroll-mt-24 text-lg font-semibold">Planes para tu renta</h2>
-      <div className="mt-4 grid gap-4 md:grid-cols-3">
-        {PLANS.map((p, i) => (
-          <Reveal key={p.code} delay={i * 60} className="flex">
-          <Card selected={p.recommended} className="flex w-full flex-col transition-[transform,translate,scale,rotate,box-shadow] duration-200 ease-brand hover:-translate-y-1 hover:shadow-pop motion-reduce:transform-none">
-            <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">{p.name}</h2>
-              {p.recommended && <Tag tone="accent">Recomendado</Tag>}
-            </div>
-            <p className="mt-3 text-xl font-bold">{formatEuros(p.priceCents)}<span className="text-sm font-normal text-text-muted"> al año</span></p>
-            <p className="mt-2 text-sm text-text-muted">{p.blurb}</p>
-            <ul className="mt-4 flex-1 space-y-1 text-sm">
-              {p.features.map((f) => <li key={f}>✓ {f}</li>)}
-            </ul>
-            <div className="mt-6"><LinkButton href="/acceder?next=/app/conectar" variant={p.recommended ? "primary" : "secondary"} className="w-full">Elegir {p.name}</LinkButton></div>
-          </Card>
-          </Reveal>
-        ))}
-      </div>
-
-      <Reveal className="mt-10"><section aria-labelledby="cerrado" className="rounded-lg bg-success-soft p-6 text-on-success-soft">
+      <div className="anim-swap"><PriceFinder
+        intro={<>
+          <h1 className="font-display text-[38px] font-semibold leading-[1.05] tracking-[-0.06em] text-ink sm:text-[56px] lg:text-[64px]">Precios claros,<br />sin sorpresas</h1>
+          <p className="mt-4 max-w-reading text-lg text-text">Calcular es gratis. Pagas solo si quieres que un asesor revise y presente tu declaración. Precios de ejemplo, IVA incluido.</p>
+        </>}
+        notice={<Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice>}
+      /></div>
+      <Reveal className="mt-20"><section aria-labelledby="cerrado" className="rounded-lg bg-success-soft p-6 text-on-success-soft">
         <h2 id="cerrado" className="text-lg font-semibold">Precio cerrado antes de pagar</h2>
         <p className="mt-1 max-w-reading">Al terminar el cuestionario te decimos qué plan necesita tu caso y cuánto cuesta en total. Ese es el precio: no hay suplementos después. Si has vendido acciones o fondos necesitarás el plan Completo, y te lo diremos antes de pagar.</p>
       </section></Reveal>
 
       <div className="mt-12">
-      <h2 className="text-lg font-semibold">Comparativa</h2>
+      <h2 id="comparativa" className="scroll-mt-24 text-lg font-semibold">Comparativa de los planes de renta</h2>
       <div className="relative mt-4 overflow-x-auto">
         <table className="w-full min-w-[520px] border-collapse text-sm">
           <caption className="sr-only">Comparativa de planes</caption>
