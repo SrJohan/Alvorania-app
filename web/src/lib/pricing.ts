@@ -16,6 +16,16 @@ const RULES: Rule[] = [
     applies: (a) => a.savingsGains > 0,
     reason: "Has vendido acciones o fondos: hay que calcular cada ganancia con su coste de compra.",
   },
+  {
+    plan: "FULL",
+    applies: (a) => a.propertyIncome,
+    reason: "Tienes ingresos o ventas de inmuebles: tu asesor los calcula a mano.",
+  },
+  {
+    plan: "FULL",
+    applies: (a) => a.selfEmployed,
+    reason: "Has tenido actividad como autónomo o profesional: tu asesor la calcula a mano.",
+  },
 ];
 
 export function requiredPlan(input: Answers): { plan: PlanCode; reasons: string[] } {

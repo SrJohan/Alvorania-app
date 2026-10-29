@@ -20,9 +20,11 @@ const ANSWER_LABELS: [keyof Answers, string, "euros" | "n" | "texto" | "si"][] =
   ["ccaa", "Comunidad", "texto"], ["civilStatus", "Estado civil", "texto"], ["birthYear", "Año de nacimiento", "n"], ["disability", "Discapacidad (%)", "n"],
   ["grossIncome", "Ingresos brutos del trabajo", "euros"], ["socialSecurity", "Seguridad Social", "euros"], ["withholdings", "Retenciones", "euros"], ["payers", "Pagadores", "n"],
   ["savingsIncome", "Intereses y dividendos", "euros"], ["savingsGains", "Ganancias", "euros"],
+  ["ascendientes", "Ascendientes a cargo", "n"], ["ascendientes75", "De ellos, mayores de 75", "n"],
   ["children", "Hijos", "n"], ["childrenUnder3", "Menores de 3", "n"], ["workingMother", "Madre trabajadora", "si"], ["nurseryCost", "Guardería", "euros"],
   ["rentPaid", "Alquiler pagado", "euros"], ["mortgagePre2013", "Hipoteca anterior a 2013", "euros"],
   ["pensionContrib", "Planes de pensiones", "euros"], ["donations", "Donativos", "euros"], ["donationsRecurrent", "Donativos recurrentes", "si"],
+  ["propertyIncome", "Inmuebles (alquiler, segunda vivienda o venta)", "si"], ["selfEmployed", "Actividad como autónomo", "si"],
 ];
 
 const fmt = (v: unknown, t: string) =>

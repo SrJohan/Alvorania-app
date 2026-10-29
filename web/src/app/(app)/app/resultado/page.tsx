@@ -66,6 +66,12 @@ export default function Resultado() {
 
       <ResultCard cents={calc.resultCents} savingsCents={calc.savingsCents} stale={stale} count />
 
+      {(c!.answers.propertyIncome || c!.answers.selfEmployed) && (
+        <Notice tone="warning" title="Este resultado no incluye todos tus ingresos">
+          Nos has dicho que tienes {[c!.answers.propertyIncome && "inmuebles", c!.answers.selfEmployed && "actividad como autónomo"].filter(Boolean).join(" y ")}. Eso lo calcula tu asesor al revisar el caso, así que la cifra de arriba puede cambiar.
+        </Notice>
+      )}
+
       {calc.approximate && (
         <Notice title="Es una estimación">
           Aún no tenemos cargadas las deducciones propias de {calc.territory}: la parte autonómica se ha calculado con la escala general. Tu asesor la ajustará antes de presentar.

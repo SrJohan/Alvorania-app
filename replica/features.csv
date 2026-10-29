@@ -8,7 +8,7 @@ Cálculo del resultado de la renta (a pagar o devolver),renta,must,yes,partial,m
 Optimización con deducciones,renta,must,yes,partial,pensiones donativos hipoteca maternidad guardería SMI y alquiler autonómico en 3 comunidades; faltan el resto de deducciones autonómicas
 Cálculo gratuito sin tarjeta,pagos,must,yes,yes,
 Selección de plan y pago,pagos,must,yes,partial,Stripe Checkout y webhook escritos (lógica probada); sin probar en modo test real
-Revisión por experto antes de presentar,renta,must,yes,partial,panel /asesor mínimo; falta pedir cambios al cliente
+Revisión por experto antes de presentar,renta,must,yes,yes,panel /asesor con datos, cálculo, mensajes, subida de la declaración en PDF y pedir cambios al cliente (el cliente lo ve y reenvía); acciones de servidor sin probar con Supabase real
 Confirmación explícita del usuario antes de presentar,renta,must,yes,yes,regla en base de datos probada; acción de servidor sin probar con datos reales
 Presentación de la declaración ante Hacienda,renta,must,yes,partial,registro del justificante por el asesor; la presentación real la hace tu gestoría
 Panel de seguimiento del caso,seguimiento,must,yes,yes,timeline y mensajes

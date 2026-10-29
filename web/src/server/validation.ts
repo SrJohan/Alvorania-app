@@ -16,6 +16,8 @@ const answersBase = z.object({
   withholdings: euros,
   savingsIncome: euros,
   savingsGains: euros,
+  ascendientes: count,
+  ascendientes75: count,
   children: count,
   childrenUnder3: count,
   workingMother: z.boolean(),
@@ -25,6 +27,8 @@ const answersBase = z.object({
   donations: euros,
   donationsRecurrent: z.boolean(),
   mortgagePre2013: euros,
+  propertyIncome: z.boolean(),
+  selfEmployed: z.boolean(),
 });
 
 /** Para guardar mientras se escribe: valida forma y rangos, no la coherencia entre campos. */
@@ -32,6 +36,7 @@ export const answersDraftSchema = answersBase;
 
 /** Para calcular: además exige coherencia entre campos. */
 export const answersSchema = answersBase.refine((a) => a.childrenUnder3 <= a.children, { message: "Los menores de 3 años no pueden superar el número de hijos", path: ["childrenUnder3"] })
+  .refine((a) => a.ascendientes75 <= a.ascendientes, { message: "Los mayores de 75 no pueden superar el número de ascendientes", path: ["ascendientes75"] })
   .refine((a) => a.socialSecurity <= a.grossIncome && a.withholdings <= a.grossIncome, { message: "Importes superiores a los ingresos", path: ["grossIncome"] });
 
 export const emailSchema = z.string().trim().toLowerCase().email().max(254);

@@ -3,8 +3,9 @@ import { RULES_2025, type Bracket, type Minimos, type TaxRules } from "./rules";
 // Motor del IRPF para tributación individual de residentes en territorio común.
 // Sigue el orden de la liquidación: rendimiento del trabajo → reducciones → bases → mínimo personal y familiar →
 // cuotas íntegras estatal y autonómica → deducciones → cuota líquida → deducción SMI → retenciones y maternidad.
-// Lo que NO cubre (y lo dice): tributación conjunta, actividades económicas, inmuebles, compensación de pérdidas,
-// ascendientes, otras deducciones autonómicas y las comunidades sin datos propios (estimación con la escala supletoria).
+// Lo que NO cubre (y lo dice): tributación conjunta, actividades económicas, inmuebles (se preguntan, pero los calcula el asesor), compensación de pérdidas,
+// ascendientes con discapacidad,
+// otras deducciones autonómicas y las comunidades sin datos propios (estimación con la escala supletoria).
 
 export type Answers = {
   taxYear: number;
@@ -18,6 +19,8 @@ export type Answers = {
   withholdings: number;           // retenciones y pagos a cuenta (trabajo y ahorro)
   savingsIncome: number;          // intereses y dividendos
   savingsGains: number;           // ganancias netas por ventas de acciones o fondos (si hubo pérdidas, 0)
+  ascendientes: number;           // mayores de 65 que conviven con el contribuyente más de medio año y ingresan ≤ 8.000 €
+  ascendientes75: number;         // de ellos, mayores de 75
   children: number;
   childrenUnder3: number;
   workingMother: boolean;         // madre con trabajo remunerado y hijos menores de 3 años
@@ -27,6 +30,8 @@ export type Answers = {
   pensionContrib: number;
   donations: number;
   donationsRecurrent: boolean;    // misma entidad tres años o más
+  propertyIncome: boolean;        // alquila un inmueble, tiene segunda vivienda o vendió un inmueble: no se calcula aquí
+  selfEmployed: boolean;          // actividad económica: no se calcula aquí
 };
 
 export type DeductionLine = {
@@ -78,8 +83,9 @@ export type Calculation = {
 export const emptyAnswers: Answers = {
   taxYear: 2025, ccaa: "", civilStatus: "", birthYear: 0, disability: 0, payers: 1,
   grossIncome: 0, socialSecurity: 0, withholdings: 0, savingsIncome: 0, savingsGains: 0,
-  children: 0, childrenUnder3: 0, workingMother: false, nurseryCost: 0,
+  ascendientes: 0, ascendientes75: 0, children: 0, childrenUnder3: 0, workingMother: false, nurseryCost: 0,
   rentPaid: 0, mortgagePre2013: 0, pensionContrib: 0, donations: 0, donationsRecurrent: false,
+  propertyIncome: false, selfEmployed: false,
 };
 
 /** Respuestas guardadas con una versión anterior del cuestionario: completa los campos que falten. */
@@ -128,6 +134,8 @@ export function minimoPersonalFamiliar(a: Answers, m: Minimos): number {
   if (age >= 75) total += m.mayor75;
   for (let i = 0; i < a.children; i++) total += m.descendientes[Math.min(i, m.descendientes.length - 1)];
   total += Math.min(a.childrenUnder3, a.children) * m.menor3;
+  // Ascendientes: mismos importes que el contribuyente mayor de 65 / 75 (cuadro de mínimos de la AEAT).
+  total += a.ascendientes * m.mayor65 + Math.min(a.ascendientes75, a.ascendientes) * m.mayor75;
   if (a.disability === 33) total += m.discapacidad33;
   if (a.disability === 65) total += m.discapacidad65 + m.asistencia;
   return total;

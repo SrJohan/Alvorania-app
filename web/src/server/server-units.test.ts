@@ -56,6 +56,8 @@ describe("validación de entradas", () => {
     expect(answersDraftSchema.safeParse(incoherent).success).toBe(true);
     expect(answersSchema.safeParse(incoherent).success).toBe(false);
     expect(answersSchema.safeParse({ ...ok, withholdings: 99999 }).success).toBe(false);
+    expect(answersSchema.safeParse({ ...ok, ascendientes: 1, ascendientes75: 2 }).success).toBe(false);
+    expect(answersSchema.safeParse({ ...ok, ascendientes: 2, ascendientes75: 1 }).success).toBe(true);
   });
   it("limita tipo y tamaño de los archivos subidos", () => {
     const base = { name: "carta.pdf", mime: "application/pdf", sizeBytes: 1000, kind: "carta_hacienda" };

@@ -56,6 +56,23 @@ describe("mínimo personal y familiar", () => {
   it("estatal: mayor de 75 y discapacidad del 65 %", () => {
     expect(minimoPersonalFamiliar(A({ birthYear: 1948, disability: 65 }), R.minimosEstatales)).toBe(5550 + 1150 + 1400 + 9000 + 3000);
   });
+  it("ascendientes: 1.150 € por cada mayor de 65 y 1.400 € más por cada mayor de 75 (estatal)", () => {
+    expect(minimoPersonalFamiliar(A({ ascendientes: 2, ascendientes75: 1 }), R.minimosEstatales)).toBe(5550 + 2 * 1150 + 1400);
+  });
+  it("ascendientes en Madrid con los importes autonómicos", () => {
+    expect(minimoPersonalFamiliar(A({ ascendientes: 1, ascendientes75: 1 }), R.territorios.Madrid.minimos as never)).toBeCloseTo(5956.65 + 1234.26 + 1502.58, 2);
+  });
+  it("los mayores de 75 nunca superan a los ascendientes", () => {
+    expect(minimoPersonalFamiliar(A({ ascendientes: 1, ascendientes75: 3 }), R.minimosEstatales)).toBe(5550 + 1150 + 1400);
+  });
+  it("un ascendiente baja la cuota: 1.150 € de mínimo estatal y autonómico a Madrid", () => {
+    const base = A({ ccaa: "Madrid", grossIncome: 40000, socialSecurity: 2540, withholdings: 6000 });
+    const con = calculate({ ...base, ascendientes: 1 });
+    const sin = calculate(base);
+    expect(con.resultCents).toBeLessThan(sin.resultCents);
+    expect(con.breakdown.minimoEstatal - sin.breakdown.minimoEstatal).toBeCloseTo(1150, 2);
+    expect(con.breakdown.minimoAutonomico - sin.breakdown.minimoAutonomico).toBeCloseTo(1234.26, 2);
+  });
 });
 
 describe("casos completos calculados a mano", () => {

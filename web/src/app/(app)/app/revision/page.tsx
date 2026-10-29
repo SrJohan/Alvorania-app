@@ -50,7 +50,13 @@ export default function Revision() {
         </ul>
       </Card>
 
-      {!r.advisorApprovedAt && <Notice>Tu asesor aún está revisando la declaración. Te avisaremos cuando esté lista para tu confirmación.</Notice>}
+      {r.status === "cambios_pedidos" && (
+        <Notice tone="warning" title="Tu asesor te ha pedido cambios">
+          «{r.notes}»<div className="mt-3"><LinkButton href="/app/caso" size="sm" variant="secondary">Ir a mi caso para corregirlo</LinkButton></div>
+        </Notice>
+      )}
+
+      {!r.advisorApprovedAt && r.status !== "cambios_pedidos" && <Notice>Tu asesor aún está revisando la declaración. Te avisaremos cuando esté lista para tu confirmación.</Notice>}
 
       {r.advisorApprovedAt && !r.userApprovedAt && (
         <Card selected>

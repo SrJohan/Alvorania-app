@@ -10,7 +10,7 @@ import { useDemoState } from "@/lib/data/store";
 import { normalizeAnswers, type Answers } from "@/lib/tax/engine";
 import { CCAA, SUPPORTED_CCAA } from "@/lib/tax/rules";
 
-const STEPS = ["Tú", "Trabajo", "Ahorro", "Familia", "Vivienda", "Deducciones"];
+const STEPS = ["Tú", "Trabajo", "Otras rentas", "Familia", "Vivienda", "Deducciones"];
 type Errors = Partial<Record<keyof Answers, string>>;
 
 const DISABILITY = ["Sin discapacidad", "Del 33 % al 64 %", "Del 65 % o más"] as const;
@@ -31,6 +31,7 @@ function validate(step: number, a: Answers): Errors {
   }
   if (step === 3) {
     if (a.childrenUnder3 > a.children) e.childrenUnder3 = "No puede ser mayor que el número de hijos.";
+    if (a.ascendientes75 > a.ascendientes) e.ascendientes75 = "No puede ser mayor que el número de ascendientes.";
   }
   return e;
 }
@@ -115,10 +116,19 @@ export default function Cuestionario() {
           <>
             <NumberField label="Intereses y dividendos cobrados" help="Cuentas, depósitos y acciones. Déjalo en blanco si no tienes." value={a.savingsIncome} onValue={(v) => set("savingsIncome", v)} />
             <NumberField label="Ganancias por vender acciones o fondos" help="La ganancia neta del año. Si perdiste dinero, déjalo en blanco: tu asesor lo compensará." value={a.savingsGains} onValue={(v) => set("savingsGains", v)} />
+            <Checkbox checked={a.propertyIncome} onChange={(e) => set("propertyIncome", e.target.checked)} label="Alquilo un inmueble, tengo una segunda vivienda o he vendido un inmueble." />
+            <Checkbox checked={a.selfEmployed} onChange={(e) => set("selfEmployed", e.target.checked)} label="He tenido actividad como autónomo o profesional." />
+            {(a.propertyIncome || a.selfEmployed) && (
+              <Notice tone="accent" title="Lo calcula tu asesor">
+                Estos ingresos no entran en el cálculo automático: tu asesor los incorporará al revisar el caso, así que el resultado puede cambiar. Para este caso necesitarás el plan Completo.
+              </Notice>
+            )}
           </>
         )}
         {step === 3 && (
           <>
+            <NumberField label="Ascendientes que viven contigo" suffix="" help="Padres o abuelos mayores de 65 años que han vivido contigo más de medio año y han ingresado menos de 8.000 €. Si otro contribuyente comparte la deducción, se reparte a partes iguales: tu asesor lo ajusta." value={a.ascendientes} onValue={(v) => set("ascendientes", Math.round(v))} />
+            {a.ascendientes > 0 && <NumberField label="De ellos, mayores de 75 años" suffix="" value={a.ascendientes75} onValue={(v) => set("ascendientes75", Math.round(v))} error={errors.ascendientes75} />}
             <NumberField label="Hijos a tu cargo" suffix="" value={a.children} onValue={(v) => set("children", Math.round(v))} />
             <NumberField label="De ellos, menores de 3 años" suffix="" value={a.childrenUnder3} onValue={(v) => set("childrenUnder3", Math.round(v))} error={errors.childrenUnder3} />
             {a.childrenUnder3 > 0 && (

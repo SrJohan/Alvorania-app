@@ -6,13 +6,13 @@ Fecha: 2026-10-29 · Build: 4594977 + matriz actualizada (empresas y artículos;
 
 | | puntuación |
 | --- | --- |
-| **Total** (80 % funciones + 20 % estructura) | **48,5 / 100** |
-| Funciones | 54,8 (34 contadas; **6 de 13 imprescindibles** hechas) |
+| **Total** (80 % funciones + 20 % estructura) | **49,2 / 100** |
+| Funciones | 56,8 (34 contadas; **7 de 13 imprescindibles** hechas) |
 | Estructura de pantallas | 23,3 (8 comparaciones) |
 
-**Veredicto: no se puede lanzar.** Quedan 7 imprescindibles a medias y un bug S2 abierto (BUG-004). No hay ningún S1.
+**Veredicto: no se puede lanzar.** Quedan 6 imprescindibles a medias y un bug S2 abierto (BUG-004). No hay ningún S1.
 
-Ninguna función está en «no» entre las imprescindibles: las 7 que faltan están **a medias**, no sin empezar.
+Ninguna función está en «no» entre las imprescindibles: las 6 que faltan están **a medias**, no sin empezar.
 
 ## Funciones por área (de peor a mejor)
 
@@ -40,9 +40,8 @@ Imprescindibles (a medias):
 2. **Optimización con deducciones** · pensiones, donativos, hipoteca, maternidad, guardería, SMI y alquiler autonómico en 3 comunidades; faltan el resto de deducciones autonómicas.
 3. **Cuestionario guiado** · 6 pasos; faltan ascendientes, inmuebles y actividades.
 4. **Selección de plan y pago** · Stripe escrito y con la lógica probada, sin configurar ni probar en real.
-5. **Revisión por un experto** · panel `/asesor` mínimo; falta «pedir cambios» al cliente.
-6. **Presentación ante Hacienda** · el asesor registra el justificante; la presentación la hace tu gestoría a mano (decisión de arquitectura).
-7. **Datos fiscales con Cl@ve** · sustituido por subida o entrada manual; Cl@ve exige ser colaborador social de la AEAT.
+5. **Presentación ante Hacienda** · el asesor registra el justificante; la presentación la hace tu gestoría a mano (decisión de arquitectura).
+6. **Datos fiscales con Cl@ve** · sustituido por subida o entrada manual; Cl@ve exige ser colaborador social de la AEAT.
 
 Deberías tener: rectificativa de 4 años, fuera de plazo, borrador de respuesta a requerimientos, autónomos (alta, 130/303, suscripción), chat con IA, chat en tiempo real o WhatsApp, notificaciones probadas.
 
@@ -82,13 +81,12 @@ La app de TaxDown no se ha usado (no hay cuenta), así que esta parte compara lo
 | correos | no visto | pago, aprobación, presentación, renovación y recordatorios escritos; sin probar en real | probar con Resend |
 | recordar entre visitas | no visto | demo: el navegador; real: la base de datos | mantener |
 
-## Las cinco cosas que construir ahora
+## Las cuatro cosas que construir ahora
 
 1. **Motor de cálculo**: deducciones autonómicas de las comunidades que faltan y firma de un fiscalista (`reviewed_at`). Cierra 2 imprescindibles.
 2. **Cuestionario completo**: ascendientes, inmuebles y actividades. Cierra 1 imprescindible y alimenta al motor.
 3. **Stripe en modo test de punta a punta**: productos, webhook con `stripe listen` y tarjeta `4242…`. Cierra 1 imprescindible.
-4. **Panel de asesor completo**: pedir cambios al cliente, subir la declaración en PDF y ver los documentos del caso. Cierra 1 imprescindible.
-5. **Correo por Resend en Supabase** (BUG-004, S2): es lo único que bloquea el veredicto aparte de los imprescindibles.
+4. **Correo por Resend en Supabase** (BUG-004, S2): es lo único que bloquea el veredicto aparte de los imprescindibles.
 
 Hecho: a 1440 px el inicio usa contenido de 1.344 px y la tarjeta del asesor va a la derecha del titular (a 1024 px y en móvil sigue debajo, igual que en TaxDown).
 

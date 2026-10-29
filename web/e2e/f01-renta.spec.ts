@@ -69,6 +69,11 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await expect(page.getByText("Falta el certificado de retenciones de tu segundo pagador.").first()).toBeVisible();
     // mientras haya cambios pedidos, no se puede aprobar
     await expect(page.getByRole("button", { name: "El asesor aprueba la revisión" })).toBeDisabled();
+    // la pantalla de revisión también lo dice, en vez de «sigue revisando»
+    await page.goto("/app/revision");
+    await expect(page.getByText("Tu asesor te ha pedido cambios")).toBeVisible();
+    await expect(page.getByText("Tu asesor aún está revisando")).toHaveCount(0);
+    await page.getByRole("link", { name: "Ir a mi caso para corregirlo" }).click();
     await page.getByRole("link", { name: "Ir al cuestionario" }).click();
     await page.getByLabel("Donativos a ONG y fundaciones").fill("50");
     await page.getByRole("link", { name: "Resultado" }).click();

@@ -21,6 +21,15 @@ describe("F1 · precio cerrado según el caso", () => {
     expect(r.reasons.join(" ")).toMatch(/acciones o fondos/);
   });
 
+  it("ingresos de inmuebles o actividad como autónomo exigen el plan Completo y lo explican", () => {
+    const inm = requiredPlan(A({ propertyIncome: true }));
+    expect(inm.plan).toBe("FULL");
+    expect(inm.reasons.join(" ")).toMatch(/inmuebles/);
+    const aut = requiredPlan(A({ selfEmployed: true }));
+    expect(aut.plan).toBe("FULL");
+    expect(aut.reasons.join(" ")).toMatch(/autónomo/);
+  });
+
   it("un plan cubre el caso si es igual o superior al necesario", () => {
     const full = A({ savingsGains: 10 });
     expect(coversCase("PRO", full)).toBe(false);
