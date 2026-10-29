@@ -125,3 +125,10 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 ::view-transition-old(.case-indicator), ::view-transition-new(.case-indicator) { animation: none; height: 100%; }
 :root:active-view-transition-type(case-select)::view-transition-old(root) { display: none; }
 :root:active-view-transition-type(case-select)::view-transition-new(root) { animation: none; }
+
+/* Expediente: texto, papel y sello. */
+.anim-quick { --rise: 6px; animation: rise 150ms cubic-bezier(.2,.8,.2,1) backwards; }
+.anim-paper { --rise: 32px; animation: rise 320ms cubic-bezier(.2,.8,.2,1) 60ms backwards; }
+@keyframes stamp { 0% { opacity: 0; scale: 1.35; } 55% { opacity: 1; scale: .97; } 100% { opacity: 1; scale: 1; } }
+.anim-stamp { animation: stamp 300ms cubic-bezier(.2,.8,.2,1) 120ms both; }
+@media (prefers-reduced-motion: reduce) { .anim-quick, .anim-paper, .anim-stamp { animation: none; } }

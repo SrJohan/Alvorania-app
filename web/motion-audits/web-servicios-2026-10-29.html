@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>web panel de trámites motion audit — 2026-10-29</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Public+Sans:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        oklch(0.155 0.006 255);
+      --surface:    oklch(0.195 0.007 255);
+      --surface-2:  oklch(0.235 0.008 255);
+      --paper:      oklch(0.945 0.004 255);
+      --paper-dim:  oklch(0.800 0.006 255);
+      --muted:      oklch(0.680 0.008 255);
+      --faint:      oklch(0.505 0.008 255);
+      --line:       oklch(0.95 0.01 255 / 0.09);
+      --line-strong:oklch(0.95 0.01 255 / 0.16);
+      --accent:     var(--paper);
+      --accent-soft:var(--paper-dim);
+      --accent-tint:color-mix(in oklch, var(--paper) 8%, transparent);
+      --crit: oklch(0.655 0.185 25);
+      --imp:  oklch(0.805 0.125 78);
+      --opp:  oklch(0.745 0.135 152);
+      --t-good: oklch(0.745 0.135 152);
+      --t-mid:  oklch(0.805 0.125 78);
+      --t-slow: oklch(0.655 0.185 25);
+      --dot-ink: oklch(0.15 0.01 255);
+      --display: "Familjen Grotesk", "Hanken Grotesk", system-ui, sans-serif;
+      --sans: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+    }
+    :root:has(#theme-light:checked) {
+      --ink:        oklch(0.985 0.003 255);
+      --surface:    oklch(0.965 0.004 255);
+      --surface-2:  oklch(0.940 0.005 255);
+      --paper:      oklch(0.180 0.006 255);
+      --paper-dim:  oklch(0.330 0.008 255);
+      --muted:      oklch(0.475 0.010 255);
+      --faint:      oklch(0.640 0.009 255);
+      --line:       oklch(0.180 0.010 255 / 0.12);
+      --line-strong:oklch(0.180 0.010 255 / 0.22);
+      --crit: oklch(0.52 0.185 25);
+      --imp:  oklch(0.58 0.125 70);
+      --opp:  oklch(0.50 0.135 152);
+      --t-good: oklch(0.50 0.135 152);
+      --t-mid:  oklch(0.58 0.125 70);
+      --t-slow: oklch(0.52 0.185 25);
+      --dot-ink: oklch(0.985 0.003 255);
+    }
+    * { box-sizing: border-box; }
+    html { color-scheme: dark light; }
+    body { background: var(--ink); color: var(--paper); font-family: var(--sans); margin: 0; line-height: 1.55; -webkit-font-smoothing: antialiased; }
+    .vh { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 32px 20px 80px; position: relative; }
+    code { font-family: var(--mono); font-size: 0.86em; background: var(--accent-tint); padding: 1px 5px; border-radius: 4px; }
+    a { color: inherit; }
+    .mono-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+    /* theme switch */
+    .theme-switch { display: flex; justify-content: flex-end; }
+    .theme-switch .seg label { padding: 5px 12px; }
+    #theme-dark:checked ~ .theme-switch label[for="theme-dark"],
+    #theme-light:checked ~ .theme-switch label[for="theme-light"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+
+    /* header */
+    .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); margin-top: 24px; }
+    h1.title { font-family: var(--display); font-weight: 600; font-size: clamp(30px, 5vw, 48px); line-height: 1.08; letter-spacing: -0.02em; margin: 10px 0 12px; }
+    .lede { max-width: 680px; color: var(--paper-dim); margin: 0 0 14px; }
+    .meta-row { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+    .stats { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+    .stat { display: flex; align-items: baseline; gap: 8px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 10px 14px; text-decoration: none; transition: border-color .2s ease; }
+    .stat:hover { border-color: var(--paper-dim); }
+    .stat b { font-family: var(--display); font-size: 26px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .stat span { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .stat[data-sev="crit"] b { color: var(--crit); } .stat[data-sev="imp"] b { color: var(--imp); } .stat[data-sev="opp"] b { color: var(--opp); }
+
+    section.block { margin-top: 64px; }
+    h2.sec { font-family: var(--display); font-size: 22px; font-weight: 600; margin: 8px 0 18px; letter-spacing: -0.01em; }
+    .assessment p { font-family: var(--display); font-size: clamp(19px, 2.4vw, 24px); line-height: 1.4; max-width: 860px; margin: 8px 0 0; font-weight: 500; }
+
+    /* lens table */
+    .lens-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
+    .lens-table th { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-align: left; font-weight: 500; padding: 0 14px; }
+    .lens-table td { background: var(--surface); padding: 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: top; transition: border-color .2s ease; }
+    .lens-table td:first-child { border-left: 1px solid var(--line); border-radius: 10px 0 0 10px; }
+    .lens-table td:last-child { border-right: 1px solid var(--line); border-radius: 0 10px 10px 0; }
+    .chip { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; border: 1px solid var(--line-strong); border-radius: 100px; padding: 2px 8px; color: var(--muted); white-space: nowrap; }
+    .verdict { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; white-space: nowrap; }
+    .verdict i { width: 9px; height: 9px; border-radius: 50%; background: var(--imp); }
+    .verdict.strong i { background: var(--opp); } .verdict.concern i { background: var(--crit); }
+
+    /* timing diagram */
+    .timing-grid { display: grid; grid-template-columns: 1fr 260px; gap: 28px; align-items: start; }
+    .timing-grid svg { width: 100%; height: auto; display: block; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+    .z-good { fill: color-mix(in oklch, var(--t-good) 14%, transparent); } .z-mid { fill: color-mix(in oklch, var(--t-mid) 14%, transparent); } .z-slow { fill: color-mix(in oklch, var(--t-slow) 14%, transparent); }
+    .d-good { fill: var(--t-good); } .d-mid { fill: var(--t-mid); } .d-slow { fill: var(--t-slow); }
+    .d-none { fill: none; stroke: var(--muted); stroke-width: 1.5; stroke-dasharray: 3 3; }
+    .dn { font-family: var(--mono); font-size: 11px; font-weight: 600; fill: var(--dot-ink); text-anchor: middle; dominant-baseline: central; }
+    .dn.none { fill: var(--muted); }
+    .zl { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; fill: var(--muted); }
+    .key { list-style: none; margin: 0; padding: 0; font-size: 13px; }
+    .key li { display: grid; grid-template-columns: 22px 1fr auto; gap: 8px; padding: 6px 0; border-bottom: 1px solid var(--line); }
+    .key li span:last-child { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+    .key li span:first-child { font-family: var(--mono); font-weight: 600; }
+    .off { margin-top: 18px; color: var(--paper-dim); font-size: 14.5px; max-width: 820px; }
+
+    /* lens sections */
+    .lens-sec { margin-top: 64px; padding-top: 28px; border-top: 1px solid var(--line-strong); }
+    .lens-sec__head { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .lens-sec__head h3 { font-family: var(--display); font-size: 26px; font-weight: 600; margin: 0; letter-spacing: -0.01em; }
+    .lens-sec__verdict { margin: 8px 0 0; }
+    .lens-block { margin-top: 26px; }
+    .lens-list { list-style: none; margin: 10px 0 0; padding: 0; display: grid; gap: 8px; }
+    .lens-list li { position: relative; padding-left: 26px; font-size: 14.5px; color: var(--paper-dim); }
+    .lens-list li::before { position: absolute; left: 0; top: 0; font-family: var(--mono); }
+    .lens-list.good li::before { content: "✓"; color: var(--opp); }
+    .lens-list.opp li::before { content: "◆"; color: var(--opp); font-size: 11px; top: 3px; }
+    .lens-empty { color: var(--faint); font-style: italic; margin: 10px 0 0; }
+    .lens-take { margin-top: 26px; padding: 16px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; color: var(--paper-dim); font-size: 14.5px; }
+    .lens-take b { color: var(--paper); }
+
+    .finding-row { display: grid; grid-template-columns: 1fr 380px; gap: 28px; margin-top: 16px; padding: 22px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; transition: border-color .2s ease; }
+    .finding-row:hover { border-color: var(--line-strong); }
+    .find-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+    .sev { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; border-radius: 100px; padding: 2px 9px; border: 1px solid currentColor; }
+    .finding-row[data-sev="crit"] .sev { color: var(--crit); } .finding-row[data-sev="imp"] .sev { color: var(--imp); }
+    h4.find-title { font-family: var(--display); font-size: 19px; font-weight: 600; margin: 0 0 10px; line-height: 1.25; }
+    .find-body p { margin: 0 0 10px; font-size: 14.5px; color: var(--paper-dim); }
+    .find-body .label { display: block; font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+    .fix { background: var(--accent-tint); border-radius: 10px; padding: 12px 14px; margin: 12px 0; }
+    .fix p { margin: 0; }
+    .find-loc { font-size: 12.5px; }
+
+    /* recs */
+    .tier-label { display: flex; align-items: center; gap: 12px; margin: 34px 0 10px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; }
+    .tier-label::after { content: ""; flex: 1; height: 1px; background: var(--line-strong); }
+    .tier-label.crit { color: var(--crit); } .tier-label.imp { color: var(--imp); } .tier-label.opp { color: var(--opp); }
+    .tier-label em { font-style: normal; color: var(--muted); order: 3; }
+    table.rec { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+    table.rec th { text-align: left; font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); font-weight: 500; padding: 6px 10px; border-bottom: 1px solid var(--line-strong); }
+    table.rec td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; color: var(--paper-dim); }
+    table.rec td:first-child { color: var(--paper); font-weight: 500; }
+
+    .ref-summary { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px; color: var(--paper-dim); font-size: 14.5px; }
+    .ref-lean { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 14px; }
+    .ref-lean div { border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; font-size: 13.5px; }
+    .ref-lean b { display: block; color: var(--paper); margin-bottom: 4px; }
+    footer { margin-top: 56px; padding-top: 18px; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+    /* ───────────── Demo card (shell) ───────────── */
+    .demo { position: relative; min-width: 0; }
+    .demo__bar { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .demo__meta { min-width: 0; }
+    .demo__title { display: block; font-size: 13.5px; font-weight: 600; color: var(--paper); line-height: 1.3; }
+    .demo__timing { display: block; font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .demo__controls { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+    .demo__loop { font-family: var(--mono); font-size: 12px; color: var(--faint); }
+    .seg { display: inline-flex; border: 1px solid var(--line-strong); border-radius: 100px; overflow: hidden; }
+    .seg label { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); padding: 4px 9px; cursor: pointer; user-select: none; transition: background 0.15s ease, color 0.15s ease; }
+    .demo input[id$="-a"]:checked ~ .demo__bar .seg label[for$="-a"],
+    .demo input[id$="-l"]:checked ~ .demo__bar .seg label[for$="-l"],
+    .demo input[id$="-d"]:checked ~ .demo__bar .seg label[for$="-d"] { background: color-mix(in oklch, var(--paper) 12%, transparent); color: var(--paper); }
+    .demo input:focus-visible ~ .demo__bar .seg { outline: 2px solid var(--paper-dim); outline-offset: 2px; }
+    .demo__stage {
+      --st-bg: var(--surface-2); --st-fg: var(--paper); --st-line: var(--line-strong);
+      --st-dim: color-mix(in oklch, var(--paper) 55%, transparent);
+      background: var(--st-bg); color: var(--st-fg);
+      border: 1px solid var(--line); border-radius: 10px;
+      padding: 28px 20px; min-height: 190px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    .demo input[id$="-l"]:checked ~ .demo__stage { --st-bg: oklch(0.985 0.003 255); --st-fg: oklch(0.180 0.006 255); --st-line: oklch(0.180 0.010 255 / 0.18); --st-dim: oklch(0.180 0.010 255 / 0.45); }
+    .demo input[id$="-d"]:checked ~ .demo__stage { --st-bg: oklch(0.180 0.006 255); --st-fg: oklch(0.985 0.003 255); --st-line: oklch(0.985 0.010 255 / 0.18); --st-dim: oklch(0.985 0.010 255 / 0.50); }
+
+    .ui-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 9px 18px; border-radius: 999px; background: var(--st-fg); color: var(--st-bg); font-size: 13px; font-weight: 600; }
+    .ui-card { background: var(--st-bg); border: 1px solid var(--st-line); border-radius: 12px; padding: 14px 16px; min-width: 220px; box-shadow: 0 8px 24px oklch(0 0 0 / 0.12); }
+    .ui-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--st-fg); padding: 6px 0; }
+    .ui-row + .ui-row { border-top: 1px solid var(--st-line); }
+    .ui-label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--st-dim); margin-bottom: 4px; }
+    .ui-num { font-family: var(--display); font-size: 30px; font-weight: 700; color: var(--st-fg); font-variant-numeric: tabular-nums; letter-spacing: -0.03em; line-height: 1; }
+    .ui-dim { font-size: 12px; color: var(--st-dim); }
+    .ui-ring { width: 14px; height: 14px; border-radius: 50%; border: 2px solid currentColor; border-top-color: transparent; }
+    .ui-ico svg { width: 14px; height: 14px; stroke: currentColor; stroke-width: 2.2; fill: none; stroke-linecap: round; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .demo__loop { display: none; }
+      [class*="__mt"], [class*="__mt"] * { animation: none !important; transition: none !important; }
+    }
+
+    /* ── per-finding motion (cadence 0 / 60 / 100, 3s loop) ── */
+    @media (prefers-reduced-motion: no-preference) {
+      /* 1 · la pestaña sube con transform, sin cambiar su caja */
+      @keyframes m1 { 0% { transform: translateY(6px); background-color: transparent; } 60% { transform: translateY(0); background-color: color-mix(in oklch, var(--st-fg) 10%, transparent); } 100% { transform: translateY(0); background-color: color-mix(in oklch, var(--st-fg) 10%, transparent); } }
+      .demo-1__mt .hot { animation: m1 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 2 · el texto se funde rápido; el papel sale de la carpeta después y desde más abajo */
+      @keyframes m2t { 0% { opacity: 0; transform: translateY(6px); } 25% { opacity: 1; transform: none; } 100% { opacity: 1; transform: none; } }
+      @keyframes m2p { 0%, 8% { opacity: 0; transform: translateY(46px) rotate(-1deg); box-shadow: 0 2px 4px oklch(0 0 0 / .08); } 60% { opacity: 1; transform: translateY(0) rotate(-1deg); box-shadow: 0 14px 30px oklch(0 0 0 / .22); } 100% { opacity: 1; transform: translateY(0) rotate(-1deg); box-shadow: 0 14px 30px oklch(0 0 0 / .22); } }
+      .demo-2__mt .tx { animation: m2t 3s cubic-bezier(.2,.8,.2,1) infinite; }
+      .demo-2__mt .pp { animation: m2p 3s cubic-bezier(.2,.8,.2,1) infinite; }
+
+      /* 3 · el sello cae una vez: más corto y sin espera larga */
+      @keyframes m3 { 0%, 12% { opacity: 0; scale: 1.35; } 30% { opacity: 1; scale: .97; } 38% { scale: 1; } 100% { opacity: 1; scale: 1; } }
+      .demo-3__mt .st { animation: m3 3s cubic-bezier(.2,.8,.2,1) infinite; }
+    }
+
+    /* estado estático = 100% de cada keyframe (contrato de movimiento reducido) */
+    .demo-1__mt { display: flex; align-items: flex-end; gap: 4px; border-bottom: 1px solid var(--st-line); padding: 0 6px; }
+    .demo-1__mt .tb { padding: 9px 14px 8px; border: 1px solid var(--st-line); border-bottom: 0; border-radius: 10px 10px 0 0; font-size: 12.5px; font-weight: 600; color: var(--st-dim); transform: translateY(6px); }
+    .demo-1__mt .tb.on { color: var(--st-fg); background: color-mix(in oklch, var(--st-fg) 16%, transparent); transform: none; padding-top: 12px; }
+    .demo-1__mt .hot { color: var(--st-fg); transform: none; background-color: color-mix(in oklch, var(--st-fg) 10%, transparent); }
+    .demo-2__mt { width: 300px; height: 150px; display: grid; grid-template-columns: 1fr 130px; gap: 16px; align-items: center; border-radius: 12px; padding: 14px; background: color-mix(in oklch, var(--st-fg) 8%, transparent); overflow: hidden; }
+    .demo-2__mt .tx b { display: block; font-family: var(--display); font-size: 20px; letter-spacing: -0.03em; }
+    .demo-2__mt .tx span { display: block; margin-top: 6px; height: 6px; border-radius: 3px; background: var(--st-line); }
+    .demo-2__mt .tx span + span { width: 70%; }
+    .demo-2__mt .pp { background: var(--st-bg); border: 1px solid var(--st-line); border-radius: 5px; padding: 12px; transform: rotate(-1deg); box-shadow: 0 14px 30px oklch(0 0 0 / .22); }
+    .demo-2__mt .pp .ui-num { font-size: 24px; }
+    .demo-3__mt { position: relative; width: 230px; }
+    .demo-3__mt .ui-card { padding-bottom: 46px; }
+    .demo-3__mt .st { position: absolute; right: 14px; bottom: 12px; rotate: -8deg; border: 2px solid var(--st-fg); border-radius: 6px; padding: 3px 8px; font-family: var(--mono); font-size: 9.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; line-height: 1.25; text-align: center; color: var(--st-fg); }
+
+    @media (max-width: 860px) {
+      .finding-row { grid-template-columns: 1fr; }
+      .timing-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .lens-table thead { display: none; }
+      .lens-table, .lens-table tbody, .lens-table tr, .lens-table td { display: block; width: 100%; }
+      .lens-table td { border: 1px solid var(--line) !important; border-radius: 0 !important; border-bottom: 0 !important; }
+      .lens-table td:first-child { border-radius: 10px 10px 0 0 !important; } .lens-table td:last-child { border-radius: 0 0 10px 10px !important; border-bottom: 1px solid var(--line) !important; }
+      .ref-lean { grid-template-columns: 1fr; }
+      table.rec thead { display: none; } table.rec, table.rec tbody, table.rec tr, table.rec td { display: block; }
+      table.rec tr { padding: 8px 0; border-bottom: 1px solid var(--line); } table.rec td { border: 0; padding: 2px 0; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <input class="vh" type="radio" name="theme" id="theme-dark" checked>
+  <input class="vh" type="radio" name="theme" id="theme-light">
+  <div class="theme-switch"><div class="seg"><label for="theme-dark">Oscuro</label><label for="theme-light">Claro</label></div></div>
+
+  <header>
+    <div class="eyebrow">Auditoría de movimiento · design-motion-principles</div>
+    <h1 class="title">Panel de trámites: el expediente tiene un gesto propio, pero todo se mueve igual y el sello se repite</h1>
+    <p class="lede">Auditoría del panel "Elige tu trámite" de la portada (<code>services-panel.tsx</code>), ya rediseñado como expediente con pestañas de archivador. No se ha tocado código.</p>
+    <div class="meta-row">Next.js 16.4.3 · Tailwind 4 · CSS keyframes de <code>globals.css</code> · 29 de octubre de 2026</div>
+    <div class="stats">
+      <a class="stat" href="#rec-crit" data-sev="crit"><b>0</b><span>Críticos</span></a>
+      <a class="stat" href="#rec-imp" data-sev="imp"><b>3</b><span>Importantes</span></a>
+      <a class="stat" href="#rec-opp" data-sev="opp"><b>4</b><span>Oportunidades</span></a>
+      <span class="stat"><b>7</b><span>Hallazgos</span></span>
+    </div>
+  </header>
+
+  <section class="block assessment">
+    <div class="mono-label">Valoración general</div>
+    <p>La idea es buena y ya se nota: pestañas que suben, un papel que aparece y un sello que cae. Pero el texto y el documento entran con la misma animación y a la vez, así que el papel no parece salir de la carpeta. Las pestañas suben animando el relleno en vez de moverse. Y el sello, el único momento con carácter, se repite con más de medio segundo de espera cada vez que cambias de trámite, también con las flechas del teclado. Hace falta jerarquía, no más movimiento.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">01 · Resumen por lente</div>
+    <h2 class="sec">Tres lentes, un veredicto cada una</h2>
+    <table class="lens-table">
+      <thead><tr><th>Lente</th><th>Veredicto</th><th>Lectura</th></tr></thead>
+      <tbody>
+        <tr><td><b>Jakub Krehel</b><br><span class="chip">Primario</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>Curva de marca coherente y movimiento reducido cubierto. Falta jerarquía entre texto y documento, y la pestaña anima el relleno.</td></tr>
+        <tr><td><b>Jhey Tompkins</b><br><span class="chip">Secundario</span></td><td><span class="verdict strong"><i></i>Sólido</span></td><td>El sello es un buen gesto propio. Hay sitio para que la carpeta se abra una vez al llegar a la sección.</td></tr>
+        <tr><td><b>Emil Kowalski</b><br><span class="chip">Selectivo</span></td><td><span class="verdict"><i></i>Mixto</span></td><td>El cambio de pestaña es frecuente dentro de la visita: el sello repetido y con espera es demasiado para eso.</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">02 · Dónde caen los tiempos</div>
+    <h2 class="sec">Presupuesto de duración</h2>
+    <div class="timing-grid">
+      <svg viewBox="0 0 660 300" role="img" aria-label="Animaciones del panel de trámites en una escala de 0 a 600 milisegundos">
+        <rect class="z-good" x="40" y="50" width="96.7" height="190"/><rect class="z-good" x="136.7" y="50" width="193.3" height="190"/>
+        <rect class="z-mid" x="330" y="50" width="193.3" height="190"/><rect class="z-slow" x="523.3" y="50" width="96.7" height="190"/>
+        <text class="zl" x="44" y="40">Instantáneo</text><text class="zl" x="140" y="40">Ágil</text><text class="zl" x="334" y="40">Deliberado</text><text class="zl" x="527" y="40">Lento</text>
+        <text class="zl" x="40" y="262">0</text><text class="zl" x="132" y="262">100</text><text class="zl" x="325" y="262">300</text><text class="zl" x="518" y="262">500</text><text class="zl" x="590" y="262">600 ms</text>
+        <circle class="d-none" cx="40" cy="90" r="12"/><text class="dn none" x="40" y="90">7</text>
+        <circle class="d-none" cx="40" cy="140" r="12"/><text class="dn none" x="40" y="140">8</text>
+        <circle class="d-good" cx="233" cy="80" r="12"/><text class="dn" x="233" y="80">5</text>
+        <circle class="d-good" cx="253" cy="130" r="12"/><text class="dn" x="253" y="130">2</text>
+        <circle class="d-good" cx="253" cy="170" r="12"/><text class="dn" x="253" y="170">3</text>
+        <circle class="d-mid" cx="336" cy="110" r="12"/><text class="dn" x="336" y="110">1</text>
+        <circle class="d-mid" cx="378" cy="200" r="12"/><text class="dn" x="378" y="200">6</text>
+        <circle class="d-slow" cx="608" cy="150" r="12"/><text class="dn" x="608" y="150">4</text>
+      </svg>
+      <ol class="key">
+        <li><span>1</span><span>Pestaña al pasar o activarse (relleno, fondo, color)</span><span>300 ms</span></li>
+        <li><span>2</span><span>Texto de la carpeta (<code>anim-swap</code>)</span><span>220 ms</span></li>
+        <li><span>3</span><span>Documento (<code>anim-swap</code>, a la vez)</span><span>220 ms</span></li>
+        <li><span>4</span><span>Sello (240 ms de espera + 380 ms)</span><span>620 ms</span></li>
+        <li><span>5</span><span>Flecha del botón al pasar</span><span>200 ms</span></li>
+        <li><span>6</span><span>Tira de pestañas en móvil (desplazamiento suave)</span><span>~350 ms</span></li>
+        <li><span>7</span><span>Salida del contenido anterior</span><span>sin transición</span></li>
+        <li><span>8</span><span>Esquina de la carpeta con la primera pestaña</span><span>sin transición</span></li>
+      </ol>
+    </div>
+    <p class="off"><b>Qué desentona:</b> el texto y el documento tienen exactamente el mismo tiempo (2 y 3), así que no hay un orden de lectura. El sello (4) es lo más lento del panel y se repite en cada cambio. Las salidas sin transición (7) están bien: en un cambio de pestaña, la salida debe ser más discreta que la entrada.</p>
+  </section>
+
+  <!-- ============ JAKUB ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jakub Krehel — Pulido de producción</h3><span class="chip">Primario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Todo usa la curva de marca <code>ease-brand</code> (<code>cubic-bezier(.2,.8,.2,1)</code>), un ease-out fuerte. No hay <code>ease</code> por defecto. <code>globals.css</code></li>
+        <li>El contenido nuevo entra y el anterior desaparece sin salida: la salida es más discreta que la entrada, como debe ser.</li>
+        <li>La flecha del botón avanza 4 px en 200 ms, el feedback justo para un enlace principal. <code>services-panel.tsx:101</code></li>
+        <li>El sello anima <code>scale</code> en vez de <code>transform</code>, así conserva su giro de Tailwind (<code>rotate</code>) sin pisarlo. <code>services-panel.tsx:132</code></li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span><span class="chip">Emil</span></div>
+          <h4 class="find-title">La pestaña sube animando el relleno, no moviéndose</h4>
+          <p><span class="label">Qué</span>Las pestañas transicionan <code>padding</code> durante 300 ms: al pasar el ratón por encima, <code>pt-2.5</code> pasa a <code>pt-3</code>, y la activa usa <code>pt-3.5</code>. La pestaña "crece" hacia arriba en lugar de deslizarse.</p>
+          <p><span class="label">Por qué importa</span>Cambiar el relleno obliga al navegador a recolocar la tira en cada fotograma. Y lo que se percibe es que el texto se estira, no que la carpeta asoma. Una pestaña de archivador real se mueve entera.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Un relleno fijo para todas y la altura con <code>translate</code>: inactivas <code>translate-y-1.5</code>, al pasar el ratón <code>translate-y-0.5</code> y la activa <code>translate-y-0</code>. Transición de <code>translate</code> y colores en 200 ms con <code>ease-brand</code>. La tira ya tiene <code>overflow</code>, así que la parte trasladada queda oculta bajo la carpeta.</p></div>
+          <p class="find-loc"><code>services-panel.tsx:81</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st1" id="st1-a" checked><input class="vh" type="radio" name="st1" id="st1-l"><input class="vh" type="radio" name="st1" id="st1-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">La pestaña asoma entera</span><span class="demo__timing">200 ms · ease-brand · translate</span></div><div class="demo__controls"><div class="seg"><label for="st1-a">Auto</label><label for="st1-l">Claro</label><label for="st1-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-1__mt"><span class="tb on">Renta</span><span class="tb hot">Autónomos</span><span class="tb">Requerimientos</span></div></div>
+        </div>
+      </div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Jakub</span><span class="chip">Jhey</span></div>
+          <h4 class="find-title">Texto y documento entran igual y a la vez</h4>
+          <p><span class="label">Qué</span>Las dos columnas usan <code>anim-swap</code>: suben 12 px y aparecen en 220 ms, en el mismo instante. El documento no se distingue del texto.</p>
+          <p><span class="label">Por qué importa</span>La gracia del expediente es que el papel sale de la carpeta. Con el mismo movimiento que un párrafo, el documento parece otro bloque más y la metáfora se pierde. Además, sin orden no hay lectura guiada: primero qué es el trámite y después cómo se ve.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>El texto, solo un fundido corto (150 ms, 6 px). El documento, después (60 ms de retraso) y desde más abajo (unos 32 px), en 320 ms, como si se deslizara fuera de la carpeta. La sombra puede crecer mientras sube (<code>shadow-card</code> a <code>shadow-pop</code>). La hoja de detrás queda quieta y hace de ancla. En código no basta con <code>[--rise:32px]</code>: el <code>--rise</code> de <code>anim-swap</code> está fuera de capa y gana a la utilidad. Hace falta una clase <code>.anim-paper</code> propia en <code>tokens-to-css.mjs</code>.</p></div>
+          <p class="find-loc"><code>services-panel.tsx:96</code> · <code>services-panel.tsx:109</code></p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st2" id="st2-a" checked><input class="vh" type="radio" name="st2" id="st2-l"><input class="vh" type="radio" name="st2" id="st2-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">El papel sale de la carpeta</span><span class="demo__timing">texto 150 ms · papel 320 ms, +60 ms · ease-brand</span></div><div class="demo__controls"><div class="seg"><label for="st2-a">Auto</label><label for="st2-l">Claro</label><label for="st2-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-2__mt"><div class="tx"><b>Autónomos</b><span></span><span></span></div><div class="pp"><div class="ui-label">Trimestre 2 · IVA</div><div class="ui-num">1.280 €</div></div></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li>La esquina superior izquierda de la carpeta cambia de recta a redondeada de golpe al salir de la primera pestaña. Basta con añadir <code>border-radius</code> a una transición de 200 ms. <code>services-panel.tsx:94</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jakub:</b> el panel ya está pulido en lo básico (curva, accesibilidad, feedback del botón). Lo que falta es jerarquía: que cada elemento se mueva según lo que es. La pestaña se desliza, el texto se funde y el papel sale de la carpeta.</p>
+  </section>
+
+  <!-- ============ JHEY ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Jhey Tompkins — Experimentación y deleite</h3><span class="chip">Secundario</span></div>
+    <p class="lens-sec__verdict"><span class="verdict strong"><i></i>Sólido</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>El sello que cae es un gesto propio de una gestoría, no un efecto genérico. Además sirve a la honestidad: marca la cifra como ejemplo. <code>services-panel.tsx:132</code></li>
+        <li>Clip, hoja trasera y sello quedan quietos tras la entrada. No hay latidos, brillos ni bucles.</li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+      <p class="lens-empty">Sin problemas en este nivel de gravedad.</p>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li><b>La carpeta se abre una vez al llegar.</b> Cuando el panel entra en pantalla por primera vez, el documento sale de la carpeta (la misma entrada del hallazgo 2) usando <code>Reveal</code> / <code>data-reveal</code>, que ya existen. Es una vez por visita, así que admite algo más de recorrido. <code>services-panel.tsx:104</code></li>
+        <li><b>La hoja de detrás se recoloca.</b> Al cambiar de trámite, la hoja trasera gira de 2,5° a 3,5° y vuelve, como si el papel nuevo la empujara. Es barato (<code>rotate</code>, 300 ms), pero solo si el hallazgo 2 ya está hecho; si no, son dos movimientos sin orden. <code>services-panel.tsx:107</code></li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Jhey:</b> el sello es el momento del panel; protegerlo es dejar que ocurra pocas veces. La carpeta que se abre al llegar a la sección le daría a la página un segundo gesto con la misma lógica, sin añadir ruido al cambio de pestaña.</p>
+  </section>
+
+  <!-- ============ EMIL ============ -->
+  <section class="lens-sec">
+    <div class="lens-sec__head"><h3>Emil Kowalski — Contención y velocidad</h3><span class="chip">Selectivo</span></div>
+    <p class="lens-sec__verdict"><span class="verdict"><i></i>Mixto</span></p>
+
+    <div class="lens-block">
+      <div class="mono-label">Lo que funciona</div>
+      <ul class="lens-list good">
+        <li>Con "reducir movimiento", <code>globals.css</code> anula transiciones y animaciones, y <code>.anim-stamp</code> tiene su propio <code>animation: none</code>.</li>
+        <li>El desplazamiento de la tira en móvil consulta <code>prefers-reduced-motion</code> antes de usar <code>smooth</code>. <code>services-panel.tsx:53</code></li>
+        <li>No hay cascadas, ni escalas al pasar el ratón, ni muelles con rebote en controles.</li>
+      </ul>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Problemas a resolver</div>
+
+      <div class="finding-row" data-sev="imp">
+        <div class="find-body">
+          <div class="find-tags"><span class="sev">Importante</span><span class="chip">Emil</span><span class="chip">Jhey</span></div>
+          <h4 class="find-title">El sello se repite en cada cambio, también con el teclado</h4>
+          <p><span class="label">Qué</span>El documento se vuelve a montar (<code>key={name}</code>) en cada cambio de pestaña, así que el sello espera 240 ms y cae durante 380 ms siempre. También ocurre al recorrer las pestañas con las flechas, que es justo cuando alguien va rápido.</p>
+          <p><span class="label">Por qué importa</span>Cambiar de pestaña es la acción más frecuente del panel. A la quinta vez el sello deja de ser un detalle y se convierte en una espera de 620 ms para ver el documento completo. Las acciones de teclado no deben animarse.</p>
+          <div class="fix"><p><span class="label">Movimiento recomendado</span>Que el sello caiga solo la primera vez que se abre cada trámite (un <code>useRef(new Set())</code> de los ya vistos) y que, cuando el cambio llega por teclado, no se anime. Al mismo tiempo, acortarlo: 120 ms de espera, 300 ms de caída y escala inicial 1.35 en vez de 1.7. Las veces siguientes, el sello ya está puesto.</p></div>
+          <p class="find-loc"><code>services-panel.tsx:132</code> · <code>tokens-to-css.mjs</code> (<code>.anim-stamp</code>)</p>
+        </div>
+        <div class="demo">
+          <input class="vh" type="radio" name="st3" id="st3-a" checked><input class="vh" type="radio" name="st3" id="st3-l"><input class="vh" type="radio" name="st3" id="st3-d">
+          <div class="demo__bar"><div class="demo__meta"><span class="demo__title">Sello más corto, una vez por trámite</span><span class="demo__timing">120 ms + 300 ms · ease-brand · scale 1.35 → 1</span></div><div class="demo__controls"><div class="seg"><label for="st3-a">Auto</label><label for="st3-l">Claro</label><label for="st3-d">Oscuro</label></div><span class="demo__loop">↻</span></div></div>
+          <div class="demo__stage"><div class="demo-3__mt"><div class="ui-card"><div class="ui-label">Renta · individual</div><div class="ui-num">+634 €</div></div><span class="st">Ejemplo<br>ilustrativo</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="lens-block">
+      <div class="mono-label">Oportunidades</div>
+      <ul class="lens-list opp">
+        <li>Si se aplica el hallazgo 2, mantener la salida del contenido anterior sin transición. Un fundido de salida añadiría tiempo a una acción frecuente sin aportar orientación.</li>
+      </ul>
+    </div>
+    <p class="lens-take"><b>Desde la lente de Emil:</b> en lo que se repite, cuanto menos, mejor. El gesto expresivo se queda, pero ocurre una vez; el resto del cambio de pestaña debe sentirse inmediato.</p>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">06 · Recomendaciones combinadas</div>
+    <h2 class="sec">Qué hacer, en orden</h2>
+
+    <div class="tier-label crit" id="rec-crit">Críticos · hay que arreglarlos <em>0</em></div>
+    <table class="rec"><tbody><tr><td class="lens-empty">Ninguno.</td></tr></tbody></table>
+
+    <div class="tier-label imp" id="rec-imp">Importantes · conviene arreglarlos <em>3</em></div>
+    <table class="rec"><thead><tr><th>Problema</th><th>Archivo</th><th>Arreglo</th></tr></thead><tbody>
+      <tr><td>El sello se repite en cada cambio y con el teclado</td><td><code>services-panel.tsx:132</code></td><td>Una vez por trámite y nunca por teclado; 120 ms + 300 ms, escala 1.35</td></tr>
+      <tr><td>Texto y documento entran igual y a la vez</td><td><code>services-panel.tsx:96</code>, <code>:109</code></td><td>Texto con fundido de 150 ms; papel 320 ms desde 32 px, +60 ms, en una clase <code>.anim-paper</code></td></tr>
+      <tr><td>La pestaña anima el relleno</td><td><code>services-panel.tsx:81</code></td><td>Relleno fijo y <code>translate-y</code>; transición de 200 ms</td></tr>
+    </tbody></table>
+
+    <div class="tier-label opp" id="rec-opp">Oportunidades · se pueden mejorar <em>4</em></div>
+    <table class="rec"><thead><tr><th>Mejora</th><th>Dónde</th><th>Impacto</th></tr></thead><tbody>
+      <tr><td>La carpeta se abre una vez al entrar en pantalla</td><td><code>services-panel.tsx:104</code></td><td>Medio: segundo gesto de marca, una vez por visita</td></tr>
+      <tr><td>Transición del radio de la esquina de la carpeta</td><td><code>services-panel.tsx:94</code></td><td>Bajo: quita un salto pequeño</td></tr>
+      <tr><td>La hoja de detrás se recoloca al cambiar</td><td><code>services-panel.tsx:107</code></td><td>Bajo: solo después del hallazgo 2</td></tr>
+      <tr><td>Mantener la salida sin transición</td><td><code>services-panel.tsx</code></td><td>Preventivo</td></tr>
+    </tbody></table>
+  </section>
+
+  <section class="block">
+    <div class="mono-label">07 · Resumen de lentes</div>
+    <div class="ref-summary">
+      <b>Lente más usada: Jakub Krehel (pulido de producción).</b> Es una portada de marketing: el panel tiene que sentirse cuidado. El fallo no es la falta de movimiento, sino que todo se mueve igual.
+      <div class="ref-lean">
+        <div><b>Seguir más a Emil</b>Quitar el sello animado de los cambios de pestaña y dejar solo el fundido del contenido.</div>
+        <div><b>Seguir más a Jakub</b>Aplicar los tres importantes: pestaña con translate, papel con su propia entrada y sello corto.</div>
+        <div><b>Seguir más a Jhey</b>Además, la carpeta que se abre al llegar y la hoja trasera que se recoloca.</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>web · portada · panel de trámites · 0 críticos · 3 importantes · 4 oportunidades · sin aplicar · 2026-10-29</footer>
+</div>
+</body>
+</html>
