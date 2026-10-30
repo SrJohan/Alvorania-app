@@ -123,15 +123,14 @@ describe("aislamiento entre clientes", () => {
   });
 
   describe("asesores", () => {
-    it("un asesor sin asignar no ve el caso", async () => {
-      expect((await as(ADV, () => q("select id from cases")) as unknown[]).length).toBe(0);
-    });
-    it("con el caso asignado lo ve, y otro asesor sigue sin verlo", async () => {
-      await q("update cases set advisor_id = $1 where id = $2", [ADV, caseA]);
+    it("todo asesor ve el caso y sus datos, esté asignado o no (0009)", async () => {
       expect((await as(ADV, () => q("select id from cases")) as unknown[]).length).toBe(1);
-      expect((await as(OTHER_ADV, () => q("select id from cases")) as unknown[]).length).toBe(0);
-      expect((await as(ADV, () => q("select id from messages")) as unknown[]).length).toBe(1);
-      expect((await as(OTHER_ADV, () => q("select id from documents")) as unknown[]).length).toBe(0);
+      await q("update cases set advisor_id = $1 where id = $2", [ADV, caseA]);
+      for (const who of [ADV, OTHER_ADV]) {
+        expect((await as(who, () => q("select id from cases")) as unknown[]).length).toBe(1);
+        expect((await as(who, () => q("select id from messages")) as unknown[]).length).toBe(1);
+        expect((await as(who, () => q("select id from documents")) as unknown[]).length).toBe(1);
+      }
     });
     it("el admin lo ve todo", async () => {
       expect((await as(ADMIN, () => q("select id from cases")) as unknown[]).length).toBe(1);
@@ -269,12 +268,10 @@ describe("0007 · endurecimiento de permisos", () => {
     await as(null, () => db.query("update reviews set status = 'pendiente' where id = $1", [reviewE]));
   });
 
-  it("un asesor solo ve su perfil y los de sus clientes", async () => {
-    const seen = (await as(ADV, () => q("select id from profiles")) as { id: string }[]).map((r) => r.id).sort();
-    expect(seen).toEqual([A, B, E, ADV].sort());
-    const other = (await as(OTHER_ADV, () => q("select id from profiles")) as { id: string }[]).map((r) => r.id);
-    expect(other).toEqual([OTHER_ADV]);
-    expect((await as(ADMIN, () => q("select id from profiles")) as unknown[]).length).toBeGreaterThanOrEqual(6);
+  it("todo asesor ve todos los perfiles; un cliente solo el suyo (0009)", async () => {
+    const all = (await q("select count(*)::int n from profiles"))[0].n;
+    for (const who of [ADV, OTHER_ADV, ADMIN]) expect((await as(who, () => q("select id from profiles")) as unknown[]).length).toBe(all);
+    expect((await as(E, () => q("select id from profiles")) as unknown[]).length).toBe(1);
   });
 
   it("un asesor no cambia casos ni escribe en ellos por la API", async () => {
@@ -297,5 +294,39 @@ describe("0007 · endurecimiento de permisos", () => {
     await fails(as(E, () => db.query("insert into tax_data (case_id, source) values ($1, 'manual')", [caseE])));
     const d = await as(E, () => db.query("delete from questionnaire_answers where case_id = $1", [caseE])) as { affectedRows: number };
     expect(d.affectedRows).toBe(0);
+  });
+});
+
+describe("blog", () => {
+  beforeAll(async () => {
+    await q(`insert into blog_posts (slug, title, author_id, status, published_at) values
+      ('publicado', 'Publicado', $1, 'publicado', now()),
+      ('borrador-adv', 'Borrador del asesor', $2, 'borrador', null),
+      ('borrador-otro', 'Borrador de otro asesor', $3, 'en_revision', null)`, [ADMIN, ADV, OTHER_ADV]);
+  });
+  const slugs = (rows: unknown) => (rows as { slug: string }[]).map((r) => r.slug).sort();
+
+  it("un visitante sin cuenta y un cliente solo ven lo publicado", async () => {
+    await db.exec("set role anon");
+    try { expect(slugs(await q("select slug from blog_posts"))).toEqual(["publicado"]); } finally { await db.exec("reset role"); }
+    expect(slugs(await as(A, () => q("select slug from blog_posts")))).toEqual(["publicado"]);
+  });
+  it("un asesor ve sus borradores pero no los de otros; el admin lo ve todo", async () => {
+    expect(slugs(await as(ADV, () => q("select slug from blog_posts")))).toEqual(["borrador-adv", "publicado"]);
+    expect(slugs(await as(ADMIN, () => q("select slug from blog_posts")))).toEqual(["borrador-adv", "borrador-otro", "publicado"]);
+  });
+  it("nadie escribe en el blog por la API: solo el servidor", async () => {
+    await fails(as(ADV, () => db.query("insert into blog_posts (slug, author_id) values ('x', $1)", [ADV])));
+    for (const who of [ADV, ADMIN]) {
+      const r = await as(who, () => db.query("update blog_posts set status = 'publicado' where slug = 'borrador-adv'")) as { affectedRows: number };
+      expect(r.affectedRows).toBe(0);
+      const s = await as(who, () => db.query("update blog_settings set style = 'tinta'")) as { affectedRows: number };
+      expect(s.affectedRows).toBe(0);
+    }
+    expect((await q("select style from blog_settings"))[0].style).toBe("clasico");
+  });
+  it("el slug y el estilo solo admiten valores conocidos", async () => {
+    await fails(q("insert into blog_posts (slug, author_id) values ('Con Espacios', $1)", [ADMIN]));
+    await fails(q("update blog_posts set style = 'neon' where slug = 'publicado'"));
   });
 });

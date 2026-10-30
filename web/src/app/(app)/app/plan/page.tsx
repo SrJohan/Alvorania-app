@@ -7,6 +7,7 @@ import { Checkbox } from "@/components/ui/form";
 import { checkout, recordConsent } from "@/lib/data/api";
 import { PLANS } from "@/lib/data/plans";
 import { useDemoState } from "@/lib/data/store";
+import { isLive } from "@/lib/env";
 import type { PlanCode } from "@/lib/data/types";
 import { formatEuros } from "@/lib/format";
 import { closedPrice, coversCase, requiredPlan } from "@/lib/pricing";
@@ -90,7 +91,7 @@ export default function Plan() {
         </div>
       </Card>
 
-      <Notice tone="warning" title="Pago simulado">En esta demostración no se cobra nada. Aquí irá el pago seguro con Stripe.</Notice>
+      {!isLive && <Notice tone="warning" title="Pago simulado">En esta demostración no se cobra nada. Aquí irá el pago seguro con Stripe.</Notice>}
       {error && <p role="alert" className="text-sm text-danger">{error}</p>}
       <Button size="lg" loading={busy} onClick={pay}>Pagar {formatEuros(price.totalCents)}</Button>
     </div>

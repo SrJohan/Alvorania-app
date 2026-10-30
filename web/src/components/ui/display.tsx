@@ -36,7 +36,7 @@ const statusMap: Record<CaseStatus, [string, Tone]> = {
   cerrado: ["Cerrado", "neutral"],
   cancelado: ["Cancelado", "danger"],
 };
-export const StatusBadge = ({ status }: { status: CaseStatus }) => <Tag tone={statusMap[status][1]}>{statusMap[status][0]}</Tag>;
+export const StatusBadge = ({ status, staff = false }: { status: CaseStatus; staff?: boolean }) => <Tag tone={statusMap[status][1]}>{staff && status === "pendiente_aprobacion" ? "Pendiente del cliente" : statusMap[status][0]}</Tag>;
 
 export function Notice({ children, tone = "accent", title }: { children: ReactNode; tone?: Tone; title?: string }) {
   const role = tone === "danger" ? "alert" : "status";

@@ -29,7 +29,7 @@ export async function requireStaff() {
 /**
  * Pregunta única de permisos: ¿puede este usuario actuar sobre este caso?
  *  - owner: el dueño del caso
- *  - staff: el asesor asignado, o un admin
+ *  - staff: cualquier asesor o admin (los asesores trabajan como una sola unidad)
  * Devuelve el caso o lanza. Se comprueba además de RLS (defensa en profundidad) porque las acciones privilegiadas usan service role.
  */
 export async function requireCaseAccess(userId: string, caseId: string, as: "owner" | "staff") {
@@ -41,7 +41,7 @@ export async function requireCaseAccess(userId: string, caseId: string, as: "own
     return c;
   }
   const role = await roleOf(userId);
-  if (role === "admin" || (role === "advisor" && c.advisor_id === userId)) return c;
+  if (role !== "client") return c;
   throw new AppError("No tienes permiso para hacer esto.", "forbidden");
 }
 
@@ -55,4 +55,15 @@ export async function rateLimit(key: string, max: number, windowSeconds: number)
   const { data, error } = await supabaseAdmin().rpc("hit_rate_limit", { p_key: key, p_max: max, p_window_seconds: windowSeconds });
   if (error) throw new Error("rate limit unavailable");
   if (!data) throw new AppError("Demasiados intentos. Espera unos minutos e inténtalo de nuevo.", "rate_limited");
+}
+
+/** Página de inicio según el rol: el equipo trabaja en /asesor, los clientes en /app. */
+export async function homeFor(userId: string): Promise<"/asesor" | "/app/conectar"> {
+  return (await roleOf(userId)) === "client" ? "/app/conectar" : "/asesor";
+}
+
+export async function requireAdmin() {
+  const ctx = await requireStaff();
+  if (ctx.role !== "admin") throw new AppError("Solo el administrador puede hacer esto.", "forbidden");
+  return ctx;
 }

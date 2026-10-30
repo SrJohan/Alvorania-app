@@ -2,7 +2,8 @@
 import Link from "next/link";
 import { Logo } from "@/components/site/logo";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
+import { LogOut } from "lucide-react";
 import { refreshState, signOut } from "@/lib/data/api";
 import { resetDemo, useDemoState, useLoaded } from "@/lib/data/store";
 import { isLive } from "@/lib/env";
@@ -20,11 +21,28 @@ const nav = [
   { href: "/app/suscripcion", label: "Suscripción" },
 ];
 
+const fieldStyle = {
+  backgroundColor: "var(--color-accent-soft)",
+  backgroundImage:
+    "radial-gradient(at 0% 0%, var(--color-field-a) 0, transparent 55%), radial-gradient(at 100% 10%, var(--color-field-b) 0, transparent 50%), radial-gradient(at 40% 100%, var(--color-field-c) 0, transparent 60%)",
+};
+
+const iconButton = "grid size-11 place-items-center rounded-md text-text-muted transition-colors duration-150 hover:bg-surface-raised/70 hover:text-ink";
+
 export function AppShell({ children }: { children: ReactNode }) {
   const hydrated = useLoaded();
   const s = useDemoState();
   const router = useRouter();
   const path = usePathname();
+  const navRef = useRef<HTMLUListElement>(null);
+
+  useEffect(() => {
+    navRef.current?.querySelector<HTMLAnchorElement>('[aria-current="page"]')?.scrollIntoView({
+      inline: "center",
+      block: "nearest",
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+    });
+  }, [path, hydrated, s.user]);
 
   // En modo live el estado viene del servidor: se carga al entrar en el área privada.
   useEffect(() => {
@@ -45,23 +63,26 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="flex h-16 items-center justify-between gap-4 border-b border-border bg-bg px-4">
-        <Link href="/" className="rounded-md"><Logo size="sm" /></Link>
-        <div className="flex items-center gap-3 text-sm">
-          {s.case && <StatusBadge status={s.case.status} />}
+      <header className="flex h-16 items-center justify-between gap-2 border-b border-border bg-bg px-4 md:gap-4">
+        <Link href="/" className="shrink-0 rounded-md"><Logo size="sm" /></Link>
+        <div className="flex min-w-0 items-center gap-1 text-sm md:gap-3">
+          {s.case && <div className="min-w-0 max-w-36 [&>span]:block [&>span]:truncate md:max-w-none"><StatusBadge status={s.case.status} /></div>}
           <span className="hidden text-text-muted sm:inline">{s.user.fullName}</span>
-          <button className="font-medium underline" onClick={async () => { await signOut(); router.push("/"); }}>Salir</button>
+          <button type="button" className={`${iconButton} shrink-0 md:flex md:w-auto md:gap-3 md:px-3 md:text-sm md:font-medium`} onClick={async () => { await signOut(); router.push("/"); }}>
+            <LogOut aria-hidden className="size-5" strokeWidth={1.75} />
+            <span className="sr-only md:not-sr-only">Salir</span>
+          </button>
         </div>
       </header>
       <div className="flex flex-1 flex-col md:flex-row">
-        <nav aria-label="Mi cuenta" className="border-b border-border bg-surface md:w-64 md:shrink-0 md:border-b-0 md:border-r">
-          <ul className="flex gap-1 overflow-x-auto p-2 md:flex-col md:p-4">
+        <nav aria-label="Mi cuenta" style={fieldStyle} className="min-w-0 border-b border-border md:w-64 md:shrink-0 md:border-b-0 md:border-r">
+          <ul ref={navRef} className="flex gap-1 overflow-x-auto p-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden max-md:[mask-image:linear-gradient(to_right,black_calc(100%_-_24px),transparent)] md:flex-col md:p-4">
             {nav.map((n) => {
               const active = path === n.href;
               return (
                 <li key={n.href} className="shrink-0">
                   <Link href={n.href} aria-current={active ? "page" : undefined} transitionTypes={[nav.findIndex((m) => m.href === n.href) > nav.findIndex((m) => m.href === path) ? "nav-forward" : "nav-back"]}
-                    className={`block whitespace-nowrap rounded-md px-3 py-2.5 text-sm ${active ? "bg-accent-soft font-semibold text-on-accent-soft" : "text-text hover:bg-border"}`}>
+                    className={`block whitespace-nowrap rounded-md px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${active ? "bg-surface-raised text-ink shadow-card" : "text-text-muted hover:bg-surface-raised/70 hover:text-ink"}`}>
                     {n.label}
                   </Link>
                 </li>

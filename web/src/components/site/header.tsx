@@ -9,7 +9,7 @@ const links = [
   { href: "/precios", label: "Precios" },
   { href: "/tramites", label: "Trámites" },
   { href: "/asesoria-gestoria", label: "Autónomos" },
-  { href: "/articulos", label: "Artículos" },
+  { href: "/blog", label: "Blog" },
   { href: "/empresas", label: "Empresas" },
 ];
 
@@ -87,12 +87,13 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 px-2 pt-2 sm:px-4">
       <div
-        className={`mx-auto flex h-14 items-center justify-between gap-4 rounded-pill px-4 ${settling ? "" : "transition-[background-color,box-shadow,max-width,backdrop-filter] duration-300 ease-brand"} motion-reduce:transition-none ${
-          scrolled ? "max-w-[calc(var(--container-wide)+16px)] bg-surface-raised/85 shadow-pop backdrop-blur-md" : "max-w-wide bg-transparent"
+        // El ancho no cambia al hacer scroll: animar max-width recalculaba el layout de la barra en cada fotograma.
+        className={`mx-auto flex h-14 max-w-wide items-center justify-between gap-4 rounded-pill px-4 ${settling ? "" : "transition-[background-color,box-shadow,backdrop-filter] duration-300 ease-brand"} motion-reduce:transition-none ${
+          scrolled ? "bg-surface-raised/85 shadow-pop backdrop-blur-md" : "bg-transparent"
         }`}
       >
         <ViewTransition key={empresas ? "logo-empresas" : "logo-web"} enter="fade-in" exit="fade-out" default="none">
-          <Link href={empresas ? "/empresas" : "/"} className="rounded-md"><Logo empresas={empresas} /></Link>
+          <Link href="/" className="rounded-md"><Logo empresas={empresas} /></Link>
         </ViewTransition>
         <ViewTransition key={empresas ? "nav-empresas" : "nav-web"} enter="fade-in" exit="fade-out" default="none">
         <nav aria-label="Principal" className="hidden items-center gap-7 md:flex">
@@ -125,7 +126,7 @@ export function SiteHeader() {
         {nav.map((l) => <Link key={l.href} href={l.href} aria-current={current(l.href)} onClick={() => setOpen(false)} className="rounded-md px-2 py-3 font-medium aria-[current]:text-accent">{l.label}</Link>)}
         {empresas
           ? <Link href={DEMO} onClick={() => setOpen(false)} className={`${navCta} mt-2 h-11 justify-center`}>Solicitar una demo</Link>
-          : <Link href={user ? "/app/caso" : "/acceder?next=/app/conectar"} className={`${navCta} mt-2 h-11 justify-center`}>{user ? "Mi panel" : "Empieza gratis"}</Link>}
+          : <Link href={user ? "/app/caso" : "/acceder?next=/app/conectar"} onClick={() => setOpen(false)} className={`${navCta} mt-2 h-11 justify-center`}>{user ? "Mi panel" : "Empieza gratis"}</Link>}
       </nav>
     </header>
   );
@@ -146,7 +147,7 @@ export function SiteFooter() {
             <li><Link href="/precios" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Precios</Link></li>
             <li><Link href="/tramites" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Trámites</Link></li>
             <li><Link href="/asesoria-gestoria" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Gestoría para autónomos</Link></li>
-            <li><Link href="/articulos" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Artículos</Link></li>
+            <li><Link href="/blog" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Blog</Link></li>
             <li><Link href="/empresas" className="underline-offset-4 transition-colors hover:text-on-ink hover:underline">Empresas</Link></li>
           </ul>
         </div>

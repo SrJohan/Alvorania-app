@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const nextParam = searchParams.get("next") ?? "/app/conectar";
   // Solo rutas internas: evita redirecciones abiertas a otro dominio.
-  const next = nextParam.startsWith("/app/") ? nextParam : "/app/conectar";
+  const next = nextParam.startsWith("/app/") || nextParam === "/restablecer" ? nextParam : "/app/conectar";
 
   if (code) {
     const sb = await supabaseForUser();

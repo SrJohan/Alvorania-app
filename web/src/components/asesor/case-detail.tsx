@@ -89,7 +89,7 @@ export function CaseDetail() {
       <Link href="/asesor" className="text-sm underline">← Casos asignados</Link>
       <div className="flex flex-wrap items-center gap-3">
         <h1 className="text-xl font-bold">{d.client.name} · Renta {d.taxYear}</h1>
-        <StatusBadge status={d.status as CaseStatus} />
+        <StatusBadge status={d.status as CaseStatus} staff />
         {r?.status === "cambios_pedidos" && <Tag tone="warning">Cambios pedidos</Tag>}
       </div>
       <p className="text-sm text-text-muted">{d.client.email}</p>

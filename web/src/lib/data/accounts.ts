@@ -32,6 +32,18 @@ export function accounts(store: Store) {
       try { store.setItem(KEY, JSON.stringify(all)); } catch { throw new Error("No podemos guardar la cuenta en este navegador."); }
       return true;
     },
+    has: (email: string) => norm(email) in read(),
+    /** Cambia la contraseña de una cuenta existente; devuelve el nombre, o null si no existe. */
+    async setPassword(email: string, password: string): Promise<string | null> {
+      const all = read();
+      const id = norm(email);
+      const a = all[id];
+      if (!a) return null;
+      const salt = crypto.getRandomValues(new Uint8Array(16));
+      all[id] = { ...a, salt: toB64(salt), hash: await derive(password, salt) };
+      try { store.setItem(KEY, JSON.stringify(all)); } catch { throw new Error("No podemos guardar la cuenta en este navegador."); }
+      return a.fullName;
+    },
     /** Devuelve el nombre si el correo y la contraseña coinciden; null en cualquier otro caso. */
     async verify(email: string, password: string): Promise<string | null> {
       const a = read()[norm(email)];

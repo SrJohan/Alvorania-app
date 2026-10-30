@@ -11,6 +11,8 @@ const impl = isLive ? live : demo;
 
 export const signIn = impl.signIn;
 export const signUp = impl.signUp;
+export const requestPasswordReset = impl.requestPasswordReset;
+export const resetPassword = impl.resetPassword;
 export const signOut = impl.signOut;
 export const recordConsent = impl.recordConsent;
 export const createCase = impl.createCase;

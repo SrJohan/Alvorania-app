@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Calculator, Check, FileText, Globe, Mail, MessageCirclePlus, Paperclip, Receipt, RotateCcw } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
+import { Notice } from "@/components/ui/display";
 import { PillCta } from "@/components/ui/pill-cta";
 import { AUTONOMO_PLANS, PLANS } from "@/lib/data/plans";
 import { formatEuros } from "@/lib/format";
@@ -17,6 +18,8 @@ type Detail = {
   cta: { label: string; href: string }; extra?: { label: string; href: string };
   // Si el caso tiene planes, el paso 3 los muestra; `pick` resalta el que encaja.
   plans?: "renta" | "autonomo"; pick?: string;
+  // Pasos reales del servicio: aquí sí hay una secuencia, por eso van numerados.
+  steps?: string[];
 };
 type Option = { id: string; Icon: ComponentType<{ className?: string }>; title: string; text: string; chip: string; detail: Detail };
 
@@ -31,6 +34,7 @@ const hacienda: Option = {
     title: "Entiende qué te piden antes de decidir nada",
     text: "Sube la carta y te explicamos gratis qué reclaman y qué plazo tienes. Si prefieres no ocuparte, un asesor redacta y presenta la respuesta.",
     price: "Gratis", priceNote: "el análisis. La respuesta, desde 60 €", cta: { label: "Subir mi carta", href: "/acceder?next=/app/requerimiento" },
+    steps: ["Subes tu carta gratis", "Te decimos qué piden y tu plazo", "Un asesor la responde por ti"],
   },
 };
 const otra: Option = {
@@ -57,7 +61,7 @@ const options: Record<Profile, Option[]> = {
       detail: {
         title: "Recupera lo que pagaste de más",
         text: "Un asesor revisa tus declaraciones de los últimos cuatro años. Si encuentra dinero a tu favor, lo reclama por ti. Pagas 12 € por cada año revisado y el 20 % de lo que consigamos ahorrarte.",
-        price: "12 € por año", priceNote: "+ 20 % del ahorro conseguido", cta: { label: "Revisar mis años", href: START },
+        price: "12 € por año", priceNote: "+ 20 % del ahorro conseguido", cta: { label: "Revisar mis años", href: START }, steps: ["Eliges los años", "Un asesor los revisa", "Reclamamos lo que te corresponda"],
       },
     },
     hacienda,
@@ -147,25 +151,73 @@ function PlanSheet({ name, price, period, blurb, list, on, stamp, tilt, href }: 
   );
 }
 
+const situaciones = [
+  { id: "inv", label: "Vendí acciones o fondos, o tengo alquileres" },
+  { id: "cripto", label: "Tengo criptomonedas o inversiones en el extranjero" },
+  { id: "beckham", label: "Ley Beckham o no soy residente en España" },
+  { id: "exterior", label: "Tengo ingresos o propiedades en el extranjero" },
+  { id: "foral", label: "Vivo en el País Vasco o Navarra" },
+];
+const fuera = ["cripto", "beckham", "exterior"]; // no se tramitan online: se presupuestan caso a caso
+
+// Según tu situación se abre un menú distinto: marcas lo que te aplica y el plan se ajusta.
+function RentaPlans({ d }: { d: Detail }) {
+  const [sel, setSel] = useState<string[]>([]);
+  const [none, setNone] = useState(false);
+  const done = none || sel.length > 0;
+  const toggle = (id: string) => { setNone(false); setSel((s) => (s.includes(id) ? s.filter((x) => x !== id) : [...s, id])); };
+  const foral = sel.includes("foral");
+  const aparte = sel.some((s) => fuera.includes(s));
+  const pick = foral || aparte ? undefined : sel.includes("inv") ? "Completo" : "Acompañado";
+  const tilts = ["md:rotate-[-1.5deg]", "md:rotate-[1deg]", "md:rotate-[1.5deg]"];
+  const chip = "group flex min-h-[92px] cursor-pointer items-start gap-4 rounded-[20px] border border-border bg-surface-raised p-5 text-base font-semibold leading-6 sm:text-lg sm:leading-7 text-ink shadow-card transition-[background-color,border-color,color,translate] duration-200 ease-brand hover:-translate-y-0.5 hover:border-lilac has-[:checked]:border-ink has-[:checked]:bg-ink has-[:checked]:text-on-ink has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-focus-ring motion-reduce:transform-none";
+  const box = "mt-0.5 grid size-6 shrink-0 place-items-center rounded-[7px] border-2 border-border-input bg-surface-raised group-has-[:checked]:border-highlight group-has-[:checked]:bg-highlight";
+  const tick = <Check aria-hidden strokeWidth={3} className="size-3.5 text-on-highlight opacity-0 group-has-[:checked]:opacity-100" />;
+  return (
+    <>
+      <h2 className="max-w-3xl font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.04em] text-ink sm:text-[40px] [text-wrap:balance]">Tu situación cambia el precio</h2>
+      <p className="mt-4 max-w-reading text-lg text-text-muted">Marca todo lo que te aplique y lo ajustamos al momento. {d.text}</p>
+      <fieldset aria-label="Tu situación" className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {situaciones.map(({ id, label }) => (
+          <label key={id} className={chip}>
+            <input type="checkbox" checked={sel.includes(id)} onChange={() => toggle(id)} className="sr-only" />
+            <span aria-hidden className={box}>{tick}</span>{label}
+          </label>
+        ))}
+        <label className={chip}>
+          <input type="checkbox" checked={none} onChange={() => { setSel([]); setNone(!none); }} className="sr-only" />
+          <span aria-hidden className={box}>{tick}</span>Ninguna de estas
+        </label>
+      </fieldset>
+      <div className="mt-10">
+        <Locked open={done} message="Marca tu situación para ver tu plan">
+          {foral && <div className="mb-6 max-w-reading"><Notice tone="warning" title="País Vasco y Navarra">Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral).</Notice></div>}
+          {!foral && aparte && <div className="mb-6 max-w-reading"><Notice tone="accent" title="Lo presupuestamos caso a caso">Con esa situación el precio depende de tu caso y todavía no se tramita online. <Link href="/tramites" className="font-semibold underline">Ver los trámites</Link></Notice></div>}
+          <div className="grid gap-6 md:grid-cols-3 md:gap-4">
+            {PLANS.map((p, i) => <PlanSheet key={p.code} name={p.name} price={formatEuros(p.priceCents)} period="al año, IVA incluido" blurb={p.blurb} list={p.features} on={p.name === pick} stamp="Encaja contigo" tilt={tilts[i]} href={START} />)}
+          </div>
+          <p className="mt-8 text-sm text-text-muted">Calcular es gratis: eliges plan solo si quieres que presentemos tu renta. <a href="#comparativa" className="font-semibold text-accent hover:text-accent-hover">Comparar planes</a></p>
+        </Locked>
+      </div>
+    </>
+  );
+}
+
 function Result({ o }: { o: Option }) {
   const d = o.detail;
+  if (d.plans === "renta") return <RentaPlans d={d} />;
   if (d.plans) {
-    const renta = d.plans === "renta";
-    const pick = d.pick ?? PLANS.find((p) => p.recommended)?.name;
+    const pick = d.pick;
     const tilts = ["md:rotate-[-1.5deg]", "md:rotate-[1deg]", "md:rotate-[1.5deg]"];
     return (
       <>
         <h2 className="max-w-3xl font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.04em] text-ink sm:text-[40px] [text-wrap:balance]">{d.title}</h2>
-        <p className="mt-4 max-w-reading text-lg text-text-muted">{d.text}{renta && " El precio es cerrado: lo ves antes de pagar."}</p>
-        <div className={`mt-12 grid gap-6 md:gap-4 ${renta ? "md:grid-cols-3" : "md:max-w-3xl md:grid-cols-2"}`}>
-          {renta
-            ? PLANS.map((p, i) => <PlanSheet key={p.code} name={p.name} price={formatEuros(p.priceCents)} period="al año, IVA incluido" blurb={p.blurb} list={p.features} on={p.name === pick} stamp="El más elegido" tilt={tilts[i]} href={START} />)
-            : AUTONOMO_PLANS.map((p, i) => <PlanSheet key={p.name} name={p.name} price={p.price} period="al mes, IVA incluido" list={p.list} on={p.name === pick} stamp="Encaja contigo" tilt={tilts[i]} href={d.cta.href} />)}
+        <p className="mt-4 max-w-reading text-lg text-text-muted">{d.text}</p>
+        <div className="mt-12 grid gap-6 md:max-w-3xl md:grid-cols-2 md:gap-4">
+          {AUTONOMO_PLANS.map((p, i) => <PlanSheet key={p.name} name={p.name} price={p.price} period="al mes, IVA incluido" list={p.list} on={p.name === pick} stamp="Encaja contigo" tilt={tilts[i]} href={d.cta.href} />)}
         </div>
         <p className="mt-8 text-sm text-text-muted">
-          {renta
-            ? <>Calcular es gratis: eliges plan solo si quieres que presentemos tu renta. <a href="#comparativa" className="font-semibold text-accent hover:text-accent-hover">Comparar planes</a></>
-            : <>Compromiso mínimo de 3 meses. <Link href="/asesoria-gestoria" className="font-semibold text-accent hover:text-accent-hover">Ver el servicio para autónomos</Link></>}
+          Compromiso mínimo de 3 meses. <Link href="/asesoria-gestoria" className="font-semibold text-accent hover:text-accent-hover">Ver el servicio para autónomos</Link>
         </p>
       </>
     );
@@ -175,6 +227,7 @@ function Result({ o }: { o: Option }) {
       <div>
         <h2 className="font-display text-[30px] font-semibold leading-[1.1] tracking-[-0.04em] text-ink sm:text-[40px] [text-wrap:balance]">{d.title}</h2>
         <p className="mt-4 max-w-reading text-lg text-text-muted">{d.text}</p>
+        {d.steps && <ol className="mt-6 grid max-w-reading gap-2 sm:grid-cols-3">{d.steps.map((s, i) => <li key={s} className="flex items-center gap-3 rounded-[14px] bg-accent-soft px-3 py-3 text-sm font-semibold text-ink"><span aria-hidden className="grid size-6 shrink-0 place-items-center rounded-full bg-ink text-xs font-bold text-on-ink">{i + 1}</span>{s}</li>)}</ol>}
         <div className="mt-8 flex flex-wrap items-center gap-3">
           <PillCta href={d.cta.href}>{d.cta.label}</PillCta>
           {d.extra && <LinkButton href={d.extra.href} variant="ghost">{d.extra.label}</LinkButton>}

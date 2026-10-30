@@ -27,4 +27,14 @@ describe("cuentas de la demo", () => {
     await accounts(store).register("ana@example.test", "Ana", "una-clave-larga");
     expect(store.raw()).not.toContain("una-clave-larga");
   });
+
+  it("cambia la contraseña: la antigua deja de valer y la nueva entra", async () => {
+    const a = accounts(memory());
+    await a.register("ana@example.test", "Ana", "una-clave-larga");
+    expect(a.has("ANA@example.test")).toBe(true);
+    expect(await a.setPassword("ana@example.test", "clave-nueva-1")).toBe("Ana");
+    expect(await a.verify("ana@example.test", "una-clave-larga")).toBeNull();
+    expect(await a.verify("ana@example.test", "clave-nueva-1")).toBe("Ana");
+    expect(await a.setPassword("nadie@example.test", "clave-nueva-1")).toBeNull();
+  });
 });

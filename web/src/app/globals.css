@@ -115,6 +115,9 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 @keyframes vt-rise { from { translate: 0 10px; } to { translate: 0 0; } }
 ::view-transition-old(.fade-out) { animation: 120ms ease-in both vt-fade reverse; }
 ::view-transition-new(.fade-in) { animation: 200ms ease-out 90ms both vt-fade, 260ms ease-out 90ms both vt-rise; }
+/* Cambio de categoría del blog: fundido corto, sin desplazamiento (es la acción más repetida de la página). */
+::view-transition-old(.grid-out) { animation: 100ms ease-in both vt-fade reverse; }
+::view-transition-new(.grid-in) { animation: 150ms cubic-bezier(.2,.8,.2,1) both vt-fade; }
 ::view-transition-group(.text-morph) { animation-duration: 400ms; }
 ::view-transition-old(.text-morph) { display: none; }
 ::view-transition-new(.text-morph) { animation: none; object-fit: none; object-position: left top; }
@@ -132,3 +135,41 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 @keyframes stamp { 0% { opacity: 0; scale: 1.35; } 55% { opacity: 1; scale: .97; } 100% { opacity: 1; scale: 1; } }
 .anim-stamp { animation: stamp 300ms cubic-bezier(.2,.8,.2,1) 120ms both; }
 @media (prefers-reduced-motion: reduce) { .anim-quick, .anim-paper, .anim-stamp { animation: none; } }
+
+/* Entrada de marca: giro breve y fundido compartido con la tarjeta. */
+.login-mark {
+  opacity: 0;
+  transform-origin: center;
+  animation: login-mark-enter 720ms var(--ease-brand) both;
+}
+
+.login-card {
+  animation: login-card-enter 420ms var(--ease-brand) 300ms backwards;
+}
+
+.login-card-exit {
+  animation: login-card-exit 180ms var(--ease-brand) both;
+}
+
+@keyframes login-mark-enter {
+  0% { opacity: 0; transform: rotate(-120deg) scale(.9); }
+  18% { opacity: 1; }
+  45% { opacity: 1; transform: rotate(0deg) scale(1); }
+  100% { opacity: 0; transform: rotate(0deg) scale(4); }
+}
+
+@keyframes login-card-enter {
+  from { opacity: 0; transform: scale(.96); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes login-card-exit {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: scale(.96); }
+}
+
+/* El acceso se muestra directamente si se ha solicitado reducir el movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  .login-mark { display: none; animation: none; }
+  .login-card, .login-card-exit { animation: none; }
+}

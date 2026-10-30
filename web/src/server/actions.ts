@@ -7,7 +7,7 @@ import { calculate, normalizeAnswers } from "@/lib/tax/engine";
 import { rulesFromRows } from "@/lib/tax/load";
 import { FORAL_CCAA } from "@/lib/tax/rules";
 import type { DemoState } from "@/lib/data/types";
-import { clientIp, rateLimit, requireCaseAccess, requireStaff, requireUser } from "./authz";
+import { clientIp, homeFor, rateLimit, requireCaseAccess, requireStaff, requireUser } from "./authz";
 import { notify } from "./email";
 import { passwordAuthError } from "./auth-errors";
 import { AppError, run, type ActionResult } from "./errors";
@@ -35,14 +35,24 @@ async function limitPasswordAuth(email: string) {
   await rateLimit(`pwd:email:${createHash("sha256").update(email).digest("hex").slice(0, 32)}`, 8, 600);
 }
 
-export async function signInWithPassword(input: { email: string; password: string }): Promise<ActionResult> {
+/** Devuelve la página de inicio según el rol: el equipo va a /asesor, los clientes a /app. */
+export async function signInWithPassword(input: { email: string; password: string }): Promise<ActionResult<{ home: string }>> {
   return run(async () => {
     const email = emailSchema.parse(input.email);
     const password = passwordSchema.parse(input.password);
     await limitPasswordAuth(email);
     const sb = await supabaseForUser();
-    const { error } = await sb.auth.signInWithPassword({ email, password });
-    if (error) throw passwordAuthError(error);
+    const { data: session, error } = await sb.auth.signInWithPassword({ email, password });
+    if (error) {
+      // Solo tras un fallo (y ya limitado por IP y correo) se distingue "sin cuenta": la pantalla ofrece crearla.
+      // Coste: quien pruebe correos puede saber cuáles tienen cuenta; el límite de intentos lo frena.
+      if (error.code === "invalid_credentials") {
+        const { data } = await supabaseAdmin().from("profiles").select("id").eq("email", email).maybeSingle();
+        if (!data) throw new AppError("No hay ninguna cuenta con ese correo.", "not_found");
+      }
+      throw passwordAuthError(error);
+    }
+    return { home: await homeFor(session.user.id) };
   });
 }
 
@@ -61,6 +71,28 @@ export async function signUpWithPassword(input: { email: string; password: strin
     });
     if (error) throw passwordAuthError(error);
     return { status: data.session ? ("signed-in" as const) : ("check-email" as const) };
+  });
+}
+
+/** Responde igual exista o no la cuenta. El enlace vuelve por /auth/callback, que abre una sesión y lleva a /restablecer. */
+export async function requestPasswordReset(input: { email: string }): Promise<ActionResult> {
+  return run(async () => {
+    const email = emailSchema.parse(input.email);
+    await limitPasswordAuth(email);
+    const sb = await supabaseForUser();
+    const { error } = await sb.auth.resetPasswordForEmail(email, { redirectTo: `${publicEnv.siteUrl}/auth/callback?next=/restablecer` });
+    if (error) throw passwordAuthError(error);
+  });
+}
+
+/** Fija la nueva contraseña de la sesión abierta por el enlace de recuperación. */
+export async function updatePassword(input: { password: string }): Promise<ActionResult<{ home: string }>> {
+  return run(async () => {
+    const password = newPasswordSchema.parse(input.password);
+    const { sb, user } = await requireUser();
+    const { error } = await sb.auth.updateUser({ password });
+    if (error) throw passwordAuthError(error);
+    return { home: await homeFor(user.id) };
   });
 }
 
@@ -299,11 +331,10 @@ export async function userApprove(): Promise<ActionResult> {
 
 export async function advisorCases(): Promise<ActionResult<{ id: string; status: string; taxYear: number | null; client: string; resultCents: number | null; advisorApproved: boolean; userApproved: boolean; changesRequested: boolean }[]>> {
   return run(async () => {
-    const { user, role } = await requireStaff();
+    const { role } = await requireStaff();
     const admin = supabaseAdmin();
-    let q = admin.from("cases").select("id,status,tax_year,result_amount_cents,user_id,advisor_id,profiles!cases_user_id_fkey(full_name,email),reviews(status,advisor_approved_at,user_approved_at)")
+    const q = admin.from("cases").select("id,status,tax_year,result_amount_cents,user_id,advisor_id,profiles!cases_user_id_fkey(full_name,email),reviews(status,advisor_approved_at,user_approved_at)")
       .in("status", role === "admin" ? ["calculado", "pagado", "en_revision", "pendiente_aprobacion"] : ["en_revision", "pendiente_aprobacion", "pagado"]).order("created_at");
-    if (role === "advisor") q = q.eq("advisor_id", user.id);
     const { data, error } = await q;
     if (error) throw error;
     return ((data ?? []) as any[]).map((c) => { // eslint-disable-line @typescript-eslint/no-explicit-any

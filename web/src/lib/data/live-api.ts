@@ -5,6 +5,7 @@ import type { Answers } from "@/lib/tax/engine";
 import * as actions from "@/server/actions";
 import * as advisor from "@/server/advisor-actions";
 import type { ActionResult } from "@/server/errors";
+import { NoAccountError } from "./no-account";
 import { initialState, replaceState, update } from "./store";
 import type { DemoState, PlanCode } from "./types";
 
@@ -41,15 +42,29 @@ async function mutate<T>(fn: () => Promise<ActionResult<T>>): Promise<T> {
   return data;
 }
 
-export async function signIn(email: string, password: string): Promise<void> {
-  unwrap(await actions.signInWithPassword({ email, password }));
+/** Devuelve la página de inicio según el rol: /asesor para el equipo, /app/conectar para clientes. */
+export async function signIn(email: string, password: string): Promise<string> {
+  const r = await actions.signInWithPassword({ email, password });
+  if (!r.ok) throw r.code === "not_found" ? new NoAccountError(r.error) : new Error(r.error);
   await refreshState();
+  return r.data.home;
 }
 
 export async function signUp(input: { fullName: string; email: string; password: string }): Promise<"signed-in" | "check-email"> {
   const { status } = unwrap(await actions.signUpWithPassword(input));
   if (status === "signed-in") await refreshState();
   return status;
+}
+
+export async function requestPasswordReset(email: string): Promise<{ demoLink: boolean }> {
+  unwrap(await actions.requestPasswordReset({ email }));
+  return { demoLink: false };
+}
+
+export async function resetPassword(password: string): Promise<string> {
+  const { home } = unwrap(await actions.updatePassword({ password }));
+  await refreshState();
+  return home;
 }
 
 export async function signOut() {

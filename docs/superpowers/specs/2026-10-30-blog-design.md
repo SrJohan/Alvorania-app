@@ -11,7 +11,7 @@ Sustituir la pestaña «Artículos», que hoy muestra el RSS de Gestoría eMadri
 
 Incluido:
 
-- Tablas, permisos e imágenes en Supabase (migración `0009_blog.sql`).
+- Tablas, permisos e imágenes en Supabase (migración `0010_blog.sql`).
 - Panel en `/asesor/blog` con editor visual Tiptap y flujo borrador → revisión → publicado.
 - Páginas públicas `/blog` y `/blog/[slug]`, redirección de `/articulos`.
 - Estilos predefinidos: uno global y otro opcional por post.

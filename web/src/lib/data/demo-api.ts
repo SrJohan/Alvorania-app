@@ -4,6 +4,7 @@
 import { calculate, type Answers } from "@/lib/tax/engine";
 import { coversCase, requiredPlan } from "@/lib/pricing";
 import { accounts } from "./accounts";
+import { NoAccountError } from "./no-account";
 import { planByCode } from "./plans";
 import { getState, newCase, update } from "./store";
 import type { PlanCode } from "./types";
@@ -12,11 +13,15 @@ const delay = (ms = 350) => new Promise((r) => setTimeout(r, ms));
 const now = () => new Date().toISOString();
 const id = () => crypto.randomUUID();
 
-export async function signIn(email: string, password: string): Promise<void> {
+// La demo solo tiene clientes (el panel de asesor necesita Supabase): siempre vuelve a /app.
+export async function signIn(email: string, password: string): Promise<string> {
   await delay();
   const fullName = await accounts(window.localStorage).verify(email, password);
-  if (fullName === null) throw new Error("Correo o contraseña incorrectos.");
+  if (fullName === null) {
+    throw accounts(window.localStorage).has(email) ? new Error("Correo o contraseña incorrectos.") : new NoAccountError("No hay ninguna cuenta con ese correo.");
+  }
   update((s) => ({ ...s, user: { email: email.trim().toLowerCase(), fullName } }));
+  return "/app/conectar";
 }
 
 export async function signUp(input: { fullName: string; email: string; password: string }): Promise<"signed-in" | "check-email"> {
@@ -27,6 +32,26 @@ export async function signUp(input: { fullName: string; email: string; password:
   }
   update((s) => ({ ...s, user: { email, fullName: input.fullName } }));
   return "signed-in";
+}
+
+const RESET_KEY = "gestoria-demo-reset";
+
+/** La demo no envía correo: si la cuenta existe, el flujo sigue en /restablecer con `demoLink` en lugar del enlace del buzón. */
+export async function requestPasswordReset(email: string): Promise<{ demoLink: boolean }> {
+  await delay();
+  const exists = accounts(window.localStorage).has(email);
+  if (exists) window.sessionStorage.setItem(RESET_KEY, email.trim().toLowerCase());
+  return { demoLink: exists };
+}
+
+export async function resetPassword(password: string): Promise<string> {
+  await delay();
+  const email = window.sessionStorage.getItem(RESET_KEY);
+  const fullName = email ? await accounts(window.localStorage).setPassword(email, password) : null;
+  if (!email || fullName === null) throw new Error("El enlace ha caducado. Pide uno nuevo desde «¿Olvidaste tu contraseña?».");
+  window.sessionStorage.removeItem(RESET_KEY);
+  update((s) => ({ ...s, user: { email, fullName } }));
+  return "/app/conectar";
 }
 
 export async function signOut() {
