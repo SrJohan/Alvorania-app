@@ -151,6 +151,17 @@ details[open]::details-content { block-size: auto; opacity: 1; }
   animation: login-card-exit 180ms var(--ease-brand) both;
 }
 
+.login-mark-exit {
+  transform-origin: center;
+  animation: login-mark-exit 400ms var(--ease-brand) both;
+}
+
+@keyframes login-mark-exit {
+  0% { opacity: 0; transform: rotate(-45deg) scale(.95); }
+  25% { opacity: 1; }
+  100% { opacity: 1; transform: rotate(0deg) scale(1.15); }
+}
+
 @keyframes login-mark-enter {
   0% { opacity: 0; transform: rotate(-120deg) scale(.9); }
   18% { opacity: 1; }
@@ -170,6 +181,6 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 
 /* El acceso se muestra directamente si se ha solicitado reducir el movimiento. */
 @media (prefers-reduced-motion: reduce) {
-  .login-mark { display: none; animation: none; }
+  .login-mark, .login-mark-exit { display: none; animation: none; }
   .login-card, .login-card-exit { animation: none; }
 }

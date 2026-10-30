@@ -1,11 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useContext, useState, type FormEvent } from "react";
 import { ArrowRight, Calculator, Mail, ShieldCheck, UserCheck } from "lucide-react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Notice } from "@/components/ui/display";
 import { PasswordField, TextField } from "@/components/ui/form";
 import { LogoMark } from "@/components/site/logo";
+import { ClientNavigationContext } from "@/components/site/client-navigation";
 import { requestPasswordReset, signIn, signUp } from "@/lib/data/api";
 import { NoAccountError } from "@/lib/data/no-account";
 import { isLive } from "@/lib/env";
@@ -32,6 +33,9 @@ const promises = [
 
 export default function Acceder() {
   const router = useRouter();
+  const clientNavigation = useContext(ClientNavigationContext);
+  // Capture only at mount: hydration must never start a delayed entrance.
+  const [animarEntrada] = useState(clientNavigation);
   const [mode, setMode] = useState<Mode>("entrar");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -43,31 +47,13 @@ export default function Acceder() {
   const [formError, setFormError] = useState("");
   const [info, setInfo] = useState("");
   const [saliendo, setSaliendo] = useState(false);
-  const destinoPendiente = useRef<string | null>(null);
-  const temporizadorSalida = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => () => {
-    if (temporizadorSalida.current !== null) clearTimeout(temporizadorSalida.current);
-    destinoPendiente.current = null;
-  }, []);
-
-  function finalizarSalida() {
-    const destino = destinoPendiente.current;
-    if (!destino) return;
-    destinoPendiente.current = null;
-    if (temporizadorSalida.current !== null) clearTimeout(temporizadorSalida.current);
-    router.push(destino);
-  }
 
   function iniciarSalida(destino: string) {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      router.push(destino);
-      return;
+    router.prefetch(destino);
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      setSaliendo(true);
     }
-    destinoPendiente.current = destino;
-    setSaliendo(true);
-    // Respaldo si el navegador no entrega el evento de fin del símbolo.
-    temporizadorSalida.current = setTimeout(finalizarSalida, 800);
+    router.push(destino);
   }
   const creating = mode === "crear";
   const recovering = mode === "recuperar";
@@ -123,13 +109,10 @@ export default function Acceder() {
   return (
     <div style={fieldStyle} className="relative isolate grid min-h-[calc(100dvh-64px)] place-items-center overflow-clip px-4 py-14 sm:py-20">
       {/* El símbolo da paso a la tarjeta sin interceptar la interacción. */}
-      <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 grid place-items-center"
-        onAnimationEnd={(evento) => {
-          if (saliendo && evento.animationName === "login-mark-enter" && evento.target === evento.currentTarget.firstElementChild) finalizarSalida();
-        }}>
-        <LogoMark key={saliendo ? "salida" : "entrada"} className="login-mark size-20 sm:size-24" />
-      </div>
-      <div inert={saliendo} className={`${saliendo ? "login-card-exit" : "login-card"} w-full max-w-[420px]`}>
+      {(saliendo || animarEntrada) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
+        <LogoMark key={saliendo ? "salida" : "entrada"} className={`${saliendo ? "login-mark-exit" : "login-mark"} size-20 sm:size-24`} />
+      </div>}
+      <div inert={saliendo} className={`${saliendo ? "login-card-exit" : animarEntrada ? "login-card" : ""} w-full max-w-[420px]`}>
         {/* Pestaña de carpeta con el logo: la cuenta es tu expediente, como en el panel de trámites. */}
         <div role="img" aria-label="Alvorania" className="w-fit rounded-t-[16px] bg-surface-raised px-5 pt-3.5 pb-2">
           <LogoMark className="size-8" />
