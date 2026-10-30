@@ -1,12 +1,12 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useContext, useState, type FormEvent } from "react";
+import { useContext, useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Calculator, Mail, ShieldCheck, UserCheck } from "lucide-react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Notice } from "@/components/ui/display";
 import { PasswordField, TextField } from "@/components/ui/form";
 import { LogoMark } from "@/components/site/logo";
-import { ClientNavigationContext } from "@/components/site/client-navigation";
+import { ClientNavigationContext, LoginMotionContext, marcarEntradaVista } from "@/components/site/client-navigation";
 import { requestPasswordReset, signIn, signUp } from "@/lib/data/api";
 import { NoAccountError } from "@/lib/data/no-account";
 import { isLive } from "@/lib/env";
@@ -34,8 +34,12 @@ const promises = [
 export default function Acceder() {
   const router = useRouter();
   const clientNavigation = useContext(ClientNavigationContext);
-  // Capture only at mount: hydration must never start a delayed entrance.
-  const [animarEntrada] = useState(clientNavigation);
+  // Se decide al montar: hidratar nunca inicia una entrada tardía.
+  const entradaMarca = useContext(LoginMotionContext);
+  const [animarEntrada] = useState(() => clientNavigation && !entradaMarca.current.vista && entradaMarca.current.modalidad === "puntero" && !window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  useEffect(() => {
+    if (animarEntrada) marcarEntradaVista();
+  }, [animarEntrada]);
   const [mode, setMode] = useState<Mode>("entrar");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -47,10 +51,30 @@ export default function Acceder() {
   const [formError, setFormError] = useState("");
   const [info, setInfo] = useState("");
   const [saliendo, setSaliendo] = useState(false);
+  // Destino ya validado mientras se navega: bloquea reenvíos y da un aviso accesible fuera de la tarjeta inerte.
+  const [navegando, setNavegando] = useState<string | null>(null);
+  const [esperaLarga, setEsperaLarga] = useState(false);
+  const avisoNavegando = useRef<HTMLParagraphElement>(null);
+  // La tarjeta no admite foco mientras aún es invisible al entrar.
+  const [entradaPendiente, setEntradaPendiente] = useState(animarEntrada);
 
-  function iniciarSalida(destino: string) {
+  useEffect(() => {
+    if (!entradaPendiente) return;
+    const t = setTimeout(() => setEntradaPendiente(false), 800); // respaldo si no llega animationend
+    return () => clearTimeout(t);
+  }, [entradaPendiente]);
+
+  useEffect(() => {
+    if (!navegando) return;
+    avisoNavegando.current?.focus(); // relevo de foco: la tarjeta pasa a ser inerte
+    const t = setTimeout(() => setEsperaLarga(true), 6000);
+    return () => clearTimeout(t);
+  }, [navegando]);
+
+  function iniciarSalida(destino: string, desdePuntero: boolean) {
+    setNavegando(destino);
     router.prefetch(destino);
-    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (desdePuntero && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setSaliendo(true);
     }
     router.push(destino);
@@ -68,6 +92,9 @@ export default function Acceder() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
+    // Se captura antes de los await para conservar la modalidad del envío.
+    const desdePuntero = entradaMarca.current.modalidad === "puntero";
+    if (navegando) return;
     const next: Errors = {};
     if (creating && name.trim().length < 2) next.name = "Escribe tu nombre.";
     if (!EMAIL.test(email)) next.email = "Introduce un email válido, por ejemplo nombre@correo.es.";
@@ -92,7 +119,7 @@ export default function Acceder() {
       }
       // `next` solo vale dentro del área del rol: un asesor no acaba en /app ni un cliente en /asesor.
       const target = new URLSearchParams(window.location.search).get("next");
-      iniciarSalida(target && target.startsWith(home === "/asesor" ? "/asesor" : "/app/") ? target : home);
+      iniciarSalida(target && target.startsWith(home === "/asesor" ? "/asesor" : "/app/") ? target : home, desdePuntero);
     } catch (err) {
       if (err instanceof NoAccountError) {
         // El correo ya está escrito: pasa a crear la cuenta con él y deja el cursor en el nombre.
@@ -109,10 +136,18 @@ export default function Acceder() {
   return (
     <div style={fieldStyle} className="relative isolate grid min-h-[calc(100dvh-64px)] place-items-center overflow-clip px-4 py-14 sm:py-20">
       {/* El símbolo da paso a la tarjeta sin interceptar la interacción. */}
-      {(saliendo || animarEntrada) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
-        <LogoMark key={saliendo ? "salida" : "entrada"} className={`${saliendo ? "login-mark-exit" : "login-mark"} size-20 sm:size-24`} />
+      {(!saliendo && animarEntrada) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
+        <LogoMark className="login-mark size-20 sm:size-24" />
       </div>}
-      <div inert={saliendo} className={`${saliendo ? "login-card-exit" : animarEntrada ? "login-card" : ""} w-full max-w-[420px]`}>
+      {navegando && (
+        <div className="absolute inset-x-4 bottom-8 z-20 text-center">
+          <p ref={avisoNavegando} tabIndex={-1} role="status" className="text-sm font-semibold text-ink outline-none">Abriendo tu cuenta…</p>
+          {esperaLarga && <a href={navegando} className="mt-2 inline-block text-sm font-semibold text-accent underline-offset-4 hover:underline">Está tardando: abrir ahora</a>}
+        </div>
+      )}
+      <div inert={saliendo || entradaPendiente} aria-busy={!!navegando}
+        onAnimationEnd={(e) => { if (e.target === e.currentTarget && e.animationName === "login-card-enter") setEntradaPendiente(false); }}
+        className={`${saliendo ? "login-card-exit" : animarEntrada ? "login-card" : ""} w-full max-w-[420px]`}>
         {/* Pestaña de carpeta con el logo: la cuenta es tu expediente, como en el panel de trámites. */}
         <div role="img" aria-label="Alvorania" className="w-fit rounded-t-[16px] bg-surface-raised px-5 pt-3.5 pb-2">
           <LogoMark className="size-8" />
@@ -158,7 +193,7 @@ export default function Acceder() {
                 {mode === "entrar" && (
                   <button type="button" onClick={() => switchMode("recuperar")} className="-mt-1 text-sm font-semibold text-accent underline-offset-4 hover:underline">¿Olvidaste tu contraseña?</button>
                 )}
-                <Button type="submit" loading={loading} size="lg" className="group !mt-6 w-full">
+                <Button type="submit" loading={loading || !!navegando} size="lg" className="group !mt-6 w-full">
                   {recovering ? "Enviar enlace" : creating ? "Crear cuenta" : "Entrar"}
                   {!loading && <ArrowRight aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-0.5 motion-reduce:transform-none" />}
                 </Button>

@@ -140,11 +140,11 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 .login-mark {
   opacity: 0;
   transform-origin: center;
-  animation: login-mark-enter 720ms var(--ease-brand) both;
+  animation: login-mark-enter 320ms var(--ease-brand) both;
 }
 
 .login-card {
-  animation: login-card-enter 420ms var(--ease-brand) 300ms backwards;
+  animation: login-card-enter 220ms var(--ease-brand) backwards;
 }
 
 .login-card-exit {
@@ -163,10 +163,10 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 }
 
 @keyframes login-mark-enter {
-  0% { opacity: 0; transform: rotate(-120deg) scale(.9); }
+  0% { opacity: 0; transform: rotate(-12deg) scale(.98); }
   18% { opacity: 1; }
   45% { opacity: 1; transform: rotate(0deg) scale(1); }
-  100% { opacity: 0; transform: rotate(0deg) scale(4); }
+  100% { opacity: 0; transform: rotate(0deg) scale(1.08); }
 }
 
 @keyframes login-card-enter {
@@ -176,7 +176,7 @@ details[open]::details-content { block-size: auto; opacity: 1; }
 
 @keyframes login-card-exit {
   from { opacity: 1; transform: none; }
-  to { opacity: 0; transform: scale(.96); }
+  to { opacity: 0; transform: none; }
 }
 
 /* El acceso se muestra directamente si se ha solicitado reducir el movimiento. */
