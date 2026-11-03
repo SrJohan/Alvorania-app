@@ -30,7 +30,7 @@ export default function Suscripcion() {
   }
 
   async function removeAccount() {
-    try { await deleteMyAccount(); router.push("/"); }
+    try { await deleteMyAccount(); router.push("/inicio"); }
     catch (e) { setDataMsg(e instanceof Error ? e.message : "No hemos podido eliminar tu cuenta."); }
   }
 

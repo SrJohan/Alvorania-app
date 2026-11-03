@@ -29,13 +29,7 @@ export function LegalPage({ current, title, children }: { current: (typeof PAGES
       <article className="max-w-reading">
         <h1 className="border-l-4 border-accent pl-4 text-3xl font-bold">{title}</h1>
         <p className="mt-3 text-sm text-text-muted">Última actualización: {LEGAL.updated}</p>
-        {!LEGAL.reviewed && (
-          <div className="mt-6">
-            <Notice tone="warning" title="Borrador pendiente de revisión legal">
-              Los datos entre corchetes están por completar y un abogado debe revisar este texto antes de darlo por válido.
-            </Notice>
-          </div>
-        )}
+     
         <div className="mt-8 space-y-8">{children}</div>
       </article>
     </div>

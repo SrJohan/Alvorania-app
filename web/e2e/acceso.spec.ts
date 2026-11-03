@@ -18,7 +18,7 @@ test.describe("Acceso con contraseña (modo demo)", () => {
     await page.getByLabel("Correo electrónico").fill("ana@example.test");
     await page.getByLabel("Contraseña", { exact: true }).fill("otra-clave-distinta");
     await page.getByRole("button", { name: "Entrar" }).click();
-    await expect(page.getByRole("alert")).toHaveText("Correo o contraseña incorrectos.");
+    await expect(page.getByRole("alert").filter({ hasText: /\S/ })).toHaveText("Correo o contraseña incorrectos.");
     await expect(page).toHaveURL(/\/acceder/);
   });
 
@@ -40,7 +40,7 @@ test.describe("Acceso con contraseña (modo demo)", () => {
     await page.getByLabel("Correo electrónico").fill("ana@example.test");
     await page.getByLabel("Contraseña", { exact: true }).fill("clave-de-prueba-1");
     await page.getByRole("button", { name: "Crear cuenta" }).click();
-    await expect(page.getByRole("alert")).toContainText("Ya existe una cuenta con ese correo");
+    await expect(page.getByRole("alert").filter({ hasText: /\S/ })).toContainText("Ya existe una cuenta con ese correo");
   });
 
   test("A4 mostrar y ocultar la contraseña", async ({ page }) => {
@@ -67,7 +67,7 @@ test.describe("Acceso con contraseña (modo demo)", () => {
     await page.getByLabel("Correo electrónico").fill("ana@example.test");
     await page.getByLabel("Contraseña", { exact: true }).fill("clave-de-prueba-1");
     await page.getByRole("button", { name: "Entrar" }).click();
-    await expect(page.getByRole("alert")).toHaveText("Correo o contraseña incorrectos.");
+    await expect(page.getByRole("alert").filter({ hasText: /\S/ })).toHaveText("Correo o contraseña incorrectos.");
   });
 
   test("A6 entrar con un correo sin cuenta lleva a crearla con el correo ya escrito", async ({ page }) => {
@@ -76,7 +76,7 @@ test.describe("Acceso con contraseña (modo demo)", () => {
     await page.getByLabel("Contraseña", { exact: true }).fill("lo-que-sea-123");
     await page.getByRole("button", { name: "Entrar" }).click();
     await expect(page.getByRole("heading", { name: "Crea tu cuenta" })).toBeVisible();
-    await expect(page.getByRole("status")).toContainText("No hay ninguna cuenta con ese correo");
+    await expect(page.getByRole("status").filter({ hasText: "No hay ninguna cuenta con ese correo" })).toContainText("No hay ninguna cuenta con ese correo");
     await expect(page.getByLabel("Correo electrónico")).toHaveValue("nuevo@example.test");
     await expect(page.getByLabel("Nombre completo")).toBeFocused();
   });

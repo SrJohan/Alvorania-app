@@ -160,7 +160,7 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     await expect(page.getByText(/Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
     await expect(page.getByRole("button", { name: "Siguiente" })).toBeDisabled();
     await page.getByRole("link", { name: "Volver al inicio" }).click();
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/inicio");
   });
 
   test("F01-E8 solo teclado: acceso y primer paso", async ({ page }) => {
@@ -233,7 +233,7 @@ test.describe("F01 particular presenta la renta con revisión", () => {
 
   test("F01-A11Y accesibilidad de cada pantalla del flujo", async ({ page }) => {
     const found: Record<string, string[]> = {};
-    await page.goto("/");
+    await page.goto("/inicio");
     found.inicio = await a11y(page);
     await signIn(page);
     found.datos = await a11y(page);

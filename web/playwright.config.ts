@@ -19,6 +19,12 @@ export default defineConfig({
     url: `http://localhost:${PORT}`,
     timeout: 240_000,
     reuseExistingServer: false,
-    env: { NEXT_PUBLIC_DATA_MODE: "demo", NEXT_DIST_DIR: ".next-e2e" },
+    env: {
+      NEXT_PUBLIC_DATA_MODE: "demo",
+      NEXT_DIST_DIR: ".next-e2e",
+      NEXT_PUBLIC_SUPABASE_URL: "",
+      NEXT_PUBLIC_SUPABASE_ANON_KEY: "",
+      SUPABASE_SERVICE_ROLE_KEY: "",
+    },
   },
 });

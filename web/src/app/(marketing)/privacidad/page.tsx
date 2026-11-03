@@ -54,7 +54,7 @@ export default function Privacidad() {
 
       <LegalSection title="6. Transferencias internacionales">
         <p>
-          <V v="[Región donde se alojan los datos y garantías aplicables si algún proveedor los trata fuera del Espacio Económico Europeo]" />
+          <V v="Madrid - España" />
         </p>
       </LegalSection>
 

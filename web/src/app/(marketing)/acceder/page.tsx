@@ -1,6 +1,6 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState, type FormEvent } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowRight, Calculator, Mail, ShieldCheck, UserCheck } from "lucide-react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Notice } from "@/components/ui/display";
@@ -64,17 +64,24 @@ export default function Acceder() {
     return () => clearTimeout(t);
   }, [entradaPendiente]);
 
+  // Con cacheComponents la página se oculta en vez de desmontarse: al volver no debe seguir a medio salir.
+  useLayoutEffect(() => {
+    setSaliendo(false);
+    setNavegando(null);
+    setEsperaLarga(false);
+  }, []);
+
   useEffect(() => {
     if (!navegando) return;
-    avisoNavegando.current?.focus(); // relevo de foco: la tarjeta pasa a ser inerte
+    avisoNavegando.current?.focus({ preventScroll: true }); // relevo de foco: la tarjeta pasa a ser inerte; sin bajar la página
     const t = setTimeout(() => setEsperaLarga(true), 6000);
     return () => clearTimeout(t);
   }, [navegando]);
 
-  function iniciarSalida(destino: string, desdePuntero: boolean) {
+  function iniciarSalida(destino: string) {
     setNavegando(destino);
     router.prefetch(destino);
-    if (desdePuntero && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       setSaliendo(true);
     }
     router.push(destino);
@@ -92,8 +99,6 @@ export default function Acceder() {
 
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    // Se captura antes de los await para conservar la modalidad del envío.
-    const desdePuntero = entradaMarca.current.modalidad === "puntero";
     if (navegando) return;
     const next: Errors = {};
     if (creating && name.trim().length < 2) next.name = "Escribe tu nombre.";
@@ -119,7 +124,7 @@ export default function Acceder() {
       }
       // `next` solo vale dentro del área del rol: un asesor no acaba en /app ni un cliente en /asesor.
       const target = new URLSearchParams(window.location.search).get("next");
-      iniciarSalida(target && target.startsWith(home === "/asesor" ? "/asesor" : "/app/") ? target : home, desdePuntero);
+      iniciarSalida(target && target.startsWith(home === "/asesor" ? "/asesor" : "/app/") ? target : home);
     } catch (err) {
       if (err instanceof NoAccountError) {
         // El correo ya está escrito: pasa a crear la cuenta con él y deja el cursor en el nombre.
@@ -136,12 +141,13 @@ export default function Acceder() {
   return (
     <div style={fieldStyle} className="relative isolate grid min-h-[calc(100dvh-64px)] place-items-center overflow-clip px-4 py-14 sm:py-20">
       {/* El símbolo da paso a la tarjeta sin interceptar la interacción. */}
-      {(!saliendo && animarEntrada) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
-        <LogoMark className="login-mark size-20 sm:size-24" />
+      {(saliendo || animarEntrada) && <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-10 grid place-items-center">
+        <LogoMark key={saliendo ? "salida" : "entrada"} className={`${saliendo ? "login-mark-exit" : "login-mark"} size-20 sm:size-24`} />
       </div>}
       {navegando && (
         <div className="absolute inset-x-4 bottom-8 z-20 text-center">
-          <p ref={avisoNavegando} tabIndex={-1} role="status" className="text-sm font-semibold text-ink outline-none">Abriendo tu cuenta…</p>
+          {/* Solo para lector de pantalla: a la vista ya hablan el botón y el logo. */}
+          <p ref={avisoNavegando} tabIndex={-1} role="status" className="sr-only">Abriendo tu cuenta…</p>
           {esperaLarga && <a href={navegando} className="mt-2 inline-block text-sm font-semibold text-accent underline-offset-4 hover:underline">Está tardando: abrir ahora</a>}
         </div>
       )}

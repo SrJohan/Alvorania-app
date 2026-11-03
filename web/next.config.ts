@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
   // Solo en desarrollo: abrir la demo desde un móvil de la misma wifi (http://192.168.x.x:3000).
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
   // La antigua pestaña de artículos (feed de otra gestoría) es ahora el blog propio.
+  rewrites: async () => ({ beforeFiles: [{ source: "/", destination: "/bienvenida/index.html" }] }),
   redirects: async () => [{ source: "/articulos", destination: "/blog", permanent: true }],
   // Las fotos de portada y precios ya vienen comprimidas en .webp a 1916-2098 px: recomprimirlas a 75 (el valor por defecto) las emborronaba.
   images: { qualities: [90] },

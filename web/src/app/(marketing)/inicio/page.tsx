@@ -8,6 +8,8 @@ import { PillCta } from "@/components/ui/pill-cta";
 import { LateralTransition } from "@/components/site/directional-transition";
 import { ServicesPanel } from "@/components/site/services-panel";
 
+import { CookieBanner } from "@/components/site/cookie-banner";
+
 const START = "/acceder?next=/app/conectar";
 
 const situations = [
@@ -78,6 +80,8 @@ const lift = "transition-[transform,translate,scale,rotate,background-color,box-
 
 export default function Home() {
   return (
+    <>
+    <CookieBanner />
     <LateralTransition><div>
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px]" style={heroWash} />
       {/* Sin `relative` a propósito: en xl la foto se ancla al contenedor de la página y ocupa todo el ancho. */}
@@ -190,5 +194,6 @@ export default function Home() {
         </div>
       </section>
     </div></LateralTransition>
+    </>
   );
 }

@@ -4,7 +4,7 @@ import { a11y, expect, noHorizontalScroll, test } from "./helpers";
 // se prueba con vitest (permisos en tests/db.test.ts y reglas en src/lib/blog.test.ts).
 test.describe("Blog", () => {
   test("BLOG-H1 se llega desde el menú, filtra por categoría y ofrece el asesor", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/inicio");
     await page.getByRole("navigation", { name: "Principal" }).getByRole("link", { name: "Blog" }).click();
     await expect(page.getByRole("heading", { level: 1, name: "Blog" })).toBeVisible();
     await expect(page.getByRole("heading", { name: "Pronto publicaremos las primeras guías." })).toBeVisible();

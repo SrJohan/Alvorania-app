@@ -1,16 +1,20 @@
 import type { Metadata } from "next";
-import { ArrowRight, Briefcase, Check, FileText, HeartHandshake, Mail, RotateCcw, Users } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowRight, Briefcase, Check, FileText, Mail, RotateCcw } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
-import { Accordion, Card } from "@/components/ui/display";
+import { Accordion } from "@/components/ui/display";
 import { PillCta } from "@/components/ui/pill-cta";
 import { Reveal } from "@/components/ui/reveal";
-import { LateralTransition } from "@/components/site/directional-transition";
+import { DirectionalTransition } from "@/components/site/directional-transition";
 import { BarraContratar } from "@/components/site/autonomos-live";
 import { HeroDemo } from "@/components/site/empresas-live";
 
 export const metadata: Metadata = { title: "Empresas" };
 
 const DEMO = "#demo";
+const PLANES = "/empresas/planes";
+const FORWARD = ["nav-forward"];
 
 const facts = [
   ["Sin integraciones", "cada persona se da de alta con un enlace"],
@@ -18,17 +22,28 @@ const facts = [
   ["Datos privados", "la empresa solo ve el uso, nunca los datos fiscales"],
 ];
 
-const solutions = [
+// Los dos caminos de la página: quien llega elige primero a quién se lo ofrece.
+const paths = [
   {
-    Icon: Users, plan: "Equipo", title: "Un beneficio para tu equipo",
-    text: "Tus empleados hacen la renta con un asesor que la revisa antes de presentarla. Una preocupación menos cada primavera.",
+    id: "equipo", who: "Para tu equipo", title: "Un beneficio que se nota cada primavera.",
+    text: "Tus empleados hacen la renta con un asesor que la revisa antes de presentarla. Tú compartes un enlace y te olvidas.",
     list: ["Renta revisada por un asesor", "Años anteriores y cartas de Hacienda", "Alta en minutos con un enlace"],
+    photo: "/home/equipo-oficina.webp", crop: "object-cover object-[78%_40%]", frame: "aspect-[4/3] md:aspect-auto md:h-full",
   },
   {
-    Icon: HeartHandshake, plan: "Clientes", title: "Un servicio para tus clientes",
-    text: "Suma la declaración de la renta a tu programa de fidelización y da a tus clientes una razón más para quedarse.",
-    list: ["Acceso con tu marca en la invitación", "Condiciones propias para tus clientes", "Informe de uso de la campaña"],
+    id: "clientes", who: "Para tus clientes", title: "Una razón más para quedarse contigo.",
+    text: "Suma la declaración de la renta a tu programa de fidelización. Tus clientes la hacen con tu marca en la invitación.",
+    list: ["Invitación con tu marca", "Condiciones propias para tus clientes", "Informe de uso de la campaña"],
+    // Ventana cuadrada como la foto, para que el móvil se vea entero sin recortes.
+    photo: "/home/movil-deducciones.webp", crop: "object-cover", frame: "aspect-square md:h-full md:w-auto",
   },
+];
+
+const reasons = [
+  { title: "Nada que integrar", text: "Ni sistemas, ni ficheros de empleados. Un enlace por el canal que ya usas." },
+  { title: "Cero trabajo para tu equipo de personas", text: "Las dudas fiscales las resuelve el asesor, no tu departamento." },
+  { title: "Con tu nombre delante", text: "La invitación lleva tu marca, para que se vea quién lo ofrece." },
+  { title: "Sabes cómo va la campaña", text: "Altas y declaraciones presentadas, sin un solo dato personal." },
 ];
 
 const services = [
@@ -45,27 +60,22 @@ const steps = [
   { title: "Ves el uso de la campaña", text: "Altas y declaraciones presentadas, sin datos personales." },
 ];
 
-const plans = [
-  {
-    name: "Equipo", blurb: "Para ofrecerlo como beneficio a tus empleados.",
-    list: ["Renta revisada por un asesor", "Años anteriores y cartas de Hacienda", "Informe de uso de la campaña"],
-  },
-  {
-    name: "Clientes", blurb: "Para incluirlo en tu programa de fidelización.", rec: true,
-    list: ["Todo lo de Equipo", "Invitación con tu marca", "Condiciones a medida para tus clientes"],
-  },
+const tiers = [
+  { size: "Hasta 50", unit: "personas", name: "Equipo pequeño" },
+  { size: "51 a 500", unit: "personas", name: "Equipo mediano" },
+  { size: "Más de 500", unit: "personas", name: "Gran empresa" },
 ];
 
 const faq = [
   { q: "¿La empresa ve los datos fiscales de sus empleados?", a: "No. La empresa solo ve cuántas personas se han dado de alta y cuántas declaraciones se han presentado. Los datos fiscales son de cada persona." },
   { q: "¿Hace falta integrar algo?", a: "No. Te damos un enlace de alta y lo compartes por el canal que ya usas con tu equipo o tus clientes." },
-  { q: "¿Cuánto cuesta?", a: "Depende del número de personas y de lo que quieras cubrir. Te enviamos una propuesta cerrada antes de empezar." },
+  { q: "¿Cuánto cuesta?", a: <>Depende del número de personas y de lo que quieras cubrir. En <Link href={PLANES} transitionTypes={FORWARD} className="font-semibold text-accent underline-offset-4 hover:underline">los planes</Link> ves qué incluye cada tamaño, y te enviamos una propuesta cerrada antes de empezar.</> },
   { q: "¿Cómo se añaden más personas?", a: "Nos lo dices y ampliamos el acceso. No tienes que volver a configurar nada." },
   { q: "¿Y si alguien vive en el País Vasco o Navarra?", a: "Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra: tienen su propio régimen fiscal." },
 ];
 
 const headline = "font-display font-semibold tracking-[-0.06em] text-ink";
-const lift = "transition-[transform,translate,scale,rotate,box-shadow] duration-200 ease-brand hover:-translate-y-1 hover:shadow-pop motion-reduce:transform-none";
+const arrow = "size-4 transition-transform duration-200 ease-brand group-hover:translate-x-1 motion-reduce:transform-none";
 
 // Mismos fondos que la portada: campo lila con tres tonos y bloque final en morado con brillo.
 const fieldStyle = {
@@ -83,7 +93,7 @@ const inkGlow = {
 
 export default function Empresas() {
   return (
-    <LateralTransition><div>
+    <DirectionalTransition lateral><div>
       <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[900px]" style={heroWash} />
       <div className="mx-auto max-w-wide px-4 py-12">
         <HeroDemo>
@@ -100,40 +110,76 @@ export default function Empresas() {
             </dl>
             <div id="hero-cta" className="mt-8 flex flex-wrap items-center gap-3">
               <PillCta href={DEMO}>Solicitar una demo</PillCta>
-              <LinkButton href="#soluciones" variant="ghost">Ver soluciones</LinkButton>
+              <LinkButton href={PLANES} transitionTypes={FORWARD} variant="ghost">Ver planes</LinkButton>
             </div>
           </div>
-
         </HeroDemo>
 
         <section aria-labelledby="soluciones" className="mt-24 scroll-mt-24">
-          <h2 id="soluciones" className={`${headline} max-w-2xl text-[34px] leading-[1.1] sm:text-[44px]`}>Dos formas de ofrecerlo.</h2>
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {solutions.map(({ Icon, plan, title, text, list }, i) => (
-              <Reveal key={title} delay={i * 60} className="flex">
-                <div className={`flex w-full flex-col rounded-[24px] p-6 sm:p-8 ${i === 0 ? "" : "border border-border bg-surface"}`} style={i === 0 ? fieldStyle : undefined}>
-                  <span aria-hidden className="grid size-12 place-items-center rounded-full bg-accent text-on-accent"><Icon className="size-6" /></span>
-                  <h3 className="mt-5 text-[22px] font-semibold leading-[1.3] tracking-[-0.02em] text-ink sm:text-[26px]">{title}</h3>
-                  <p className="mt-2 max-w-reading text-text-muted">{text}</p>
-                  <ul className="mt-5 space-y-2">
-                    {list.map((l) => <li key={l} className="flex gap-2 text-ink"><Check aria-hidden className="mt-1 size-4 shrink-0 text-accent" />{l}</li>)}
-                  </ul>
-                  <a href={`#plan-${plan.toLowerCase()}`} className="group mt-6 inline-flex items-center gap-2 self-start font-semibold text-accent hover:text-accent-hover">
-                    Ver el plan {plan}
-                    <ArrowRight aria-hidden className="size-4 transition-transform duration-200 group-hover:translate-x-1 motion-reduce:transform-none" />
-                  </a>
-                </div>
+          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <h2 id="soluciones" className={`${headline} max-w-2xl text-[34px] leading-[1.1] text-balance sm:text-[44px]`}>¿A quién quieres ofrecérselo?</h2>
+            <nav aria-label="Elige un camino" className="flex gap-2">
+              {paths.map((p) => (
+                <a key={p.id} href={`#${p.id}`} className="inline-flex h-10 items-center rounded-pill border border-border bg-surface-raised px-4 text-sm font-semibold text-ink transition-colors duration-150 hover:border-accent hover:text-accent">{p.who}</a>
+              ))}
+            </nav>
+          </div>
+          <div className="mt-8 space-y-4">
+            {paths.map((p, i) => (
+              <Reveal key={p.id}>
+                <article id={p.id} aria-labelledby={`${p.id}-titulo`} className="anim-target relative grid scroll-mt-24 overflow-hidden rounded-[24px] md:min-h-[460px] md:grid-cols-2" style={fieldStyle}>
+                  {/* Radio anidado: 24 px de la tarjeta menos 12 px de margen. */}
+                  <div aria-hidden className={`p-3 ${i % 2 ? "md:order-1" : "md:order-2"}`}>
+                    {/* Solo el canto que mira al texto se funde con la tarjeta; los demás quedan definidos. */}
+                    <div className={`relative overflow-hidden rounded-[12px] ${p.frame} [mask-image:linear-gradient(to_bottom,#000_65%,transparent)] ${i % 2 ? "md:[mask-image:linear-gradient(to_left,transparent,#000_35%)]" : "md:[mask-image:linear-gradient(to_right,transparent,#000_35%)]"}`}>
+                      <Image src={p.photo} alt="" fill sizes="(min-width: 768px) 50vw, 100vw" className={p.crop} />
+                      <span aria-hidden className="pointer-events-none absolute inset-0 rounded-[12px] ring-1 ring-inset ring-border" />
+                    </div>
+                  </div>
+                  <div className={`relative flex flex-col p-6 sm:p-10 md:justify-center ${i % 2 ? "md:order-2" : "md:order-1"}`}>
+                    <h3 id={`${p.id}-titulo`} className={`${headline} text-[28px] leading-[1.1] text-balance sm:text-[40px]`}>{p.who}</h3>
+                    <p className="mt-3 text-xl font-semibold leading-[1.3] tracking-[-0.02em] text-ink">{p.title}</p>
+                    <p className="mt-2 max-w-reading text-text-muted">{p.text}</p>
+                    <ul className="mt-6 space-y-2">
+                      {p.list.map((l) => <li key={l} className="flex gap-2 text-ink"><Check aria-hidden className="mt-1 size-4 shrink-0 text-accent" />{l}</li>)}
+                    </ul>
+                    <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+                      <PillCta href={DEMO}>Solicitar una demo</PillCta>
+                      <Link href={PLANES} transitionTypes={FORWARD} className="group inline-flex items-center gap-2 font-semibold text-accent hover:text-accent-hover">
+                        Ver planes {p.who.toLowerCase()}
+                        <ArrowRight aria-hidden className={arrow} />
+                      </Link>
+                    </div>
+                  </div>
+                </article>
               </Reveal>
             ))}
           </div>
         </section>
 
+        <section aria-labelledby="por-que" className="mt-24 grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <h2 id="por-que" className={`${headline} text-[34px] leading-[1.1] text-balance sm:text-[44px]`}>Un beneficio que no te da trabajo.</h2>
+            <p className="mt-3 max-w-reading text-text-muted">Lo pensamos para que ofrecerlo cueste un correo, no un proyecto.</p>
+          </div>
+          <ul className="divide-y divide-border border-y border-border">
+            {reasons.map((r) => (
+              <li key={r.title}>
+                <div className="grid gap-2 py-6 sm:grid-cols-[1fr_1.2fr] sm:gap-8 sm:py-8">
+                  <p className="font-display text-[22px] font-semibold leading-[1.2] tracking-[-0.03em] text-ink sm:text-[26px]">{r.title}</p>
+                  <p className="text-text-muted sm:pt-1">{r.text}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
+
         <section aria-labelledby="reciben" className="mt-24">
           <h2 id="reciben" className={`${headline} text-[34px] leading-[1.1] sm:text-[44px]`}>Lo que reciben</h2>
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <ul className="mt-8 grid gap-x-10 sm:grid-cols-2">
             {services.map(({ Icon, title, text }) => (
-              <li key={title} className="flex gap-4 rounded-[20px] border border-border bg-surface p-6">
-                <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-full bg-accent text-on-accent"><Icon className="size-6" /></span>
+              <li key={title} className="flex gap-4 border-t border-border py-6">
+                <span aria-hidden className="grid size-12 shrink-0 place-items-center rounded-full bg-accent-soft text-accent"><Icon className="size-6" /></span>
                 <div><p className="text-lg font-semibold text-ink">{title}</p><p className="mt-1 text-text-muted">{text}</p></div>
               </li>
             ))}
@@ -145,11 +191,11 @@ export default function Empresas() {
           <ol className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
             {steps.map((s, i) => (
               <li key={s.title}>
-                <Reveal delay={i * 100} className="group">
+                <Reveal delay={i * 60} className="group">
                   <div className="h-0.5 bg-border">
-                    <div className="h-full origin-left bg-accent transition-[scale] duration-500 ease-brand [transition-delay:var(--d)] motion-reduce:transition-none group-data-[reveal=hidden]:scale-x-0" />
+                    <div className="h-full origin-left bg-accent transition-[scale] duration-[360ms] ease-brand [transition-delay:var(--d)] motion-reduce:transition-none group-data-[reveal=hidden]:scale-x-0" />
                   </div>
-                  <span className="mt-6 block font-display text-display font-semibold leading-none tracking-[-0.06em] text-accent transition-colors duration-500 [transition-delay:var(--d)] group-data-[reveal=hidden]:text-lilac" aria-hidden>{i + 1}</span>
+                  <span className="mt-6 block font-display text-display font-semibold leading-none tracking-[-0.06em] text-accent transition-colors duration-[360ms] [transition-delay:var(--d)] group-data-[reveal=hidden]:text-lilac" aria-hidden>{i + 1}</span>
                   <p className="mt-2 text-lg font-semibold text-ink"><span className="sr-only">Paso {i + 1}: </span>{s.title}</p>
                   <p className="mt-1 text-text-muted">{s.text}</p>
                 </Reveal>
@@ -159,20 +205,26 @@ export default function Empresas() {
         </section>
 
         <section aria-labelledby="planes" className="mt-24 scroll-mt-24">
-          <h2 id="planes" className={`${headline} text-[34px] leading-[1.1] sm:text-[44px]`}>Planes a medida</h2>
-          <p className="mt-3 max-w-reading text-text-muted">El precio depende del número de personas y de lo que quieras cubrir. Te enviamos una propuesta cerrada antes de empezar.</p>
-          <div className="mt-8 grid gap-4 md:grid-cols-2">
-            {plans.map((p) => (
-              <div key={p.name} id={`plan-${p.name.toLowerCase()}`} className="anim-target flex scroll-mt-24 rounded-lg">
-                <Card selected={p.rec} className={`flex w-full flex-col ${lift}`}>
-                  <h3 className="text-lg font-semibold">{p.name}</h3>
-                  <p className="mt-3 text-xl font-bold">A presupuestar</p>
-                  <p className="mt-2 text-sm text-text-muted">{p.blurb}</p>
-                  <ul className="mt-4 flex-1 space-y-1 text-sm">{p.list.map((l) => <li key={l} className="flex gap-2"><Check aria-hidden className="mt-0.5 size-4 shrink-0 text-accent" />{l}</li>)}</ul>
-                  <div className="mt-6"><LinkButton href={DEMO} variant={p.rec ? "primary" : "secondary"}>Pedir propuesta</LinkButton></div>
-                </Card>
+          <div className="rounded-[24px] border border-border bg-surface p-6 sm:p-10">
+            <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2 id="planes" className={`${headline} text-[34px] leading-[1.1] sm:text-[44px]`}>Un plan para cada tamaño.</h2>
+                <p className="mt-3 max-w-reading text-text-muted">El precio depende de cuántas personas son y de lo que quieras cubrir. Siempre con propuesta cerrada antes de empezar.</p>
               </div>
-            ))}
+              <LinkButton href={PLANES} transitionTypes={FORWARD} variant="secondary">Comparar planes</LinkButton>
+            </div>
+            <ul className="mt-8 grid gap-px overflow-hidden rounded-[16px] bg-border sm:grid-cols-3">
+              {tiers.map((t) => (
+                <li key={t.name}>
+                  <Link href={PLANES} transitionTypes={FORWARD} className="group flex h-full flex-col bg-surface-raised p-6 transition-colors duration-150 hover:bg-accent-soft">
+                    <span className={`${headline} origin-left text-[32px] leading-none transition-transform duration-200 ease-brand group-hover:scale-[1.04] motion-reduce:transform-none`}>{t.size}</span>
+                    <span className="mt-1 text-sm text-text-muted">{t.unit}</span>
+                    <span className="mt-6 inline-flex items-center gap-2 font-semibold text-accent">{t.name}<ArrowRight aria-hidden className={arrow} /></span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+            <p className="mt-4 text-sm text-text-muted">¿Es para tus clientes? También hay planes según cuántos sean, en la misma página.</p>
           </div>
         </section>
 
@@ -182,18 +234,16 @@ export default function Empresas() {
         </section>
 
         <section id="cierre" aria-labelledby="cierre-titulo" className="mt-24">
-          <Reveal>
           <div className="flex flex-col items-start justify-between gap-6 rounded-[24px] bg-ink p-8 text-on-ink md:flex-row md:items-center md:p-12" style={inkGlow}>
             <div>
               <h2 id="cierre-titulo" className="font-display text-[34px] font-semibold leading-[1.1] tracking-[-0.06em] sm:text-[44px]">Te lo enseñamos con tu caso.</h2>
-              <p className="mt-2 max-w-reading text-on-ink-muted">Cuéntanos quién eres y cuántas personas hay en tu equipo, y preparamos la demo a tu medida.</p>
+              <p className="mt-2 max-w-reading text-on-ink-muted">Cuéntanos quién eres y a quién quieres ofrecérselo, y preparamos la demo a tu medida.</p>
             </div>
             <PillCta href={DEMO} tone="light">Solicitar una demo</PillCta>
           </div>
-          </Reveal>
         </section>
         <BarraContratar href={DEMO} label="Solicitar una demo" endId="cierre" />
       </div>
-    </div></LateralTransition>
+    </div></DirectionalTransition>
   );
 }

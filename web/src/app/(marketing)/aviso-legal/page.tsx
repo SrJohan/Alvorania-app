@@ -11,10 +11,10 @@ export default function AvisoLegal() {
       <LegalSection title="1. Titular del sitio">
         <p>
           En cumplimiento del artículo 10 de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico, se informa de que este sitio web, {LEGAL.brand},
-          es titular de <V v={LEGAL.company} />, con CIF <V v={LEGAL.taxId} /> y domicilio social en <V v={LEGAL.address} />.
+          es titularidad de <V v={LEGAL.company} />, con CIF <V v={LEGAL.taxId} /> y domicilio social en <V v={LEGAL.address} />.
         </p>
         <p>Datos registrales: <V v={LEGAL.registry} />.</p>
-        <p>Correo de contacto: <V v={LEGAL.email} />.</p>
+        <p>Correo de contacto: <V v={LEGAL.email} />. Teléfono: <V v={LEGAL.phone} />.</p>
       </LegalSection>
 
       <LegalSection title="2. Objeto">
@@ -51,7 +51,7 @@ export default function AvisoLegal() {
 
       <LegalSection title="6. Profesionales">
         <p>
-          Cada declaración la revisa un asesor cuyo nombre y número de colegiado ves en tu caso. Datos profesionales: <V v={LEGAL.professional} />.
+          Cada declaración la revisa un asesor cuyo nombre y número de colegiado ves en tu caso. 
         </p>
       </LegalSection>
 

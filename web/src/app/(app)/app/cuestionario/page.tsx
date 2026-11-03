@@ -91,7 +91,7 @@ export default function Cuestionario() {
             {foral && (
               <Notice tone="warning" title="No disponible en tu comunidad">
                 Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral). No te cobraremos nada. Si tu residencia fiscal está en otra comunidad, elígela arriba.{" "}
-                <Link href="/" className="font-semibold underline">Volver al inicio</Link>
+                <Link href="/inicio" className="font-semibold underline">Volver al inicio</Link>
               </Notice>
             )}
             {estimate && (

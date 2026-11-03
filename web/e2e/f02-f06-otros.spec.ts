@@ -67,22 +67,22 @@ test.describe("F04 autónomos y F05 trámites (páginas informativas)", () => {
   test("F05-E2 precios e inicio avisan de que no aceptamos régimen foral (BUG-003)", async ({ page }) => {
     await page.goto("/precios");
     await expect(page.getByText(/no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
-    await page.goto("/");
+    await page.goto("/inicio");
     await page.getByText("¿Y si vivo en el País Vasco o Navarra?").click();
     await expect(page.getByText(/no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
   });
 
   test("F04/F05-A11Y páginas públicas sin infracciones", async ({ page }) => {
     const found: Record<string, string[]> = {};
-    for (const p of ["/", "/precios", "/tramites", "/asesoria-gestoria", "/acceder"]) {
+    for (const p of ["/inicio", "/precios", "/tramites", "/asesoria-gestoria", "/acceder"]) {
       await page.goto(p);
       found[p] = await a11y(page);
     }
-    expect(found).toEqual({ "/": [], "/precios": [], "/tramites": [], "/asesoria-gestoria": [], "/acceder": [] });
+    expect(found).toEqual({ "/inicio": [], "/precios": [], "/tramites": [], "/asesoria-gestoria": [], "/acceder": [] });
   });
 
   test("F04/F05-E1 páginas públicas a 390 px sin desbordamiento @mobile", async ({ page }) => {
-    for (const p of ["/", "/precios", "/tramites", "/asesoria-gestoria", "/acceder"]) {
+    for (const p of ["/inicio", "/precios", "/tramites", "/asesoria-gestoria", "/acceder"]) {
       await page.goto(p);
       await noHorizontalScroll(page);
     }
