@@ -2,6 +2,8 @@
 export const publicEnv = {
   mode: process.env.NEXT_PUBLIC_DATA_MODE === "live" ? ("live" as const) : ("demo" as const),
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
+  // La web pública (WordPress), a la que llevan «Ver la web» y las salidas de sesión.
+  webUrl: process.env.NEXT_PUBLIC_WEB_URL ?? "https://alvorania.es",
   supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "",
   supabaseAnonKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "",
 };

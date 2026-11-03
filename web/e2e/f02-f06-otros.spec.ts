@@ -50,45 +50,6 @@ test.describe("F02 regresiones", () => {
   });
 });
 
-test.describe("F04 autónomos y F05 trámites (páginas informativas)", () => {
-  test("F04-H1 la página de autónomos lleva a empezar", async ({ page }) => {
-    await page.goto("/asesoria-gestoria");
-    await expect(page.getByRole("heading", { name: /Tú a lo tuyo/ })).toBeVisible();
-    await page.getByRole("link", { name: /Contratar Premium/ }).click();
-    await expect(page).toHaveURL(/\/acceder/);
-  });
-
-  test("F05-H1 los trámites internacionales aparecen como próximamente", async ({ page }) => {
-    await page.goto("/tramites");
-    await expect(page.getByText("Modelo 720 (bienes en el extranjero)")).toBeVisible();
-    await expect(page.getByText("Próximamente").first()).toBeVisible();
-  });
-
-  test("F05-E2 precios e inicio avisan de que no aceptamos régimen foral (BUG-003)", async ({ page }) => {
-    await page.goto("/precios");
-    await expect(page.getByText(/no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
-    await page.goto("/inicio");
-    await page.getByText("¿Y si vivo en el País Vasco o Navarra?").click();
-    await expect(page.getByText(/no trabajamos con declaraciones del País Vasco ni de Navarra/)).toBeVisible();
-  });
-
-  test("F04/F05-A11Y páginas públicas sin infracciones", async ({ page }) => {
-    const found: Record<string, string[]> = {};
-    for (const p of ["/inicio", "/precios", "/tramites", "/asesoria-gestoria", "/acceder"]) {
-      await page.goto(p);
-      found[p] = await a11y(page);
-    }
-    expect(found).toEqual({ "/inicio": [], "/precios": [], "/tramites": [], "/asesoria-gestoria": [], "/acceder": [] });
-  });
-
-  test("F04/F05-E1 páginas públicas a 390 px sin desbordamiento @mobile", async ({ page }) => {
-    for (const p of ["/inicio", "/precios", "/tramites", "/asesoria-gestoria", "/acceder"]) {
-      await page.goto(p);
-      await noHorizontalScroll(page);
-    }
-  });
-});
-
 test.describe("F06 chat con el asesor", () => {
   test("F06-H1 con plan Acompañado se puede escribir al asesor", async ({ page }) => {
     await signIn(page);

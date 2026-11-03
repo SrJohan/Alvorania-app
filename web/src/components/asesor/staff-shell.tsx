@@ -2,9 +2,10 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { ArrowUpRight, BriefcaseBusiness, LogOut, Newspaper, Users } from "lucide-react";
+import { ArrowUpRight, BriefcaseBusiness, LogOut, Users } from "lucide-react";
 import { Logo } from "@/components/site/logo";
 import { signOut } from "@/lib/data/api";
+import { publicEnv } from "@/lib/env";
 import { staffRole } from "@/server/team-actions";
 import type { Role } from "@/server/authz";
 
@@ -16,7 +17,6 @@ export function useStaffRole(): Role | null {
 
 const nav = [
   { href: "/asesor", label: "Casos", icon: BriefcaseBusiness, adminOnly: false },
-  { href: "/asesor/blog", label: "Blog", icon: Newspaper, adminOnly: false },
   { href: "/asesor/equipo", label: "Equipo", icon: Users, adminOnly: true },
 ];
 
@@ -47,7 +47,7 @@ export function StaffShell({ children }: { children: ReactNode }) {
   }, []);
 
   const items = nav.filter((n) => !n.adminOnly || role === "admin");
-  const exit = async () => { await signOut(); router.push("/inicio"); };
+  const exit = async () => { await signOut(); router.push("/acceder"); };
   const linkClass = (active: boolean) =>
     `flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors duration-150 ${
       active ? "bg-surface-raised text-ink shadow-card" : "text-text-muted hover:bg-surface-raised/70 hover:text-ink"
@@ -61,7 +61,7 @@ export function StaffShell({ children }: { children: ReactNode }) {
           <Link href="/asesor" className="rounded-md"><Logo size="sm" /></Link>
           {/* En móvil, salir y ver la web van como iconos para que el menú quepa sin barra de desplazamiento. */}
           <div className="flex items-center gap-1 md:hidden">
-            <Link href="/inicio" target="_blank" className={iconButton}><ArrowUpRight aria-hidden className="size-5" strokeWidth={1.75} /><span className="sr-only">Ver la web (se abre en otra pestaña)</span></Link>
+            <Link href={publicEnv.webUrl} target="_blank" className={iconButton}><ArrowUpRight aria-hidden className="size-5" strokeWidth={1.75} /><span className="sr-only">Ver la web (se abre en otra pestaña)</span></Link>
             <button type="button" onClick={exit} className={iconButton}><LogOut aria-hidden className="size-5" strokeWidth={1.75} /><span className="sr-only">Salir</span></button>
           </div>
         </div>
@@ -81,7 +81,7 @@ export function StaffShell({ children }: { children: ReactNode }) {
         </nav>
         <div className="hidden space-y-1 border-t border-border p-3 md:block">
           <p className="px-3 pb-2 text-xs text-text-muted">{role === "admin" ? "Administración" : role ? "Asesoría" : " "}</p>
-          <Link href="/inicio" target="_blank" className={linkClass(false)}><ArrowUpRight aria-hidden className="size-4" strokeWidth={1.75} />Ver la web<span className="sr-only"> (se abre en otra pestaña)</span></Link>
+          <Link href={publicEnv.webUrl} target="_blank" className={linkClass(false)}><ArrowUpRight aria-hidden className="size-4" strokeWidth={1.75} />Ver la web<span className="sr-only"> (se abre en otra pestaña)</span></Link>
           <button type="button" onClick={exit} className={`${linkClass(false)} w-full`}><LogOut aria-hidden className="size-4" strokeWidth={1.75} />Salir</button>
         </div>
       </aside>

@@ -5,11 +5,10 @@ const nextConfig: NextConfig = {
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
   // Solo en desarrollo: abrir la demo desde un móvil de la misma wifi (http://192.168.x.x:3000).
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
-  // La antigua pestaña de artículos (feed de otra gestoría) es ahora el blog propio.
-  rewrites: async () => ({ beforeFiles: [{ source: "/", destination: "/bienvenida/index.html" }] }),
-  redirects: async () => [{ source: "/articulos", destination: "/blog", permanent: true }],
-  // Las fotos de portada y precios ya vienen comprimidas en .webp a 1916-2098 px: recomprimirlas a 75 (el valor por defecto) las emborronaba.
-  images: { qualities: [90] },
+  // La web pública vive en WordPress; aquí solo está la app. La raíz lleva al acceso.
+  redirects: async () => [{ source: "/", destination: "/acceder", permanent: false }],
+  // La app no se indexa nunca: es privada.
+  headers: async () => [{ source: "/:path*", headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }] }],
   cacheComponents: true,
   partialPrefetching: true,
   // Las pantallas del área privada leen el estado del navegador; solo se valida la navegación instantánea donde se pida con `instant`.

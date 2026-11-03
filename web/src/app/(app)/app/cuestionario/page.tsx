@@ -9,6 +9,7 @@ import { isForal, saveAnswers } from "@/lib/data/api";
 import { useDemoState } from "@/lib/data/store";
 import { normalizeAnswers, type Answers } from "@/lib/tax/engine";
 import { CCAA, SUPPORTED_CCAA } from "@/lib/tax/rules";
+import { publicEnv } from "@/lib/env";
 
 const STEPS = ["Tú", "Trabajo", "Otras rentas", "Familia", "Vivienda", "Deducciones"];
 type Errors = Partial<Record<keyof Answers, string>>;
@@ -91,7 +92,7 @@ export default function Cuestionario() {
             {foral && (
               <Notice tone="warning" title="No disponible en tu comunidad">
                 Por ahora no trabajamos con declaraciones del País Vasco ni de Navarra, que tienen su propio régimen fiscal (foral). No te cobraremos nada. Si tu residencia fiscal está en otra comunidad, elígela arriba.{" "}
-                <Link href="/inicio" className="font-semibold underline">Volver al inicio</Link>
+                <Link href={publicEnv.webUrl} className="font-semibold underline">Volver a la web</Link>
               </Notice>
             )}
             {estimate && (

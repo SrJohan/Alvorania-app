@@ -30,7 +30,7 @@ export default function Suscripcion() {
   }
 
   async function removeAccount() {
-    try { await deleteMyAccount(); router.push("/inicio"); }
+    try { await deleteMyAccount(); router.push("/acceder"); }
     catch (e) { setDataMsg(e instanceof Error ? e.message : "No hemos podido eliminar tu cuenta."); }
   }
 
@@ -56,7 +56,7 @@ export default function Suscripcion() {
   if (!sub) {
     return (
       <div className="space-y-8">
-        <EmptyState title="No tienes ninguna suscripción" text="Cuando contrates un plan, podrás gestionarlo aquí." action={<LinkButton href="/precios">Ver precios</LinkButton>} />
+        <EmptyState title="No tienes ninguna suscripción" text="Cuando contrates un plan, podrás gestionarlo aquí." action={<LinkButton href="/app/plan">Ver planes</LinkButton>} />
         {myData}
       </div>
     );

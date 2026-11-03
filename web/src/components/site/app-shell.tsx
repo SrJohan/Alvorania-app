@@ -64,11 +64,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <div className="flex min-h-screen flex-col">
       <header className="flex h-16 items-center justify-between gap-2 border-b border-border bg-bg px-4 md:gap-4">
-        <Link href="/inicio" className="shrink-0 rounded-md"><Logo size="sm" /></Link>
+        <Link href="/app/caso" className="shrink-0 rounded-md"><Logo size="sm" /></Link>
         <div className="flex min-w-0 items-center gap-1 text-sm md:gap-3">
           {s.case && <div className="min-w-0 max-w-36 [&>span]:block [&>span]:truncate md:max-w-none"><StatusBadge status={s.case.status} /></div>}
           <span className="hidden text-text-muted sm:inline">{s.user.fullName}</span>
-          <button type="button" className={`${iconButton} shrink-0 md:flex md:w-auto md:gap-3 md:px-3 md:text-sm md:font-medium`} onClick={async () => { await signOut(); router.push("/inicio"); }}>
+          <button type="button" className={`${iconButton} shrink-0 md:flex md:w-auto md:gap-3 md:px-3 md:text-sm md:font-medium`} onClick={async () => { await signOut(); router.push("/acceder"); }}>
             <LogOut aria-hidden className="size-5" strokeWidth={1.75} />
             <span className="sr-only md:not-sr-only">Salir</span>
           </button>
@@ -90,7 +90,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             })}
           </ul>
           {!isLive && <div className="hidden p-4 md:block">
-            <button className="text-xs text-text-muted underline" onClick={() => { if (confirm("¿Borrar todos los datos de la demostración?")) { resetDemo(); router.push("/inicio"); } }}>
+            <button className="text-xs text-text-muted underline" onClick={() => { if (confirm("¿Borrar todos los datos de la demostración?")) { resetDemo(); router.push("/acceder"); } }}>
               Reiniciar demostración
             </button>
           </div>}

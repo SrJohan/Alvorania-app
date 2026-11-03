@@ -66,6 +66,7 @@ export default function Acceder() {
 
   // Con cacheComponents la página se oculta en vez de desmontarse: al volver no debe seguir a medio salir.
   useLayoutEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- Restablece la salida antes de pintar al reactivar la página conservada en caché.
     setSaliendo(false);
     setNavegando(null);
     setEsperaLarga(false);
