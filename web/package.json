@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "aeat:check": "node scripts/aeat-check.mjs",
     "test:db": "vitest run tests/db.test.ts",
     "e2e": "playwright test"
   },
