@@ -72,6 +72,12 @@ export async function setDataSource(source: "manual" | "documento") {
   update((s) => (s.case ? { ...s, case: { ...s.case, dataSource: source } } : s));
 }
 
+export async function saveAeatReference(nif: string, referencia: string) {
+  void nif; void referencia; // en demo no se guarda: solo se marca la elección
+  await delay(250);
+  update((s) => (s.case ? { ...s, case: { ...s.case, dataSource: "aeat" } } : s));
+}
+
 export async function saveAnswers(answers: Answers, step: number) {
   update((s) => (s.case ? { ...s, case: { ...s.case, answers, questionnaireStep: step } } : s));
 }

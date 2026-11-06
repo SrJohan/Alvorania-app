@@ -1,7 +1,7 @@
 "use client";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useLayoutEffect, useRef, useState, type FormEvent } from "react";
-import { ArrowRight, Calculator, Mail, ShieldCheck, UserCheck } from "lucide-react";
+import { useContext, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
+import { ArrowLeft, ArrowRight, Calculator, Mail, ShieldCheck, UserCheck } from "lucide-react";
 import { Button, LinkButton } from "@/components/ui/button";
 import { Notice } from "@/components/ui/display";
 import { PasswordField, TextField } from "@/components/ui/form";
@@ -31,8 +31,15 @@ const promises = [
   { Icon: ShieldCheck, text: "Tus datos viajan cifrados y solo los ve tu gestor" },
 ];
 
+const noSubscribe = () => () => {};
+// Página de la que viene quien llega, solo si es otra web: si fuera esta misma, volver sería rebotar en el login.
+const referrerExterno = () => {
+  try { return document.referrer && new URL(document.referrer).origin !== location.origin ? document.referrer : ""; } catch { return ""; }
+};
+
 export default function Acceder() {
   const router = useRouter();
+  const volverA = useSyncExternalStore(noSubscribe, referrerExterno, () => "");
   const clientNavigation = useContext(ClientNavigationContext);
   // Se decide al montar: hidratar nunca inicia una entrada tardía.
   const entradaMarca = useContext(LoginMotionContext);
@@ -151,6 +158,12 @@ export default function Acceder() {
           <p ref={avisoNavegando} tabIndex={-1} role="status" className="sr-only">Abriendo tu cuenta…</p>
           {esperaLarga && <a href={navegando} className="mt-2 inline-block text-sm font-semibold text-accent underline-offset-4 hover:underline">Está tardando: abrir ahora</a>}
         </div>
+      )}
+      {volverA && !navegando && (
+        <a href={volverA} className="absolute left-4 top-4 z-20 inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-sm font-semibold text-accent hover:bg-surface-raised/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">
+          <ArrowLeft aria-hidden className="size-4" />
+          Volver
+        </a>
       )}
       <div inert={saliendo || entradaPendiente} aria-busy={!!navegando}
         onAnimationEnd={(e) => { if (e.target === e.currentTarget && e.animationName === "login-card-enter") setEntradaPendiente(false); }}

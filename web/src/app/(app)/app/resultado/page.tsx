@@ -1,11 +1,14 @@
 "use client";
+import { FlowHeader } from "@/components/site/flow-header";
+import { DawnPanel } from "@/components/ui/dawn-panel";
 import { useEffect, useRef, type CSSProperties } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
-import { Card, EmptyState, Notice, ResultCard, Skeleton, Tag } from "@/components/ui/display";
+import { Card, EmptyState, Notice, Skeleton, Tag } from "@/components/ui/display";
 import { runCalculation } from "@/lib/data/api";
 import { useDemoState } from "@/lib/data/store";
 import { formatEuros } from "@/lib/format";
 import { calculate, type Breakdown } from "@/lib/tax/engine";
+import { explainResult } from "@/lib/tax/explain";
 import { RULES_2025 } from "@/lib/tax/rules";
 
 const ROWS: [keyof Breakdown, string, "+" | "-" | "="][] = [
@@ -56,15 +59,15 @@ export default function Resultado() {
   }
 
   const paid = c!.status !== "borrador" && c!.status !== "calculado";
+  const why = explainResult(calc);
 
   return (
     <div className="space-y-6">
-      <div>
-        <p className="text-sm text-text-muted">Paso 3 de 4</p>
-        <h1 className="text-xl font-bold">Tu resultado de la renta {c!.taxYear}</h1>
-      </div>
+      <FlowHeader step={3} title={`Tu resultado de la renta ${c!.taxYear}`} />
 
-      <ResultCard cents={calc.resultCents} savingsCents={calc.savingsCents} stale={stale} count />
+      <DawnPanel size="hero" cents={calc.resultCents} savingsCents={calc.savingsCents} stale={stale}>
+        {why && <p className="max-w-reading text-base">{why}</p>}
+      </DawnPanel>
 
       {(c!.answers.propertyIncome || c!.answers.selfEmployed) && (
         <Notice tone="warning" title="Este resultado no incluye todos tus ingresos">

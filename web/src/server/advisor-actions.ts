@@ -25,6 +25,8 @@ export type AdvisorCaseDetail = {
   documents: { id: string; kind: string; name: string; sizeBytes: number; at: string; byClient: boolean }[];
   messages: { id: string; from: string; body: string; at: string }[];
   aeatReference: string | null;
+  /** NIF y referencia de Renta que dio el cliente para abrir su expediente en Renta WEB. */
+  aeatAccess: { nif: string; referencia: string; savedAt: string } | null;
   isAdmin: boolean;
 };
 
@@ -34,20 +36,23 @@ export async function advisorCaseDetail(caseId: string): Promise<ActionResult<Ad
     const id = uuidSchema.parse(caseId);
     const c = await requireCaseAccess(user.id, id, "staff");
     const admin = supabaseAdmin();
-    const [{ data: profile }, { data: qa }, { data: calcs }, { data: rev }, { data: docs }, { data: msgs }] = await Promise.all([
+    const [{ data: profile }, { data: qa }, { data: calcs }, { data: rev }, { data: docs }, { data: msgs }, { data: td }] = await Promise.all([
       admin.from("profiles").select("full_name,email").eq("id", c.user_id).single(),
       admin.from("questionnaire_answers").select("answers").eq("case_id", id).order("version", { ascending: false }).limit(1).maybeSingle(),
       admin.from("calculations").select("output").eq("case_id", id).order("created_at", { ascending: false }).limit(1),
       admin.from("reviews").select("status,notes,advisor_approved_at,user_approved_at").eq("case_id", id).maybeSingle(),
       admin.from("documents").select("id,kind,storage_path,size_bytes,created_at,uploaded_by").eq("case_id", id).order("created_at"),
       admin.from("messages").select("id,sender_kind,body,created_at").eq("case_id", id).order("created_at"),
+      admin.from("tax_data").select("source,raw_json").eq("case_id", id).maybeSingle(),
     ]);
+    const access = td?.source === "aeat_datos_fiscales" ? (td.raw_json as { nif?: string; referencia?: string; savedAt?: string }) : null;
     // Ver los datos fiscales de un cliente queda registrado (RGPD: trazabilidad de accesos del personal).
     await admin.from("audit_log").insert({ actor_id: user.id, action: "advisor_viewed_case", entity: "case", entity_id: id });
     const { __step: _s, ...raw } = (qa?.answers ?? {}) as Record<string, unknown>;
     void _s;
     return {
       id, status: c.status, taxYear: c.tax_year, aeatReference: c.aeat_reference ?? null, isAdmin: role === "admin",
+      aeatAccess: access?.nif && access.referencia ? { nif: access.nif, referencia: access.referencia, savedAt: access.savedAt ?? "" } : null,
       client: { name: profile?.full_name ?? "Cliente", email: profile?.email ?? "" },
       answers: qa ? normalizeAnswers(raw as Partial<Answers>) : null,
       calculation: ((calcs ?? [])[0]?.output as Calculation | undefined) ?? null,

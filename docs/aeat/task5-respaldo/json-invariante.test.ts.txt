@@ -1,0 +1,19 @@
+import { describe, expect, it } from "vitest";
+import { RULES_2025 } from "@/lib/tax/rules";
+
+// Relación 1:1 con la guía de la AEAT: cada entrada lleva el slug de su deducción.
+// Las variantes de una misma deducción (p. ej. alquiler para jóvenes y para mayores) pueden compartir slug
+// entre deducciones y noModeladas, pero dentro de noModeladas cada slug va una sola vez.
+describe("irpf-2025.json: clave aeat", () => {
+  for (const [nombre, territorio] of Object.entries(RULES_2025.territorios)) {
+    it(`${nombre}: toda entrada tiene aeat`, () => {
+      const entradas = [...territorio.deducciones, ...(territorio.noModeladas ?? [])];
+      expect(entradas.filter((e) => !e.aeat)).toEqual([]);
+    });
+
+    it(`${nombre}: sin slugs repetidos en noModeladas`, () => {
+      const slugs = (territorio.noModeladas ?? []).map((e) => e.aeat);
+      expect(slugs.filter((s, i) => slugs.indexOf(s) !== i)).toEqual([]);
+    });
+  }
+});

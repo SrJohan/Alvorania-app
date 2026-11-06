@@ -26,6 +26,10 @@ const answersBase = z.object({
   pensionContrib: euros,
   donations: euros,
   donationsRecurrent: z.boolean(),
+  // Opcionales: las respuestas guardadas antes de estos campos se completan con normalizeAnswers.
+  donationsRegional: euros.default(0),
+  bornThisYear: count.default(0),
+  familiaNumerosa: z.enum(["", "general", "especial"]).default(""),
   mortgagePre2013: euros,
   propertyIncome: z.boolean(),
   selfEmployed: z.boolean(),

@@ -1,9 +1,11 @@
 "use client";
+import { FlowHeader } from "@/components/site/flow-header";
+import { LiveResult } from "@/components/site/live-result";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, LinkButton } from "@/components/ui/button";
-import { EmptyState, Notice, Stepper } from "@/components/ui/display";
+import { EmptyState, Notice } from "@/components/ui/display";
 import { Checkbox, NumberField, SelectField } from "@/components/ui/form";
 import { isForal, saveAnswers } from "@/lib/data/api";
 import { useDemoState } from "@/lib/data/store";
@@ -29,9 +31,11 @@ function validate(step: number, a: Answers): Errors {
     if (a.grossIncome <= 0) e.grossIncome = "Indica tus ingresos brutos del año.";
     if (a.socialSecurity > a.grossIncome) e.socialSecurity = "No puede superar tus ingresos brutos.";
     if (a.withholdings > a.grossIncome + a.savingsIncome + a.savingsGains) e.withholdings = "No puede superar tus ingresos.";
+    if (!Number.isInteger(a.payers) || a.payers < 1 || a.payers > 4) e.payers = "Indica entre 1 y 4 pagadores.";
   }
   if (step === 3) {
     if (a.childrenUnder3 > a.children) e.childrenUnder3 = "No puede ser mayor que el número de hijos.";
+    if (a.bornThisYear > a.children) e.bornThisYear = "No puede ser mayor que el número de hijos.";
     if (a.ascendientes75 > a.ascendientes) e.ascendientes75 = "No puede ser mayor que el número de ascendientes.";
   }
   return e;
@@ -46,6 +50,11 @@ export default function Cuestionario() {
 
   if (!c) {
     return <EmptyState title="Aún no has empezado" text="Primero cuéntanos cómo aportarás tus datos fiscales." action={<LinkButton href="/app/conectar">Empezar</LinkButton>} />;
+  }
+
+  // El servidor rechaza guardar en estos estados (saveAnswers); sin este aviso "Siguiente" parecía no hacer nada.
+  if (["pendiente_aprobacion", "presentado", "cerrado", "cancelado"].includes(c.status)) {
+    return <EmptyState title="Este caso ya no admite cambios" text="Tu cuestionario ya está enviado. Puedes ver cómo va tu caso o tu resultado." action={<LinkButton href="/app/caso">Ver mi caso</LinkButton>} />;
   }
 
   const a = normalizeAnswers(c.answers);
@@ -72,20 +81,17 @@ export default function Cuestionario() {
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <p className="text-sm text-text-muted">Paso 2 de 4</p>
-        <h1 className="text-xl font-bold">Cuéntanos tu situación</h1>
-      </div>
-      <Stepper steps={STEPS} current={step} />
+    <div className="space-y-6 pb-28 lg:pb-0">
+      <FlowHeader step={2} title="Cuéntanos tu situación" subtitle={`${STEPS[step]}, ${step + 1} de ${STEPS.length}`} progress={(step + 1) / STEPS.length} />
 
-      <form onSubmit={(e) => { e.preventDefault(); go(1); }} noValidate className="max-w-xl space-y-5">
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,36rem)_minmax(0,1fr)]">
+      <form onSubmit={(e) => { e.preventDefault(); go(1); }} noValidate className="min-w-0 space-y-5 pb-32 lg:pb-0">
         {Object.keys(errors).some((k) => errors[k as keyof Answers]) && (
           <div role="alert" className="rounded-md bg-danger-soft px-4 py-3 text-sm text-on-danger-soft">Revisa los campos marcados.</div>
         )}
 
         {/* Al cambiar de paso el bloque se vuelve a montar y entra con el ascenso corto; escribir no lo dispara. */}
-        <div key={step} className="anim-swap space-y-5">
+        <div key={step} className="anim-swap space-y-5 rounded-[24px] border border-border bg-surface-raised p-5 md:p-6">
         {step === 0 && (
           <>
             <SelectField label="Comunidad donde resides" value={a.ccaa} onChange={(e) => set("ccaa", e.target.value)} options={CCAA} placeholder="Elige una" error={errors.ccaa} />
@@ -110,7 +116,7 @@ export default function Cuestionario() {
             <NumberField label="Ingresos brutos del trabajo en el año" help="Lo que consta en tu certificado de retenciones." value={a.grossIncome} onValue={(v) => set("grossIncome", v)} error={errors.grossIncome} />
             <NumberField label="Cotizaciones a la Seguridad Social" value={a.socialSecurity} onValue={(v) => set("socialSecurity", v)} error={errors.socialSecurity} />
             <NumberField label="Retenciones practicadas (IRPF)" help="Súmalas todas: las de tu nómina y las de tu banco o bróker." value={a.withholdings} onValue={(v) => set("withholdings", v)} error={errors.withholdings} />
-            <NumberField label="Número de pagadores" suffix="" min={1} value={a.payers} onValue={(v) => set("payers", Math.max(1, Math.round(v)))} />
+            <NumberField label="Número de pagadores" suffix="" min={1} max={4} value={a.payers} onValue={(v) => set("payers", Math.round(v))} error={errors.payers} />
           </>
         )}
         {step === 2 && (
@@ -132,6 +138,8 @@ export default function Cuestionario() {
             {a.ascendientes > 0 && <NumberField label="De ellos, mayores de 75 años" suffix="" value={a.ascendientes75} onValue={(v) => set("ascendientes75", Math.round(v))} error={errors.ascendientes75} />}
             <NumberField label="Hijos a tu cargo" suffix="" value={a.children} onValue={(v) => set("children", Math.round(v))} />
             <NumberField label="De ellos, menores de 3 años" suffix="" value={a.childrenUnder3} onValue={(v) => set("childrenUnder3", Math.round(v))} error={errors.childrenUnder3} />
+            {a.children > 0 && <NumberField label="De ellos, nacidos o adoptados en 2025" suffix="" help="Algunas comunidades dan una deducción por cada hijo que nace o se adopta en el año." value={a.bornThisYear} onValue={(v) => set("bornThisYear", Math.round(v))} error={errors.bornThisYear} />}
+            <SelectField label="Familia numerosa" help="Según tu título de familia numerosa." value={a.familiaNumerosa === "especial" ? "Categoría especial" : a.familiaNumerosa === "general" ? "Categoría general" : ""} onChange={(e) => set("familiaNumerosa", e.target.value === "Categoría especial" ? "especial" : e.target.value === "Categoría general" ? "general" : "")} options={["Categoría general", "Categoría especial"]} placeholder="No" error={errors.familiaNumerosa} />
             {a.childrenUnder3 > 0 && (
               <>
                 <Checkbox checked={a.workingMother} onChange={(e) => set("workingMother", e.target.checked)} label="Soy la madre y he trabajado (por cuenta propia o ajena) con alta en la Seguridad Social." />
@@ -151,6 +159,7 @@ export default function Cuestionario() {
             <NumberField label="Aportaciones a planes de pensiones" help="Reducen tu base hasta 1.500 € al año." value={a.pensionContrib} onValue={(v) => set("pensionContrib", v)} />
             <NumberField label="Donativos a ONG y fundaciones" value={a.donations} onValue={(v) => set("donations", v)} />
             {a.donations > 0 && <Checkbox checked={a.donationsRecurrent} onChange={(e) => set("donationsRecurrent", e.target.checked)} label="Dono a la misma entidad desde hace tres años o más." />}
+            <NumberField label="Donativos a entidades de tu comunidad" help="Fundaciones, universidades o entidades de tu comunidad autónoma. No repitas aquí lo que ya has puesto arriba." value={a.donationsRegional} onValue={(v) => set("donationsRegional", v)} error={errors.donationsRegional} />
           </>
         )}
         </div>
@@ -160,6 +169,8 @@ export default function Cuestionario() {
           <Button type="submit" loading={busy} disabled={foral}>{step === STEPS.length - 1 ? "Ver mi resultado" : "Siguiente"}</Button>
         </div>
       </form>
+      {!busy && <LiveResult answers={a} />}
+      </div>
     </div>
   );
 }

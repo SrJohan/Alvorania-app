@@ -7,9 +7,9 @@ import { RULES_2025 } from "@/lib/tax/rules";
 import { esc, renderEmail } from "./email";
 import { answersDraftSchema, answersSchema, safeFileName, uploadSchema } from "./validation";
 
-// El paquete de la migración 0005 se lee del propio SQL: si diverge del JSON del motor, la prueba lo detecta.
+// El paquete de la migración 0012 (el último, que sustituye al de 0005) se lee del propio SQL: si diverge del JSON del motor, la prueba lo detecta.
 function packageFromMigration(reviewed: boolean): TaxRuleRow[] {
-  const sql = fs.readFileSync(path.join(__dirname, "..", "..", "supabase", "migrations", "0005_irpf_2025.sql"), "utf8");
+  const sql = fs.readFileSync(path.join(__dirname, "..", "..", "supabase", "migrations", "0012_irpf_2025_comunidades.sql"), "utf8");
   const m = sql.match(/'(\{[\s\S]*\})'::jsonb/);
   if (!m) throw new Error("no se encontró el paquete en la migración");
   const rule = JSON.parse(m[1].replace(/''/g, "'"));

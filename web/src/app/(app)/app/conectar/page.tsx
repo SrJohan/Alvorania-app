@@ -2,24 +2,18 @@
 import { useRouter } from "next/navigation";
 import { useRef, useState, type CSSProperties } from "react";
 import { ArrowRight, Check, FileCheck, FileUp, PenLine, ShieldCheck } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button, buttonClass } from "@/components/ui/button";
+import { FlowHeader } from "@/components/site/flow-header";
 import { Tag } from "@/components/ui/display";
-import { Checkbox } from "@/components/ui/form";
+import { Checkbox, TextField } from "@/components/ui/form";
 import { FileDrop } from "@/components/ui/file-drop";
-import { createCase, recordConsent, setDataSource } from "@/lib/data/api";
+import { createCase, recordConsent, saveAeatReference, setDataSource } from "@/lib/data/api";
+import { cleanId, isValidNif, isValidReferencia } from "@/lib/aeat";
 import { getState, useDemoState } from "@/lib/data/store";
 
 const delay = (ms: number) => ({ "--d": `${ms}ms` }) as CSSProperties;
 
-// Lavado de color de la cabecera: los mismos tonos de campo de la portada, que se disuelven hacia abajo y a los lados.
-const wash = {
-  backgroundImage:
-    "linear-gradient(to bottom, transparent 40%, var(--color-bg) 100%), radial-gradient(at 12% 0%, var(--color-field-c) 0, transparent 55%), radial-gradient(at 88% 10%, var(--color-field-a) 0, transparent 50%)",
-  maskImage: "linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%)",
-  WebkitMaskImage: "linear-gradient(to right, transparent 0%, #000 18%, #000 82%, transparent 100%)",
-};
-
-// Las dos formas de aportar los datos son tarjetas grandes y elegibles: la elegida se marca con aro y fondo lila.
+// Las formas de aportar los datos son tarjetas grandes y elegibles: la elegida se marca con aro y fondo lila.
 const option = "flex flex-col rounded-[24px] border p-5 transition-[translate,box-shadow,border-color,background-color] duration-200 ease-brand motion-reduce:transition-none sm:p-6";
 const idle = "border-border bg-surface-raised shadow-card hover:-translate-y-0.5 hover:shadow-pop motion-reduce:transform-none";
 const chosen = "border-accent bg-accent-soft shadow-pop ring-1 ring-accent";
@@ -31,6 +25,10 @@ export default function Conectar() {
   const [busy, setBusy] = useState(false);
   const [file, setFile] = useState<string>("");
   const [error, setError] = useState("");
+  const [nif, setNif] = useState("");
+  const [referencia, setReferencia] = useState("");
+  const [validated, setValidated] = useState(false);
+  const [saving, setSaving] = useState(false);
   // La elección se guarda de forma asíncrona: «Continuar» espera a que termine en vez de dar un error falso.
   const pending = useRef<Promise<void> | null>(null);
   const source = s.case?.dataSource;
@@ -52,6 +50,26 @@ export default function Conectar() {
     return pending.current;
   }
 
+  function saveReference() {
+    if (busy) return;
+    setValidated(true);
+    setError("");
+    if (!isValidNif(nif) || !isValidReferencia(referencia)) return;
+    setBusy(true);
+    setSaving(true);
+    pending.current = (async () => {
+      try {
+        await createCase();
+        await saveAeatReference(cleanId(nif), cleanId(referencia));
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "No hemos podido guardar la referencia.");
+      } finally {
+        setBusy(false);
+        setSaving(false);
+      }
+    })();
+  }
+
   async function next() {
     if (pending.current) await pending.current;
     const latest = getState();
@@ -68,20 +86,39 @@ export default function Conectar() {
   }
 
   return (
-    // El lavado de color de la cabecera sale del padding de <main> para llegar a sus bordes, como el de la portada.
-    <div className="relative -m-4 space-y-6 p-4 md:-m-8 md:space-y-8 md:p-8">
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[340px]" style={wash} />
-
-      <header className="anim-rise">
-        <p className="sr-only">Paso 1 de 4</p>
-        <div aria-hidden className="flex w-40 gap-1.5">
-          {[0, 1, 2, 3].map((i) => <span key={i} className={`h-1.5 flex-1 rounded-pill ${i === 0 ? "bg-accent" : "bg-border-input/60"}`} />)}
-        </div>
-        <h1 className="mt-4 font-display text-[34px] font-semibold leading-[1.08] tracking-[-0.05em] text-ink md:text-[44px]">Tus datos fiscales</h1>
-        <p className="mt-3 max-w-reading text-text-muted">Con tus datos fiscales del ejercicio 2025 calculamos tu resultado. Descárgalos de la sede de la Agencia Tributaria o introdúcelos tú.</p>
-      </header>
+    <div className="space-y-6 md:space-y-8">
+      <FlowHeader step={1} title="Tus datos fiscales" subtitle="Con tus datos fiscales del ejercicio 2025 calculamos tu resultado. Descárgalos de la sede de la Agencia Tributaria o introdúcelos tú." />
 
       <div className="grid gap-4 md:grid-cols-2">
+        <section aria-labelledby="op-aeat" className={`${option} anim-rise md:col-span-2 ${source === "aeat" ? chosen : idle}`} style={delay(0)}>
+          <div className="flex items-start justify-between gap-3">
+            <span aria-hidden className={`${tile} ${source === "aeat" ? "bg-surface-raised" : "bg-accent-soft"}`}><ShieldCheck className="size-6" /></span>
+            <div className="flex items-center gap-3"><Tag>Recomendado</Tag><SelectBadge on={source === "aeat"} /></div>
+          </div>
+          <h2 id="op-aeat" className="mt-5 font-display text-[22px] font-semibold leading-tight tracking-[-0.03em] text-ink">Con la Agencia Tributaria</h2>
+          <p className="mt-1.5 text-sm text-text-muted">Es lo más cómodo: pides una referencia en la web de Hacienda y nosotros nos encargamos del resto.</p>
+          <ol className="mt-5 grid list-inside list-decimal gap-6 md:grid-cols-2">
+            <li className="text-sm font-semibold text-ink">
+              Obtén tu referencia en la web de Hacienda
+              <div className="mt-3">
+                <a className={buttonClass("secondary", "md", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")} href="https://sede.agenciatributaria.gob.es/static_files/common/html/selector_acceso/SelectorAccesos.html?ref=%2Fwlpl%2FDABJ-REN0%2FObtenerReferenciaServlet&aut=CPD" target="_blank" rel="noopener noreferrer">Obtener referencia</a>
+                <p className="mt-2 text-xs font-normal text-text-muted">Entras con tu Cl@ve en la web de la Agencia Tributaria. Nosotros nunca vemos tu Cl@ve.</p>
+              </div>
+            </li>
+            <li className="text-sm font-semibold text-ink">
+              Vuelve aquí e introduce tus datos
+              <form className="mt-3 font-normal" onSubmit={(e) => { e.preventDefault(); saveReference(); }}>
+                <fieldset disabled={busy} className="space-y-3" aria-live="polite">
+                  <TextField label="NIF" placeholder="12345678Z" autoComplete="off" value={nif} onChange={(e) => setNif(e.target.value.toUpperCase())} error={validated && !isValidNif(nif) ? "Revisa el NIF" : undefined} className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />
+                  <TextField label="Referencia" placeholder="QBW2X9" autoComplete="off" maxLength={10} value={referencia} onChange={(e) => setReferencia(e.target.value.toUpperCase())} error={validated && !isValidReferencia(referencia) ? "La referencia son 6 letras y números" : undefined} className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" />
+                  <Button type="submit" loading={saving} className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent">Guardar</Button>
+                </fieldset>
+              </form>
+            </li>
+          </ol>
+          {source === "aeat" && <p role="status" className="mt-5 flex flex-wrap items-center gap-3 text-sm"><Tag tone="success">Guardada</Tag>Referencia guardada. Tu asesor la usará para traer tus datos.</p>}
+        </section>
+        <h2 className="text-sm font-semibold text-text-muted md:col-span-2">Otras formas de aportar tus datos</h2>
         <section aria-labelledby="op-documento" className={`${option} anim-rise ${source === "documento" ? chosen : idle}`} style={delay(60)}>
           <div className="flex items-start justify-between gap-3">
             <span aria-hidden className={`${tile} ${source === "documento" ? "bg-surface-raised" : "bg-accent-soft"}`}><FileUp className="size-6" /></span>
@@ -107,7 +144,7 @@ export default function Conectar() {
           </div>
           <h2 id="op-manual" className="mt-5 font-display text-[22px] font-semibold leading-tight tracking-[-0.03em] text-ink">Introducirlos a mano</h2>
           <p className="mb-5 mt-1.5 text-sm text-text-muted">Responde unas preguntas con las cifras de tu certificado de retenciones.</p>
-          <Button className="mt-auto self-start" variant={source === "manual" ? "primary" : "secondary"} loading={busy && !file} onClick={() => choose("manual")}>
+          <Button className="mt-auto self-start" variant={source === "manual" ? "primary" : "secondary"} disabled={busy} loading={busy && !saving && !file} onClick={() => choose("manual")}>
             {source === "manual" ? <><Check aria-hidden className="size-4" strokeWidth={3} />Elegido</> : "Prefiero introducirlos"}
           </Button>
         </section>

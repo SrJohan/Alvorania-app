@@ -11,14 +11,27 @@ export type Minimos = {
   discapacidad33: number; discapacidad65: number; asistencia: number;
 };
 
-export type AutonomicDeduction = {
-  code: string; label: string; tipo: "alquiler";
-  pct: number; max: number;
-  edadMenorDe?: number; edadMaxima?: number; edadMayorDe?: number;
-  alquilerMinPctBase?: number; maxBaseImponible?: number; maxBaseMenosMinimo?: number;
-};
+// Límite de renta común a todas (tributación individual). `fuente` = URL de la AEAT de donde sale cada cifra.
+// `aeat` = slug de la deducción en la guía de la AEAT (clave del comprobador scripts/aeat-check.mjs).
+type DedCommon = { code: string; label: string; fuente?: string; aeat?: string; maxBaseImponible?: number; maxBaseMenosMinimo?: number };
 
-export type TerritoryRules = { escala: Bracket[]; minimos: Minimos | "estatales"; deducciones: AutonomicDeduction[] };
+export type AutonomicDeduction = DedCommon & (
+  | { tipo: "alquiler"; pct: number; max: number; edadMenorDe?: number; edadMaxima?: number; edadMayorDe?: number; alquilerMinPctBase?: number }
+  // Hijos nacidos o adoptados en el ejercicio: importe del 1.º, 2.º, 3.º y siguientes (el último se repite).
+  | { tipo: "nacimiento"; porHijo: number[] }
+  | { tipo: "familia_numerosa"; general: number; especial: number }
+  // Donativos a entidades de la comunidad: pct sobre lo donado, con tope opcional en euros o en % de la base.
+  | { tipo: "donativos"; pct: number; max?: number; limitePctBase?: number }
+);
+
+export type TerritoryRules = {
+  escala: Bracket[]; minimos: Minimos | "estatales"; deducciones: AutonomicDeduction[];
+  fuentes?: { escala?: string; minimos?: string };
+  /** Deducciones de la comunidad que el esquema no sabe calcular: las revisa el asesor. */
+  noModeladas?: { nombre: string; url: string; motivo: string; aeat?: string }[];
+  /** Dudas que dejó la extracción de cifras, para el fiscalista que revise el paquete. */
+  avisos?: string[];
+};
 
 export type TaxRules = {
   year: number;

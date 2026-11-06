@@ -51,7 +51,7 @@ test.describe("F01 particular presenta la renta con revisión", () => {
   test("F01-E12 comunidad sin datos propios: se avisa de que es una estimación", async ({ page }) => {
     await signIn(page);
     await connectManual(page);
-    await page.getByLabel("Comunidad donde resides").selectOption("Galicia");
+    await page.getByLabel("Comunidad donde resides").selectOption("Ceuta");
     await expect(page.getByText("Cálculo estimado")).toBeVisible();
     await page.getByLabel("Estado civil").selectOption("soltero");
     await page.getByRole("button", { name: "Siguiente" }).click();
@@ -231,6 +231,7 @@ test.describe("F01 particular presenta la renta con revisión", () => {
   });
 
   test("F01-A11Y accesibilidad de cada pantalla del flujo", async ({ page }) => {
+    test.setTimeout(120_000); // seis escaneos axe, cada uno recorre la página y espera a las animaciones
     const found: Record<string, string[]> = {};
     await page.goto("/acceder");
     found.acceso = await a11y(page);
@@ -248,4 +249,99 @@ test.describe("F01 particular presenta la renta con revisión", () => {
     found.caso = await a11y(page);
     expect(found).toEqual({ acceso: [], datos: [], cuestionario: [], resultado: [], plan: [], caso: [] });
   });
+
+  async function liveIncome(page: Parameters<typeof signIn>[0]) {
+    await signIn(page);
+    await connectManual(page);
+    await page.getByLabel("Comunidad donde resides").selectOption("Madrid");
+    await page.getByLabel("Estado civil").selectOption("soltero");
+    await page.getByLabel("Año de nacimiento").fill("1990");
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await page.getByLabel("Ingresos brutos del trabajo en el año").fill("30000");
+    await page.getByLabel("Cotizaciones a la Seguridad Social").fill("1950");
+    await page.getByLabel("Retenciones practicadas (IRPF)").fill("4000");
+    await expect(page.getByTestId("live-result")).toContainText("598,02");
+  }
+
+  test("F01-V1 la cifra viva aparece al rellenar ingresos y comunidad y se mueve con una respuesta", async ({ page }) => {
+    await signIn(page);
+    await connectManual(page);
+    const live = page.getByTestId("live-result");
+    await expect(live).toContainText("Rellena tus ingresos y tu comunidad");
+    await page.getByLabel("Comunidad donde resides").selectOption("Madrid");
+    await page.getByLabel("Estado civil").selectOption("soltero");
+    await page.getByLabel("Año de nacimiento").fill("1990");
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await page.getByLabel("Ingresos brutos del trabajo en el año").fill("30000");
+    await page.getByLabel("Cotizaciones a la Seguridad Social").fill("1950");
+    await page.getByLabel("Retenciones practicadas (IRPF)").fill("4000");
+    await expect(live).toContainText("A pagar");
+    await expect(live).toContainText("598,02");
+    // El delta se acumula mientras se escribe y se borra 2 s después: se espera a que se limpie para medir solo el siguiente cambio.
+    await expect(live.getByText(/(mejora|empeora) .* euros/)).toHaveCount(0);
+    await page.getByLabel("Retenciones practicadas (IRPF)").fill("5000");
+    await expect(live).toContainText("A devolver");
+    await expect(live).toContainText("401,98");
+    await expect(live).toContainText("+1000");
+  });
+
+  test("F01-V2 comunidad foral: la cifra viva no aparece", async ({ page }) => {
+    await liveIncome(page);
+    await page.getByRole("button", { name: "Atrás" }).click();
+    await page.getByLabel("Comunidad donde resides").selectOption("Navarra");
+    await expect(page.getByTestId("live-result")).toHaveCount(0);
+  });
+
+  test("F01-V3 alquiler o autónomo: el aviso es visible", async ({ page }) => {
+    await liveIncome(page);
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await page.getByLabel("Alquilo un inmueble, tengo una segunda vivienda o he vendido un inmueble.").check();
+    await expect(page.getByTestId("live-result").getByText("No incluye todos tus ingresos")).toBeVisible();
+  });
+
+  test("F01-V4 la barra de la cifra no tapa los botones ni desborda @mobile", async ({ page }) => {
+    await liveIncome(page);
+    await expect(page.getByTestId("live-result")).toBeVisible();
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await expect(page.getByLabel("Intereses y dividendos cobrados")).toBeVisible();
+    await noHorizontalScroll(page);
+  });
+
+  test("F01-V5 accesibilidad con la cifra viva visible", async ({ page }) => {
+    await liveIncome(page);
+    expect(await a11y(page)).toEqual([]);
+  });
+
+  test("F01-V6 el resultado explica por qué sale a pagar o a devolver", async ({ page }) => {
+    await signIn(page);
+    await connectManual(page);
+    await fillQuestionnaire(page); // caso A: 4.000 € de retenciones, sale a pagar
+    const result = page.getByRole("status").filter({ hasText: "A pagar" });
+    await expect(result).toContainText("Sale a pagar porque tus retenciones");
+    await expect(result).toContainText("no cubren todo el impuesto que te corresponde");
+    await page.getByRole("link", { name: "Cuestionario" }).click();
+    for (let i = 0; i < 4; i++) await page.getByRole("button", { name: "Atrás" }).click(); // del último paso a «Trabajo»
+    await page.getByLabel("Retenciones practicadas (IRPF)").fill("5000");
+    await page.getByRole("link", { name: "Resultado" }).click();
+    await page.getByRole("button", { name: "Volver a calcular" }).click();
+    const refund = page.getByRole("status").filter({ hasText: "A devolver" });
+    await expect(refund).toContainText("Te devuelven porque has pagado de más");
+    await expect(refund).toContainText("superan el impuesto que te corresponde");
+  });
+
+  test("F01-V7 el número de pagadores se puede cambiar y solo admite de 1 a 4", async ({ page }) => {
+    await liveIncome(page);
+    const payers = page.getByLabel("Número de pagadores");
+    await payers.clear();
+    await expect(payers).toHaveValue(""); // antes se recortaba a 1 y no dejaba borrarlo
+    await payers.fill("3");
+    await expect(payers).toHaveValue("3");
+    await payers.fill("5");
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await expect(page.getByText("Indica entre 1 y 4 pagadores.")).toBeVisible();
+    await payers.fill("4");
+    await page.getByRole("button", { name: "Siguiente" }).click();
+    await expect(page.getByLabel("Intereses y dividendos cobrados")).toBeVisible();
+  });
+
 });

@@ -30,6 +30,9 @@ export type Answers = {
   pensionContrib: number;
   donations: number;
   donationsRecurrent: boolean;    // misma entidad tres años o más
+  donationsRegional: number;      // donativos a entidades de su comunidad (fundaciones, universidades...) para la deducción autonómica
+  bornThisYear: number;           // hijos nacidos o adoptados en el ejercicio (deducciones autonómicas por nacimiento)
+  familiaNumerosa: "" | "general" | "especial";
   propertyIncome: boolean;        // alquila un inmueble, tiene segunda vivienda o vendió un inmueble: no se calcula aquí
   selfEmployed: boolean;          // actividad económica: no se calcula aquí
 };
@@ -85,6 +88,7 @@ export const emptyAnswers: Answers = {
   grossIncome: 0, socialSecurity: 0, withholdings: 0, savingsIncome: 0, savingsGains: 0,
   ascendientes: 0, ascendientes75: 0, children: 0, childrenUnder3: 0, workingMother: false, nurseryCost: 0,
   rentPaid: 0, mortgagePre2013: 0, pensionContrib: 0, donations: 0, donationsRecurrent: false,
+  donationsRegional: 0, bornThisYear: 0, familiaNumerosa: "",
   propertyIncome: false, selfEmployed: false,
 };
 
@@ -200,17 +204,30 @@ function compute(a: Answers, r: TaxRules, { claimOptional }: Opts) {
   let autonomicas = 0;
   const baseImponible = baseGeneral + baseAhorro;
   for (const ded of terr?.deducciones ?? []) {
-    if (ded.tipo !== "alquiler" || a.rentPaid <= 0) continue;
     const reasons: string[] = [];
-    const ageOk =
-      age == null ? false
-        : (ded.edadMenorDe != null && age < ded.edadMenorDe) || (ded.edadMaxima != null && age <= ded.edadMaxima) || (ded.edadMayorDe != null && age > ded.edadMayorDe);
-    if (age == null) reasons.push("indica tu año de nacimiento");
-    else if (!ageOk) reasons.push("no cumples el requisito de edad");
+    let amount = 0;
+    if (ded.tipo === "alquiler") {
+      if (a.rentPaid <= 0) continue;
+      const ageOk =
+        age == null ? false
+          : (ded.edadMenorDe != null && age < ded.edadMenorDe) || (ded.edadMaxima != null && age <= ded.edadMaxima) || (ded.edadMayorDe != null && age > ded.edadMayorDe);
+      if (age == null) reasons.push("indica tu año de nacimiento");
+      else if (!ageOk) reasons.push("no cumples el requisito de edad");
+      if (ded.alquilerMinPctBase != null && a.rentPaid <= ded.alquilerMinPctBase * baseImponible) reasons.push(`el alquiler no supera el ${Math.round(ded.alquilerMinPctBase * 100)} % de tu base imponible`);
+      amount = Math.min(a.rentPaid * ded.pct, ded.max);
+    } else if (ded.tipo === "nacimiento") {
+      if (a.bornThisYear <= 0) continue;
+      for (let i = 0; i < a.bornThisYear; i++) amount += ded.porHijo[Math.min(i, ded.porHijo.length - 1)];
+    } else if (ded.tipo === "familia_numerosa") {
+      if (!a.familiaNumerosa) continue;
+      amount = a.familiaNumerosa === "especial" ? ded.especial : ded.general;
+    } else {
+      if (a.donationsRegional <= 0) continue;
+      const base = ded.limitePctBase != null ? Math.min(a.donationsRegional, ded.limitePctBase * baseImponible) : a.donationsRegional;
+      amount = Math.min(base * ded.pct, ded.max ?? Infinity);
+    }
     if (ded.maxBaseImponible != null && baseImponible > ded.maxBaseImponible) reasons.push("tu base imponible supera el límite");
     if (ded.maxBaseMenosMinimo != null && baseImponible - minAut > ded.maxBaseMenosMinimo) reasons.push("tus ingresos superan el límite");
-    if (ded.alquilerMinPctBase != null && a.rentPaid <= ded.alquilerMinPctBase * baseImponible) reasons.push("el alquiler no supera el 20 % de tu base imponible");
-    const amount = Math.min(a.rentPaid * ded.pct, ded.max);
     if (reasons.length) {
       lines.push({ code: ded.code, label: ded.label, amount: 0, kind: "cuota", status: "no_aplica", hint: `No aplica: ${reasons.join("; ")}.` });
     } else if (claimOptional) {
@@ -288,6 +305,11 @@ export function calculate(input: Answers, rules: TaxRules = RULES_2025): Calcula
   // No aplicadas en el cálculo final pero detectadas en el borrador (p. ej. alquiler que no cumple requisitos).
   for (const l of draft.lines) if (l.status === "no_aplica" && !deductions.some((x) => x.code === l.code)) deductions.push(l);
   if (a.pensionContrib === 0) deductions.push({ code: "pensiones_sugerida", label: "Aportaciones a planes de pensiones", amount: 0, kind: "base", status: "sugerida", hint: `Hasta ${rules.pensiones.limite.toLocaleString("es-ES")} € al año reducen tu base.` });
+  const otras = rules.territorios[a.ccaa]?.noModeladas;
+  if (otras?.length) {
+    deductions.push({ code: "autonomicas_otras", label: `Otras deducciones de ${a.ccaa}`, amount: 0, kind: "cuota", status: "sugerida",
+      hint: `Tu comunidad tiene deducciones que no calculamos aquí (${otras.map((o) => o.nombre).slice(0, 3).join("; ")}${otras.length > 3 ? "…" : ""}). Tu asesor las revisará.` });
+  }
   if (a.donations === 0) deductions.push({ code: "donativos_sugerida", label: "Donativos", amount: 0, kind: "cuota", status: "sugerida", hint: "Los primeros 250 € donados desgravan un 80 %." });
 
   const resultCents = toCents(best.result);

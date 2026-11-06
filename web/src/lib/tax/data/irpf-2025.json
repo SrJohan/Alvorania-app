@@ -1,7 +1,7 @@
 {
   "year": 2025,
   "status": "pendiente de revisión por un fiscalista",
-  "notes": "Cifras tomadas del Manual práctico de Renta 2025 de la AEAT (actualizado en marzo de 2026). Solo tributación individual y residentes en territorio común.",
+  "notes": "Cifras tomadas del Manual práctico de Renta 2025 de la AEAT (actualizado en marzo de 2026). Solo tributación individual y residentes en territorio común. Comunidades de territorio común con escala y mínimos propios y las deducciones por alquiler, nacimiento, familia numerosa y donativos que caben en el esquema; las demás figuran en noModeladas de cada comunidad y las revisa el asesor. Fuente: AEAT, Manual de Renta 2025, deducciones autonómicas.",
   "sources": {
     "escalaEstatal": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-estatal.html",
     "escalaAhorro": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/8-cumplimentacion-irpf/8_4-cuota-integra/8_4_4-gravamen-base-liquidable-ahorro.html",
@@ -24,96 +24,1238 @@
     "reduccion": {
       "maxOtrasRentas": 6500,
       "tramos": [
-        { "hasta": 14852, "fijo": 7302 },
-        { "hasta": 17673.52, "base": 7302, "desde": 14852, "pendiente": 1.75 },
-        { "hasta": 19747.5, "base": 2364.34, "desde": 17673.52, "pendiente": 1.14 }
+        {
+          "hasta": 14852,
+          "fijo": 7302
+        },
+        {
+          "hasta": 17673.52,
+          "base": 7302,
+          "desde": 14852,
+          "pendiente": 1.75
+        },
+        {
+          "hasta": 19747.5,
+          "base": 2364.34,
+          "desde": 17673.52,
+          "pendiente": 1.14
+        }
       ]
     }
   },
-  "deduccionSmi": { "maxIntegros": 18276, "plenoHasta": 16576, "importe": 340, "pendiente": 0.2, "maxOtrasRentas": 6500 },
-  "pensiones": { "limite": 1500, "pctRendimientos": 0.3 },
-  "donativos": { "tramo": 250, "pctTramo": 0.8, "pctResto": 0.4, "pctRestoRecurrente": 0.45, "limitePctBase": 0.1 },
-  "hipotecaAnterior2013": { "baseMax": 9040, "pctEstatal": 0.075, "pctAutonomico": 0.075 },
-  "maternidad": { "porHijo": 1200, "guarderiaMax": 1000 },
+  "deduccionSmi": {
+    "maxIntegros": 18276,
+    "plenoHasta": 16576,
+    "importe": 340,
+    "pendiente": 0.2,
+    "maxOtrasRentas": 6500
+  },
+  "pensiones": {
+    "limite": 1500,
+    "pctRendimientos": 0.3
+  },
+  "donativos": {
+    "tramo": 250,
+    "pctTramo": 0.8,
+    "pctResto": 0.4,
+    "pctRestoRecurrente": 0.45,
+    "limitePctBase": 0.1
+  },
+  "hipotecaAnterior2013": {
+    "baseMax": 9040,
+    "pctEstatal": 0.075,
+    "pctAutonomico": 0.075
+  },
+  "maternidad": {
+    "porHijo": 1200,
+    "guarderiaMax": 1000
+  },
   "escalaEstatal": [
-    { "hasta": 12450, "tipo": 0.095 },
-    { "hasta": 20200, "tipo": 0.12 },
-    { "hasta": 35200, "tipo": 0.15 },
-    { "hasta": 60000, "tipo": 0.185 },
-    { "hasta": 300000, "tipo": 0.225 },
-    { "hasta": null, "tipo": 0.245 }
+    {
+      "hasta": 12450,
+      "tipo": 0.095
+    },
+    {
+      "hasta": 20200,
+      "tipo": 0.12
+    },
+    {
+      "hasta": 35200,
+      "tipo": 0.15
+    },
+    {
+      "hasta": 60000,
+      "tipo": 0.185
+    },
+    {
+      "hasta": 300000,
+      "tipo": 0.225
+    },
+    {
+      "hasta": null,
+      "tipo": 0.245
+    }
   ],
   "escalaAhorroEstatal": [
-    { "hasta": 6000, "tipo": 0.095 },
-    { "hasta": 50000, "tipo": 0.105 },
-    { "hasta": 200000, "tipo": 0.115 },
-    { "hasta": 300000, "tipo": 0.135 },
-    { "hasta": null, "tipo": 0.15 }
+    {
+      "hasta": 6000,
+      "tipo": 0.095
+    },
+    {
+      "hasta": 50000,
+      "tipo": 0.105
+    },
+    {
+      "hasta": 200000,
+      "tipo": 0.115
+    },
+    {
+      "hasta": 300000,
+      "tipo": 0.135
+    },
+    {
+      "hasta": null,
+      "tipo": 0.15
+    }
   ],
   "escalaAhorroAutonomica": [
-    { "hasta": 6000, "tipo": 0.095 },
-    { "hasta": 50000, "tipo": 0.105 },
-    { "hasta": 200000, "tipo": 0.115 },
-    { "hasta": 300000, "tipo": 0.135 },
-    { "hasta": null, "tipo": 0.15 }
+    {
+      "hasta": 6000,
+      "tipo": 0.095
+    },
+    {
+      "hasta": 50000,
+      "tipo": 0.105
+    },
+    {
+      "hasta": 200000,
+      "tipo": 0.115
+    },
+    {
+      "hasta": 300000,
+      "tipo": 0.135
+    },
+    {
+      "hasta": null,
+      "tipo": 0.15
+    }
   ],
   "minimosEstatales": {
-    "personal": 5550, "mayor65": 1150, "mayor75": 1400,
-    "descendientes": [2400, 2700, 4000, 4500], "menor3": 2800,
-    "discapacidad33": 3000, "discapacidad65": 9000, "asistencia": 3000
+    "personal": 5550,
+    "mayor65": 1150,
+    "mayor75": 1400,
+    "descendientes": [
+      2400,
+      2700,
+      4000,
+      4500
+    ],
+    "menor3": 2800,
+    "discapacidad33": 3000,
+    "discapacidad65": 9000,
+    "asistencia": 3000
   },
   "territorios": {
     "Madrid": {
       "escala": [
-        { "hasta": 13362.22, "tipo": 0.085 },
-        { "hasta": 19004.63, "tipo": 0.107 },
-        { "hasta": 35425.68, "tipo": 0.128 },
-        { "hasta": 57320.4, "tipo": 0.174 },
-        { "hasta": null, "tipo": 0.205 }
+        {
+          "hasta": 13362.22,
+          "tipo": 0.085
+        },
+        {
+          "hasta": 19004.63,
+          "tipo": 0.107
+        },
+        {
+          "hasta": 35425.68,
+          "tipo": 0.128
+        },
+        {
+          "hasta": 57320.4,
+          "tipo": 0.174
+        },
+        {
+          "hasta": null,
+          "tipo": 0.205
+        }
       ],
       "minimos": {
-        "personal": 5956.65, "mayor65": 1234.26, "mayor75": 1502.58,
-        "descendientes": [2575.85, 2897.83, 4400, 4950], "menor3": 3005.16,
-        "discapacidad33": 3219.81, "discapacidad65": 9659.44, "asistencia": 3219.81
+        "personal": 5956.65,
+        "mayor65": 1234.26,
+        "mayor75": 1502.58,
+        "descendientes": [
+          2575.85,
+          2897.83,
+          4400,
+          4950
+        ],
+        "menor3": 3005.16,
+        "discapacidad33": 3219.81,
+        "discapacidad65": 9659.44,
+        "asistencia": 3219.81
       },
       "deducciones": [
-        { "code": "madrid_alquiler", "label": "Alquiler de vivienda habitual (Madrid, menores de 40 años)", "tipo": "alquiler",
-          "pct": 0.3, "max": 1237.2, "edadMenorDe": 40, "alquilerMinPctBase": 0.2, "maxBaseImponible": 26414.22 }
+        {
+          "code": "madrid_alquiler",
+          "label": "Alquiler de vivienda habitual (Madrid, menores de 40 años)",
+          "tipo": "alquiler",
+          "pct": 0.3,
+          "max": 1237.2,
+          "edadMenorDe": 40,
+          "alquilerMinPctBase": 0.2,
+          "maxBaseImponible": 26414.22
+        }
       ]
     },
     "Cataluña": {
       "escala": [
-        { "hasta": 12500, "tipo": 0.095 },
-        { "hasta": 22000, "tipo": 0.125 },
-        { "hasta": 33000, "tipo": 0.16 },
-        { "hasta": 53000, "tipo": 0.19 },
-        { "hasta": 90000, "tipo": 0.215 },
-        { "hasta": 120000, "tipo": 0.235 },
-        { "hasta": 175000, "tipo": 0.245 },
-        { "hasta": null, "tipo": 0.255 }
+        {
+          "hasta": 12500,
+          "tipo": 0.095
+        },
+        {
+          "hasta": 22000,
+          "tipo": 0.125
+        },
+        {
+          "hasta": 33000,
+          "tipo": 0.16
+        },
+        {
+          "hasta": 53000,
+          "tipo": 0.19
+        },
+        {
+          "hasta": 90000,
+          "tipo": 0.215
+        },
+        {
+          "hasta": 120000,
+          "tipo": 0.235
+        },
+        {
+          "hasta": 175000,
+          "tipo": 0.245
+        },
+        {
+          "hasta": null,
+          "tipo": 0.255
+        }
       ],
       "minimos": "estatales",
       "deducciones": [
-        { "code": "cataluna_alquiler", "label": "Alquiler de vivienda habitual (Cataluña, 35 años o menos)", "tipo": "alquiler",
-          "pct": 0.1, "max": 500, "edadMaxima": 35, "maxBaseMenosMinimo": 30000 }
+        {
+          "code": "cataluna_alquiler",
+          "label": "Alquiler de vivienda habitual (Cataluña, 35 años o menos)",
+          "tipo": "alquiler",
+          "pct": 0.1,
+          "max": 500,
+          "edadMaxima": 35,
+          "maxBaseMenosMinimo": 30000
+        }
       ]
     },
     "Andalucía": {
       "escala": [
-        { "hasta": 13000, "tipo": 0.095 },
-        { "hasta": 21100, "tipo": 0.12 },
-        { "hasta": 35200, "tipo": 0.15 },
-        { "hasta": 60000, "tipo": 0.185 },
-        { "hasta": null, "tipo": 0.225 }
+        {
+          "hasta": 13000,
+          "tipo": 0.095
+        },
+        {
+          "hasta": 21100,
+          "tipo": 0.12
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.15
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.185
+        },
+        {
+          "hasta": null,
+          "tipo": 0.225
+        }
       ],
       "minimos": {
-        "personal": 5790, "mayor65": 1200, "mayor75": 1460,
-        "descendientes": [2510, 2820, 4170, 4700], "menor3": 2920,
-        "discapacidad33": 3130, "discapacidad65": 9390, "asistencia": 3130
+        "personal": 5790,
+        "mayor65": 1200,
+        "mayor75": 1460,
+        "descendientes": [
+          2510,
+          2820,
+          4170,
+          4700
+        ],
+        "menor3": 2920,
+        "discapacidad33": 3130,
+        "discapacidad65": 9390,
+        "asistencia": 3130
       },
       "deducciones": [
-        { "code": "andalucia_alquiler", "label": "Alquiler de vivienda habitual (Andalucía, menores de 35 o mayores de 65)", "tipo": "alquiler",
-          "pct": 0.15, "max": 1200, "edadMenorDe": 35, "edadMayorDe": 65, "maxBaseImponible": 25000 }
+        {
+          "code": "andalucia_alquiler",
+          "label": "Alquiler de vivienda habitual (Andalucía, menores de 35 o mayores de 65)",
+          "tipo": "alquiler",
+          "pct": 0.15,
+          "max": 1200,
+          "edadMenorDe": 35,
+          "edadMayorDe": 65,
+          "maxBaseImponible": 25000
+        }
+      ]
+    },
+    "Aragón": {
+      "escala": [
+        {
+          "hasta": 13072.5,
+          "tipo": 0.095
+        },
+        {
+          "hasta": 21210,
+          "tipo": 0.12
+        },
+        {
+          "hasta": 36960,
+          "tipo": 0.15
+        },
+        {
+          "hasta": 52500,
+          "tipo": 0.185
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.205
+        },
+        {
+          "hasta": 80000,
+          "tipo": 0.23
+        },
+        {
+          "hasta": 90000,
+          "tipo": 0.24
+        },
+        {
+          "hasta": 130000,
+          "tipo": 0.25
+        },
+        {
+          "hasta": null,
+          "tipo": 0.255
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-aragon.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "10.2.1 Nacimiento o adopcion del tercer hijo o sucesivos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_2-aragon/10_2_1-nacimiento-adopcion-tercer-hijo-sucesivos.html",
+          "motivo": "500 euros, o 600 si base imponible menos minimos personal y descendientes <=21000 individual; regimen diferenciado rural 600/720; no encaja en porHijo"
+        },
+        {
+          "nombre": "10.2.15 Nacimiento primer/segundo hijo en municipios <10.000 hab.",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_2-aragon/10_2_15-nacimiento-adopcion.html",
+          "motivo": "depende de municipio (no leida en detalle)"
+        },
+        {
+          "nombre": "10.2.16 Guarderia menores de 3 anos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_2-aragon/10_2_16-gastos-guarderia-hijos-menores-anos_.html",
+          "motivo": "fuera de las 4 categorias (gasto)"
+        }
+      ],
+      "avisos": [
+        "Aragon no aparece en el cuadro AEAT de minimos autonomicos: se asume que aplica los estatales (inferido por ausencia).",
+        "Sin deduccion de alquiler de vivienda habitual generica (solo la ligada a dacion en pago, 10.2.11). Sin familia numerosa. Donaciones 10.2.5 son de finalidad ecologica/I+D, no leidas ni modeladas.",
+        "La pagina de escala no muestra escala de ahorro propia."
+      ]
+    },
+    "Asturias": {
+      "escala": [
+        {
+          "hasta": 12450,
+          "tipo": 0.09
+        },
+        {
+          "hasta": 17707.2,
+          "tipo": 0.12
+        },
+        {
+          "hasta": 33007.2,
+          "tipo": 0.14
+        },
+        {
+          "hasta": 53407.2,
+          "tipo": 0.192
+        },
+        {
+          "hasta": 70000,
+          "tipo": 0.215
+        },
+        {
+          "hasta": 90000,
+          "tipo": 0.225
+        },
+        {
+          "hasta": 175000,
+          "tipo": 0.25
+        },
+        {
+          "hasta": null,
+          "tipo": 0.26
+        }
+      ],
+      "minimos": {
+        "personal": 6105,
+        "mayor65": 1265,
+        "mayor75": 1540,
+        "descendientes": [
+          2640,
+          2970,
+          4400,
+          4950
+        ],
+        "menor3": 3080,
+        "discapacidad33": 3300,
+        "discapacidad65": 9900,
+        "asistencia": 3300
+      },
+      "deducciones": [
+        {
+          "code": "asturias_alquiler",
+          "label": "Asturias: alquiler vivienda habitual (tipo general)",
+          "tipo": "alquiler",
+          "pct": 0.1,
+          "max": 500,
+          "maxBaseImponible": 35000,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_3-principado-asturias/10_3_4-arrendamiento-vivienda-habitual.html"
+        },
+        {
+          "code": "asturias_familia_numerosa",
+          "label": "Asturias: familia numerosa",
+          "tipo": "familia_numerosa",
+          "general": 1000,
+          "especial": 2000,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_3-principado-asturias/10_3_7-familias-numerosas.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-principado-asturias.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "10.3.4 Alquiler: variante 30% hasta 1.500 euros (menores de 35, familias numerosas/monoparentales, victimas violencia de genero, municipios en riesgo de despoblamiento)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_3-principado-asturias/10_3_4-arrendamiento-vivienda-habitual.html",
+          "motivo": "depende de municipio y de grupos familiares; solapa con el tipo general"
+        },
+        {
+          "nombre": "10.3.6 Partos multiples o dos adopciones",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_3-principado-asturias/10_3_6-partos-multiples-dos-adopciones.html",
+          "motivo": "no leida; condicion de parto multiple, no encaja en porHijo"
+        },
+        {
+          "nombre": "10.3.13 Nacimiento 2.º y sucesivos en municipios en riesgo de despoblamiento",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_3-principado-asturias/10_3_13-nacimiento-adopcion-segundo-sucesivos-hijos.html",
+          "motivo": "depende de municipio (no leida)"
+        },
+        {
+          "nombre": "10.3.20 Emancipacion de jovenes hasta 35",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_3-principado-asturias/10_3_20-emancipacion-jovenes-hasta-35-edad.html",
+          "motivo": "no leida; puede solapar con alquiler"
+        }
+      ],
+      "avisos": [
+        "Familia numerosa: la pagina indica el limite 35.000 (indiv.) solo para los casos 'equivalentes' (1-2 ascendientes con dos hijos); por eso no se puso maxBaseImponible. Verificar.",
+        "Alquiler general: 10% max 500, limite base imponible 35.000 individual. Un menor de 35 tendria 30%/1.500 (no modelado, el motor lo infravalora).",
+        "Sin deduccion de nacimiento por importe fijo ni donativos propios modelados (no revisados los 27 enlaces uno a uno).",
+        "Los minimos son del cuadro AEAT (mayor65 es el suplemento +1.265; personal 6.105 general). Sin escala de ahorro propia en la pagina."
+      ]
+    },
+    "Baleares": {
+      "escala": [
+        {
+          "hasta": 10000,
+          "tipo": 0.09
+        },
+        {
+          "hasta": 18000,
+          "tipo": 0.1125
+        },
+        {
+          "hasta": 30000,
+          "tipo": 0.1425
+        },
+        {
+          "hasta": 48000,
+          "tipo": 0.175
+        },
+        {
+          "hasta": 70000,
+          "tipo": 0.19
+        },
+        {
+          "hasta": 90000,
+          "tipo": 0.2175
+        },
+        {
+          "hasta": 120000,
+          "tipo": 0.2275
+        },
+        {
+          "hasta": 175000,
+          "tipo": 0.2375
+        },
+        {
+          "hasta": null,
+          "tipo": 0.2475
+        }
+      ],
+      "minimos": {
+        "personal": 5550,
+        "mayor65": 1265,
+        "mayor75": 1540,
+        "descendientes": [
+          2400,
+          2970,
+          4400,
+          4950
+        ],
+        "menor3": 2800,
+        "discapacidad33": 3300,
+        "discapacidad65": 9900,
+        "asistencia": 3300
+      },
+      "deducciones": [
+        {
+          "code": "baleares_alquiler",
+          "label": "Baleares: alquiler vivienda habitual (menores de 36)",
+          "tipo": "alquiler",
+          "pct": 0.15,
+          "max": 530,
+          "edadMenorDe": 36,
+          "maxBaseImponible": 33000,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_4-illes-balears/10_4_12-arrendamiento-vivienda-habitual.html"
+        },
+        {
+          "code": "baleares_donativos_tercer_sector",
+          "label": "Baleares: donaciones a entidades del tercer sector",
+          "tipo": "donativos",
+          "pct": 0.25,
+          "max": 41.25,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_4-illes-balears/10_4_17-donaciones-entidades-tercer-sector.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-illes-balears.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "10.4.1 Nacimiento (800/1000/1200/1400 por hijo)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_4-illes-balears/10_4_1-nacimiento.html",
+          "motivo": "4 importes distintos (1.º,2.º,3.º,4.º+) y 50% si se superan limites; porHijo admite 3; ademas limites de familias numerosas poco claros"
+        },
+        {
+          "nombre": "10.4.12 Alquiler: variante 20% hasta 650 euros",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_4-illes-balears/10_4_12-arrendamiento-vivienda-habitual.html",
+          "motivo": "menores de 30, discapacidad, familia numerosa/monoparental, autonomos RETA; solapa con el 15%; limites de renta mas altos segun caso"
+        },
+        {
+          "nombre": "10.4.2 Adopcion",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_4-illes-balears/10_4_2-adopcion.html",
+          "motivo": "no leida; analoga a nacimiento"
+        }
+      ],
+      "avisos": [
+        "Alquiler: el 15%/530 tambien aplica a mayores de 65 sin actividad (no modelado); los menores de 30 tendrian 20%/650 (el motor los infravalora). Requiere ademas no tener otra vivienda a menos de 70 km, contrato >=1 ano.",
+        "Donativos: tope de base 165 euros segun la pagina (max deduccion 41,25 = calculo propio 25% x 165); solo donaciones dinerarias a entidades del tercer sector inscritas en Baleares.",
+        "Minimos: la fila del contribuyente es ambigua (5.550 general; 6.105 si >65; y tambien +1.265 mayor de 65). Se uso el suplemento +1.265 como mayor65. Verificar.",
+        "Escala: la columna 'hasta' no se imprime; se derivo de desde+resto. Sin escala de ahorro propia en la pagina."
+      ]
+    },
+    "Canarias": {
+      "escala": [
+        {
+          "hasta": 13748,
+          "tipo": 0.09
+        },
+        {
+          "hasta": 19422,
+          "tipo": 0.115
+        },
+        {
+          "hasta": 35924,
+          "tipo": 0.14
+        },
+        {
+          "hasta": 57566,
+          "tipo": 0.185
+        },
+        {
+          "hasta": 93268,
+          "tipo": 0.235
+        },
+        {
+          "hasta": 123745,
+          "tipo": 0.25
+        },
+        {
+          "hasta": null,
+          "tipo": 0.26
+        }
+      ],
+      "minimos": {
+        "personal": 5606,
+        "mayor65": 1162,
+        "mayor75": 1414,
+        "descendientes": [
+          2424,
+          2727,
+          4040,
+          4545
+        ],
+        "menor3": 2828,
+        "discapacidad33": 3030,
+        "discapacidad65": 9090,
+        "asistencia": 3030
+      },
+      "deducciones": [
+        {
+          "code": "canarias_familia_numerosa",
+          "label": "Canarias: familia numerosa (importe base, sin el incremento por conyuge/descendiente con discapacidad >=65%)",
+          "tipo": "familia_numerosa",
+          "general": 597,
+          "especial": 796,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_5-canarias/10_5_9_por-familia-numerosa.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-canarias.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Por nacimiento o adopcion de hijos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_5-canarias/10_5_6-nacimiento-adopcion-hijos.html",
+          "motivo": "Importes por orden de hijo en 5 niveles (265, 265, 530, 796, 928) mas incremento por hijo con discapacidad >=65%; limite de renta 46.455 individual / 61.770 conjunta; no cabe en 3 niveles con ultimo repetido."
+        },
+        {
+          "nombre": "Por alquiler de vivienda habitual",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_5-canarias/10_5_12-alquiler-vivienda-habitual.html",
+          "motivo": "24% con maximo 740 EUR, o 760 EUR si menor de 40 o 75+ (dos topes segun edad, no disjuntos en el esquema); limite de renta 46.455 individual; alquiler > 10% de la renta."
+        },
+        {
+          "nombre": "Por donaciones a entidades sin animo de lucro",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_5-canarias/10_5_15-donaciones-entidades-sin-animo-lucro.html",
+          "motivo": "Porcentaje escalonado (20% hasta 150 EUR, 15% el resto, 17,5% por fidelizacion); limite 10% de la base liquidable; sin requisito de ser entidad canaria."
+        }
+      ],
+      "avisos": [
+        "La pagina de la escala no menciona escala propia del ahorro.",
+        "Escala 2025 modificada por la disposicion final undecima de la Ley 9/2025 segun la AEAT.",
+        "Familia numerosa: importes base 597/796; con conyuge o descendiente con discapacidad >=65% son 1.326/1.459 (no modelado). La pagina no indica limite de renta.",
+        "Hay otras deducciones canarias (p. ej. 10_5_14 donaciones para fines culturales/deportivos/investigacion, guarderia, estudios) no analizadas por quedar fuera de las cuatro categorias pedidas."
+      ]
+    },
+    "Cantabria": {
+      "escala": [
+        {
+          "hasta": 13000,
+          "tipo": 0.085
+        },
+        {
+          "hasta": 21000,
+          "tipo": 0.11
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.145
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.18
+        },
+        {
+          "hasta": 90000,
+          "tipo": 0.225
+        },
+        {
+          "hasta": null,
+          "tipo": 0.245
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [
+        {
+          "code": "cantabria_alquiler_jovenes",
+          "label": "Cantabria: alquiler de vivienda habitual, menores de 36 anos",
+          "tipo": "alquiler",
+          "pct": 0.1,
+          "max": 300,
+          "edadMenorDe": 36,
+          "alquilerMinPctBase": 0.1,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_6-cantabria/10_6_2-arrendamiento-vivienda-habitual.html"
+        },
+        {
+          "code": "cantabria_alquiler_mayores",
+          "label": "Cantabria: alquiler de vivienda habitual, 65 o mas anos",
+          "tipo": "alquiler",
+          "pct": 0.1,
+          "max": 300,
+          "edadMayorDe": 64,
+          "alquilerMinPctBase": 0.1,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_6-cantabria/10_6_2-arrendamiento-vivienda-habitual.html"
+        },
+        {
+          "code": "cantabria_nacimiento",
+          "label": "Cantabria: nacimiento o adopcion de hijos",
+          "tipo": "nacimiento",
+          "porHijo": [
+            1400,
+            1400,
+            1400
+          ],
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_6-cantabria/10_6_10-nacimiento-adopcion-hijos.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-cantabria.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Por donativos a fundaciones, Fondo Cantabria Coopera o asociaciones de apoyo a la discapacidad",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_6-cantabria/10_6_5-donativos-fundaciones-fondo-cantabria-coopera.html",
+          "motivo": "Porcentaje distinto segun destinatario (15% fundaciones y asociaciones discapacidad, 12% Fondo Cantabria Coopera); limite 10% de base liquidable conjunto con deducciones estatales."
+        }
+      ],
+      "avisos": [
+        "La pagina de la escala no menciona escala propia del ahorro. La columna 'hasta' la deduje de 'desde' + 'resto' y cuadra con las cuotas integras (13.000x8,5% = 1.105).",
+        "Minimos: la tabla de la AEAT no tiene fila de Cantabria; asumo estatales (no hay mencion explicita de que apliquen los estatales).",
+        "Alquiler: en la AEAT el requisito es 10% de la 'renta' del contribuyente; lo mapee a alquilerMinPctBase 0,10 (base imponible), verificar el concepto exacto. Sin limite de renta. Maximo 300 individual (600 conjunta). Contribuyentes con discapacidad >=65% quedan exentos del requisito de edad (no modelado). Incompatible con la deduccion de arrendamiento en municipios con riesgo de despoblamiento.",
+        "Nacimiento: 1.400 EUR por hijo aplicable en el ano del nacimiento/adopcion y los dos siguientes; en declaracion individual se reparte a partes iguales entre progenitores. Sin limite de renta. Incompatible con 'Por cuidado de familiares' salvo discapacidad >=65%.",
+        "Otras deducciones (guarderia, educacion, municipios con riesgo de despoblamiento, etc.) fuera de las cuatro categorias, no analizadas."
+      ]
+    },
+    "Castilla-La Mancha": {
+      "escala": [
+        {
+          "hasta": 12450,
+          "tipo": 0.095
+        },
+        {
+          "hasta": 20200,
+          "tipo": 0.12
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.15
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.185
+        },
+        {
+          "hasta": null,
+          "tipo": 0.225
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [
+        {
+          "code": "clm_familia_numerosa",
+          "label": "Castilla-La Mancha: familia numerosa (importe base, sin incremento por discapacidad >=65%)",
+          "tipo": "familia_numerosa",
+          "general": 200,
+          "especial": 400,
+          "maxBaseImponible": 27000,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_7-castilla-mancha/10_7_7-familia-numerosa.html"
+        },
+        {
+          "code": "clm_donativos",
+          "label": "Castilla-La Mancha: donaciones dinerarias a entidades de cooperacion, pobreza, discapacidad o exclusion social inscritas en CLM",
+          "tipo": "donativos",
+          "pct": 0.15,
+          "limitePctBase": 0.1,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_7-castilla-mancha/10_7_6-cantidades-donadas-cooperacion-internacional.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-castilla-mancha.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Por nacimiento o adopcion de hijos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_7-castilla-mancha/10_7_1-nacimiento-adopcion-hijos.html",
+          "motivo": "Importe segun numero de hijos del mismo parto/adopcion (100 / 500 / 900 EUR), no por orden de hijo; limite 27.000 individual / 36.000 conjunta."
+        },
+        {
+          "nombre": "Por arrendamiento de vivienda habitual para menores de 36 anos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_7-castilla-mancha/10_7_12-arrendamiento-vivienda-habitual.html",
+          "motivo": "15% (max 500) o 20% (max 612) segun poblacion/distancia del municipio; limite de base imponible menos minimo por descendientes 12.500 individual."
+        }
+      ],
+      "avisos": [
+        "La pagina de la escala no menciona escala propia del ahorro. Ultimo tramo: desde 60.000 EUR al 22,5% (cuota acumulada 8.950,75 cuadra).",
+        "Minimos: la tabla de la AEAT no tiene fila de Castilla-La Mancha; asumo estatales (sin mencion explicita).",
+        "Familia numerosa: con discapacidad >=65% que genere minimo, importes 300 (general) / 900 (especial) no modelados. Limite de renta 27.000 es suma de base general y ahorro (= base imponible), individual. Incompatible con la deduccion de alquiler por familias numerosas.",
+        "Donativos: limite del 10% es sobre la base liquidable (el esquema dice base imponible); destinatarios deben estar inscritos en registros de CLM. Existen otras deducciones por donaciones (10_7_8 I+D, 10_7_13 bienes culturales) no analizadas.",
+        "Existen deducciones de alquiler especificas (familias numerosas, monoparentales, discapacidad, dacion en pago) no analizadas por quedar fuera del tipo 'alquiler' de edad solicitado."
+      ]
+    },
+    "Castilla y León": {
+      "escala": [
+        {
+          "hasta": 12450,
+          "tipo": 0.09
+        },
+        {
+          "hasta": 20200,
+          "tipo": 0.12
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.14
+        },
+        {
+          "hasta": 53407.2,
+          "tipo": 0.185
+        },
+        {
+          "hasta": null,
+          "tipo": 0.215
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-castilla-leon.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Por arrendamiento de vivienda habitual por jóvenes",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_8-castilla-leon/10_8_7-arrendamiento-vivienda-habitual-jovenes.html",
+          "motivo": "20% max 459 EUR, o 25% max 612 EUR segun poblacion del municipio (<=10.000 hab., o <=3.000 hab. en general); edad <36; base imponible menos minimo <=18.900 individual"
+        },
+        {
+          "nombre": "Por familia numerosa",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_8-castilla-leon/10_8_12-familia-numerosa.html",
+          "motivo": "No usa general/especial: 600 base, 1.500 con 4 descendientes, 2.500 con 5, +1.000 desde el 6.º, +600 si discapacidad >=65%"
+        },
+        {
+          "nombre": "Por nacimiento o adopción de hijos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_8-castilla-leon/10_8_13-nacimiento-adopcion-hijos.html",
+          "motivo": "Importe distinto segun municipio (general 1.010/1.475/2.351; rural <=5.000 hab. 1.420/2.070/3.300) y se duplica con discapacidad >=33% del hijo"
+        },
+        {
+          "nombre": "Por cantidades donadas a fundaciones de Castilla y León y patrimonio",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_8-castilla-leon/10_8_3-cantidades-donadas-fundaciones.html",
+          "motivo": "15% sin maximo propio, pero exige base imponible menos minimo <=18.900 individual y limite conjunto 10% de la base liquidable con otras deducciones"
+        }
+      ],
+      "avisos": [
+        "No hay escala del ahorro propia en la pagina de AEAT.",
+        "Hay otras deducciones de CyL (cuidado de hijos menores, partos multiples, etc.) fuera de las cuatro categorias pedidas; no revisadas."
+      ]
+    },
+    "Extremadura": {
+      "escala": [
+        {
+          "hasta": 12450,
+          "tipo": 0.08
+        },
+        {
+          "hasta": 20200,
+          "tipo": 0.1
+        },
+        {
+          "hasta": 24200,
+          "tipo": 0.16
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.175
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.21
+        },
+        {
+          "hasta": 80200,
+          "tipo": 0.235
+        },
+        {
+          "hasta": 99200,
+          "tipo": 0.24
+        },
+        {
+          "hasta": 120200,
+          "tipo": 0.245
+        },
+        {
+          "hasta": null,
+          "tipo": 0.25
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [
+        {
+          "code": "extremadura_donativos_cultura_deporte",
+          "label": "Extremadura: donativos a entidades culturales y patrocinio de deportistas de la comunidad",
+          "tipo": "donativos",
+          "pct": 0.2,
+          "max": 500,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_10-extremadura/10_10_16-donaciones-dinero-entidades-culturales-deportistas.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-extremadura.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Por arrendamiento de vivienda habitual",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_10-extremadura/10_10_11-arrendamiento-vivienda-habitual.html",
+          "motivo": "30% max 1.000 EUR (1.500 en municipios <3.000 hab.); requisito alternativo: <36 anos, familia numerosa, monoparental con 2 hijos o discapacidad >=65%; base <=28.000 individual (sin limite en algunos casos rurales); no tener otra vivienda a 75 km"
+        }
+      ],
+      "avisos": [
+        "Minimos: la pagina de AEAT no menciona Extremadura (solo lista 10 comunidades), asi que no se verifico; se omite la clave minimos. Probablemente estatales, pero no confirmado en AEAT.",
+        "No hay deduccion autonomica de nacimiento por importe fijo por hijo ni de familia numerosa en el indice de Extremadura (solo partos multiples, acogimiento, cuidado de hijos <=14, etc., no revisadas).",
+        "Donativos: la deduccion son dos (20% a entidades culturales y 20% a patrocinio de deportistas) con tope conjunto de 500 EUR; se modelo como una sola. Exige entidades/deportistas domiciliados en Extremadura y donacion pura, simple e irrevocable.",
+        "No hay escala del ahorro propia en la pagina de AEAT.",
+        "Mínimos: la AEAT no la lista en su cuadro; se aplican los estatales por defecto, sin confirmación expresa."
+      ]
+    },
+    "Galicia": {
+      "escala": [
+        {
+          "hasta": 12985.35,
+          "tipo": 0.09
+        },
+        {
+          "hasta": 21068.6,
+          "tipo": 0.1165
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.149
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.184
+        },
+        {
+          "hasta": null,
+          "tipo": 0.225
+        }
+      ],
+      "minimos": {
+        "personal": 5789,
+        "mayor65": 1199,
+        "mayor75": 1460,
+        "descendientes": [
+          2503,
+          2816,
+          4172,
+          4694
+        ],
+        "menor3": 2920,
+        "discapacidad33": 3129,
+        "discapacidad65": 9387,
+        "asistencia": 3129
+      },
+      "deducciones": [],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-galicia.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Por nacimiento o adopción de hijos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_11-galicia/10_11_1-nacimiento-adopcion-hijos.html",
+          "motivo": "Importe segun base (<=22.000: 360/1.200/2.400; >22.000: 300), se aplica tambien 2 anos siguientes, +20% en municipios <5.000 hab., doble con discapacidad"
+        },
+        {
+          "nombre": "Por familia numerosa",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_11-galicia/10_11_3-familia-numerosa.html",
+          "motivo": "General 250 y especial 400 para hasta 2 hijos, +250 por cada hijo adicional, doble con discapacidad/dependencia; no es cantidad fija por categoria"
+        },
+        {
+          "nombre": "Por alquiler de la vivienda habitual por contribuyentes de edad igual o inferior a 35 años",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_11-galicia/10_11_7-alquiler-vivienda-habitual.html",
+          "motivo": "10% max 300 EUR; 20% max 600 con 2 o mas hijos menores; doble con discapacidad >=33%; edad <=35; base imponible <=22.000 (individual o conjunta)"
+        },
+        {
+          "nombre": "Por familias con 2 hijos e hijas",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_11-galicia/10_11_2-familias-2-hijos-hijas.html",
+          "motivo": "Fuera de las 4 categorias (250 EUR, 500 con discapacidad); incompatible con familia numerosa"
+        }
+      ],
+      "avisos": [
+        "Galicia usa minimos propios: los importes de mayor65, mayor75, menor3 y asistencia son los suplementos que publica AEAT, en el mismo formato que los estatales de referencia.",
+        "No hay escala del ahorro propia en la pagina de AEAT.",
+        "La deduccion de donativos de Galicia (10.11.12) es solo para I+D e innovacion; no revisada ni modelada."
+      ]
+    },
+    "Murcia": {
+      "escala": [
+        {
+          "hasta": 12450,
+          "tipo": 0.095
+        },
+        {
+          "hasta": 20200,
+          "tipo": 0.112
+        },
+        {
+          "hasta": 34000,
+          "tipo": 0.133
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.179
+        },
+        {
+          "hasta": null,
+          "tipo": 0.225
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [
+        {
+          "code": "murcia_alquiler",
+          "label": "Murcia: alquiler de vivienda habitual, hasta 40 años",
+          "tipo": "alquiler",
+          "pct": 0.1,
+          "max": 300,
+          "edadMaxima": 40,
+          "maxBaseMenosMinimo": 40000,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_13-region-murcia/10_13_14-arrendamiento-vivienda-habitual.html"
+        },
+        {
+          "code": "murcia_nacimiento",
+          "label": "Murcia: nacimiento o adopcion de hijos",
+          "tipo": "nacimiento",
+          "porHijo": [
+            100,
+            200,
+            300
+          ],
+          "maxBaseImponible": 30000,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_13-region-murcia/10_13_9-adopcion-nacimiento.html"
+        },
+        {
+          "code": "murcia_donativos",
+          "label": "Murcia: donativos de mecenazgo (patrimonio cultural y actividades culturales, sociales, cientificas y medioambientales)",
+          "tipo": "donativos",
+          "pct": 0.5,
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_13-region-murcia/10_13_2-donativos-proteccion-patrimonio-cultural.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-region-murcia.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Murcia: familia numerosa (adquisicion de vivienda por familias numerosas, 10.13.17)",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_13-region-murcia/10_13_17-adquisicion-nueva-vivienda-habitual-ampliacion.html",
+          "motivo": "No es una cantidad fija por categoria; es inversion en vivienda. No se leyo su pagina. Murcia no tiene deduccion fija de familia numerosa general/especial en el indice."
+        }
+      ],
+      "avisos": [
+        "Minimos: Murcia no aparece en el cuadro de minimos autonomicos de la AEAT; se asume que aplica los estatales (inferido por ausencia, no hay frase expresa).",
+        "Alquiler Murcia: la AEAT admite tambien a quien sea familia numerosa o tenga discapacidad >=65% aunque supere 40 anos; el esquema solo recoge la edad, asi que esos casos quedan sin deduccion. Ademas exige base liquidable del ahorro <=1.800 euros (no modelado). Limite de 40.000 sobre base general menos minimo personal y familiar; la AEAT no distingue individual/conjunta. El maximo de 300 es por contrato.",
+        "Nacimiento Murcia: limite 30.000 euros (suma de base general y ahorro, individual); 50.000 en conjunta. Con padres que declaran por separado la deduccion se reparte a mitades; el importe por hijo depende del orden de cada progenitor.",
+        "Donativos Murcia: 50% sin maximo ni limite sobre la base publicado; solo para donaciones puras y simples a entidades de la Ley de Mecenazgo de Murcia; se reduce por lo ya usado en la deduccion estatal por donativos.",
+        "Escala del ahorro: no se ha consultado ninguna escala propia; no se afirma nada al respecto.",
+        "Otras deducciones de Murcia (gastos de guarderia, material escolar, donativos investigacion biosanitaria 10.13.8, etc.) no se revisaron por quedar fuera de las cuatro categorias o no ser objetivo."
+      ]
+    },
+    "La Rioja": {
+      "escala": [
+        {
+          "hasta": 12450,
+          "tipo": 0.08
+        },
+        {
+          "hasta": 20200,
+          "tipo": 0.106
+        },
+        {
+          "hasta": 35200,
+          "tipo": 0.136
+        },
+        {
+          "hasta": 40000,
+          "tipo": 0.178
+        },
+        {
+          "hasta": 50000,
+          "tipo": 0.183
+        },
+        {
+          "hasta": 60000,
+          "tipo": 0.19
+        },
+        {
+          "hasta": 120000,
+          "tipo": 0.245
+        },
+        {
+          "hasta": null,
+          "tipo": 0.27
+        }
+      ],
+      "minimos": "estatales",
+      "deducciones": [
+        {
+          "code": "la_rioja_nacimiento",
+          "label": "La Rioja: nacimiento o adopcion de hijos",
+          "tipo": "nacimiento",
+          "porHijo": [
+            600,
+            750,
+            900
+          ],
+          "fuente": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_14_la-rioja/10_14_1-nacimiento-adopcion-hijos.html"
+        }
+      ],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunidad-autonoma-rioja.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "La Rioja: arrendamiento de vivienda habitual, menores de 36 anos",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_14_la-rioja/10_14_15-arrendamiento-vivienda-habitual-menores-anos.html",
+          "motivo": "10% con maximo 300 por contrato (20% y 400 en pequenos municipios), edad <36, pero el limite de renta es sobre base LIQUIDABLE general (18.030 individual) y base liquidable del ahorro <=1.800; no encaja en maxBaseImponible ni en maxBaseMenosMinimo, y depende del municipio."
+        },
+        {
+          "nombre": "La Rioja: donaciones para promocion y estimulo del mecenazgo",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_14_la-rioja/10_14_17-donaciones-promocion.html",
+          "motivo": "15% con tope conjunto de 500 euros compartido con otra deduccion y limite del 30% de la cuota integra autonomica (no de la base); incompatible con otras dos deducciones de donaciones culturales."
+        }
+      ],
+      "avisos": [
+        "Minimos: el cuadro de la AEAT dice que personal, descendientes y ascendientes son iguales a los estatales. Excepcion: para descendientes con discapacidad el cuadro da 3.300 (>=33%) y 9.900 (>=65%); el texto no aclara los importes para contribuyente y ascendientes con discapacidad. Asistencia +3.000 (igual que estatal).",
+        "Nacimiento La Rioja: 600/750/900; +60 euros por hijo en parto o adopcion multiple (no modelado). La pagina no indica limite de renta. Con convivencia de ambos padres y declaracion separada se reparte a mitades.",
+        "La escala de La Rioja cambio por la Ley 13/2023 desde 2024; la tabla recogida es la de 2025. No se consulto ninguna escala del ahorro propia.",
+        "Donativos La Rioja: hay otras deducciones por donaciones culturales (10_14_18 a 10_14_21) no revisadas."
+      ]
+    },
+    "Comunidad Valenciana": {
+      "escala": [
+        {
+          "hasta": 12000,
+          "tipo": 0.09
+        },
+        {
+          "hasta": 22000,
+          "tipo": 0.12
+        },
+        {
+          "hasta": 32000,
+          "tipo": 0.15
+        },
+        {
+          "hasta": 42000,
+          "tipo": 0.175
+        },
+        {
+          "hasta": 52000,
+          "tipo": 0.2
+        },
+        {
+          "hasta": 62000,
+          "tipo": 0.225
+        },
+        {
+          "hasta": 72000,
+          "tipo": 0.25
+        },
+        {
+          "hasta": 100000,
+          "tipo": 0.265
+        },
+        {
+          "hasta": 150000,
+          "tipo": 0.275
+        },
+        {
+          "hasta": 200000,
+          "tipo": 0.285
+        },
+        {
+          "hasta": null,
+          "tipo": 0.295
+        }
+      ],
+      "minimos": {
+        "personal": 6105,
+        "mayor65": 1265,
+        "mayor75": 1540,
+        "descendientes": [
+          2640,
+          2970,
+          4400,
+          4950
+        ],
+        "menor3": 3080,
+        "discapacidad33": 3300,
+        "discapacidad65": 9900,
+        "asistencia": 3300
+      },
+      "deducciones": [],
+      "fuentes": {
+        "escala": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c15-calculo-impuesto-determinacion-cuotas-integras/gravamen-base-liquidable-general/gravamen-autonomico/comunitat-valenciana.html",
+        "minimos": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-practicos/irpf-2025/c14-adecuacion-impuesto-circunstancias-personales/minimo-autonomico-personal-familiar/cuadro-minimos-personales-familiares-estatal-autonomicos.html"
+      },
+      "noModeladas": [
+        {
+          "nombre": "Comunitat Valenciana: nacimiento, adopcion, delegacion de guarda o acogimiento familiar",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_15-comunitat-valenciana/10_15_1-nacimiento-adopcion-delegacion-guarda-familiar.html",
+          "motivo": "600/750/900 por hijo, pero con reduccion progresiva entre 27.000 y 30.000 euros (individual) y nada por encima; no cabe un maxBaseImponible simple. Tambien +300 por hijos de 2023/2024 aplicables en anos siguientes."
+        },
+        {
+          "nombre": "Comunitat Valenciana: familia numerosa o monoparental",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_15-comunitat-valenciana/10_15_4-familia-numerosa-monoparental.html",
+          "motivo": "330 (general) y 660 (especial), pero con reduccion progresiva por renta: general pleno <27.000 y nulo >30.000 individual; especial pleno <31.000 y nulo >35.000. Incluye monoparental."
+        },
+        {
+          "nombre": "Comunitat Valenciana: arrendamiento o pago por cesion en uso de la vivienda habitual",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_15-comunitat-valenciana/10_15_13-arrendamiento-pago.html",
+          "motivo": "Tres niveles: 20% max 800; 25% max 950 con una condicion; 30% max 1.100 con dos o mas (edad <=35, discapacidad, violencia de genero), mas reduccion progresiva por renta 27.000-30.000 individual. Descripcion extraida con ambiguedad sobre el tipo de arrendador; revisar en la fuente."
+        },
+        {
+          "nombre": "Comunitat Valenciana: donaciones con finalidad ecologica",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_15-comunitat-valenciana/10_15_16-donaciones-finalidad-ecologica.html",
+          "motivo": "Dos tramos de porcentaje: 20% los primeros 250 euros y 25% el resto; sin maximo publicado."
+        },
+        {
+          "nombre": "Comunitat Valenciana: donaciones al fomento de la Lengua Valenciana",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_15-comunitat-valenciana/10_15_20-donaciones-destinadas-fomento-lengua-valenciana.html",
+          "motivo": "Dos tramos (20% hasta 250 euros, 25% el resto) y limite conjunto del 30% de la base liquidable general y del ahorro compartido con otras deducciones."
+        },
+        {
+          "nombre": "Comunitat Valenciana: donaciones de bienes del Patrimonio Cultural Valenciano",
+          "url": "https://sede.agenciatributaria.gob.es/Sede/ayuda/manuales-videos-folletos/manuales-ayuda-presentacion/irpf-2025/10-cumplimentacion-irpf-deducciones-autonomicas/10_15-comunitat-valenciana/10_15_17-donaciones-bienes-integrantes.html",
+          "motivo": "Dos tramos de porcentaje (20% primeros 250 euros, 25% el resto)."
+        }
+      ],
+      "avisos": [
+        "Valencia no tiene ninguna deduccion de las cuatro categorias que encaje en el esquema: todas tienen tramos de porcentaje o reduccion progresiva por renta.",
+        "Minimos: importes extraidos del cuadro de la AEAT. Mayor de 65 y mayor de 75 son importes adicionales (+1.265 y +1.540 segun el cuadro), igual que menor de 3 anos (+3.080) y asistencia (+3.300). Se mapeo asistencia a 3.300 (cuadro: ayuda de terceras personas, movilidad reducida o discapacidad >=65%).",
+        "Los minimos de ascendientes (1.265 y 1.540) coinciden con los de mayor65/mayor75; es la lectura del cuadro, no verificada celda a celda.",
+        "No se consulto ninguna escala del ahorro propia; la Comunitat Valenciana puede tenerla, verificar."
       ]
     }
   }

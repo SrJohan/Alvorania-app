@@ -44,7 +44,7 @@ export type CaseRow = {
   taxYear: number;
   answers: Answers;
   questionnaireStep: number;
-  dataSource: "manual" | "documento" | null;
+  dataSource: "manual" | "documento" | "aeat" | null;
   calculation: Calculation | null;
   review: Review | null;
   aeatReference: string | null;

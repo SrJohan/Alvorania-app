@@ -1,0 +1,22 @@
+# Demo de Alvorania en el VPS de gestoriainnova.com. Se usa desde /opt/alvorania-demo (ver LEEME.md).
+services:
+  web:
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_DATA_MODE: live
+        NEXT_PUBLIC_SITE_URL: https://alvorania.gestoriainnova.com
+        NEXT_PUBLIC_SUPABASE_URL: ${NEXT_PUBLIC_SUPABASE_URL}
+        NEXT_PUBLIC_SUPABASE_ANON_KEY: ${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+    image: alvorania-demo
+    restart: unless-stopped
+    env_file: .env   # claves secretas: solo en el servidor (chmod 600), nunca en git
+    ports:
+      - "127.0.0.1:3110:3000"   # solo nginx llega a la app
+    mem_limit: 512m
+    read_only: true
+    tmpfs:
+      - /tmp
+      - /app/.next/cache
+    security_opt:
+      - no-new-privileges:true

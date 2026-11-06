@@ -1,5 +1,6 @@
 "use server";
 import { createHash, randomUUID } from "node:crypto";
+import { cleanId, isValidNif, isValidReferencia } from "@/lib/aeat";
 import { publicEnv } from "@/lib/env";
 import { serverEnv } from "@/server/env";
 import { supabaseAdmin, supabaseForUser } from "@/lib/supabase/server";
@@ -137,6 +138,20 @@ export async function setDataSource(source: string): Promise<ActionResult> {
     const s = source === "documento" ? "documento" : "manual";
     const c = await myRentaCase(user.id);
     const { error } = await sb.from("tax_data").upsert({ case_id: c.id, source: s }, { onConflict: "case_id" });
+    if (error) throw error;
+  });
+}
+
+/** El usuario nos da el NIF y la referencia de Renta que le dio la AEAT; el asesor los usa en Renta WEB como colaborador social. */
+export async function saveAeatReference(nif: string, referencia: string): Promise<ActionResult> {
+  return run(async () => {
+    const { sb, user } = await requireUser();
+    await rateLimit(`aeatref:user:${user.id}`, 10, 3600);
+    if (!isValidNif(nif)) throw new AppError("Revisa el NIF: no parece válido.");
+    if (!isValidReferencia(referencia)) throw new AppError("Revisa la referencia: son 6 letras y números.");
+    const c = await myRentaCase(user.id);
+    const raw_json = { nif: cleanId(nif), referencia: cleanId(referencia), savedAt: new Date().toISOString() };
+    const { error } = await sb.from("tax_data").upsert({ case_id: c.id, source: "aeat_datos_fiscales", raw_json }, { onConflict: "case_id" });
     if (error) throw error;
   });
 }

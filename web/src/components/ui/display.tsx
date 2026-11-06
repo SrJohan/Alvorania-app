@@ -86,33 +86,6 @@ export function ResultCard({ cents, savingsCents, stale, count }: { cents: numbe
   );
 }
 
-export function Stepper({ steps, current }: { steps: string[]; current: number }) {
-  return (
-    <>
-      <p className="text-sm font-medium sm:hidden">Paso {current + 1} de {steps.length}: {steps[current]}</p>
-      <ol className="hidden flex-wrap items-center gap-x-3 gap-y-2 sm:flex">
-        {steps.map((s, i) => {
-          const done = i < current;
-          const cur = i === current;
-          return (
-            <li key={s} aria-current={cur ? "step" : undefined} className={`flex items-center gap-2 text-sm ${cur ? "font-semibold text-text" : "text-text-muted"}`}>
-              <span className={`grid size-7 place-items-center rounded-full border-2 text-xs font-semibold transition-colors duration-200 ${done ? "border-success bg-success text-on-accent" : cur ? "border-accent text-accent" : "border-border-input"}`}>
-                {done ? <>✓<span className="sr-only"> completado</span></> : i + 1}
-              </span>
-              {s}
-              {i < steps.length - 1 && (
-                <span aria-hidden className="ml-1 h-0.5 w-6 overflow-hidden bg-border">
-                  <span className={`block h-full origin-left bg-success transition-[scale] duration-200 ease-brand motion-reduce:transition-none ${done ? "scale-x-100" : "scale-x-0"}`} />
-                </span>
-              )}
-            </li>
-          );
-        })}
-      </ol>
-    </>
-  );
-}
-
 export type TimelineItem = { title: string; detail?: string; state: "done" | "current" | "pending"; action?: ReactNode };
 export function Timeline({ items }: { items: TimelineItem[] }) {
   return (

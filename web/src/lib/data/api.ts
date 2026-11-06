@@ -17,6 +17,7 @@ export const signOut = impl.signOut;
 export const recordConsent = impl.recordConsent;
 export const createCase = impl.createCase;
 export const setDataSource = impl.setDataSource;
+export const saveAeatReference = impl.saveAeatReference;
 export const saveAnswers = impl.saveAnswers;
 export const runCalculation = impl.runCalculation;
 export const checkout = impl.checkout;

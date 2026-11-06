@@ -1,8 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState, type FormEvent } from "react";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useRef, useState, type FormEvent } from "react";
+import { Button, buttonClass } from "@/components/ui/button";
 import { FileDrop } from "@/components/ui/file-drop";
 import { Card, ErrorState, Notice, ResultCard, Skeleton, StatusBadge, Tag } from "@/components/ui/display";
 import { SelectField, TextField } from "@/components/ui/form";
@@ -22,10 +22,33 @@ const ANSWER_LABELS: [keyof Answers, string, "euros" | "n" | "texto" | "si"][] =
   ["savingsIncome", "Intereses y dividendos", "euros"], ["savingsGains", "Ganancias", "euros"],
   ["ascendientes", "Ascendientes a cargo", "n"], ["ascendientes75", "De ellos, mayores de 75", "n"],
   ["children", "Hijos", "n"], ["childrenUnder3", "Menores de 3", "n"], ["workingMother", "Madre trabajadora", "si"], ["nurseryCost", "Guardería", "euros"],
+  ["bornThisYear", "Hijos nacidos o adoptados en 2025", "n"], ["familiaNumerosa", "Familia numerosa", "texto"],
   ["rentPaid", "Alquiler pagado", "euros"], ["mortgagePre2013", "Hipoteca anterior a 2013", "euros"],
   ["pensionContrib", "Planes de pensiones", "euros"], ["donations", "Donativos", "euros"], ["donationsRecurrent", "Donativos recurrentes", "si"],
+  ["donationsRegional", "Donativos a entidades de su comunidad", "euros"],
   ["propertyIncome", "Inmuebles (alquiler, segunda vivienda o venta)", "si"], ["selfEmployed", "Actividad como autónomo", "si"],
 ];
+
+// shortcut: la dirección lleva el año de la campaña (2025); al abrir otro ejercicio hay que sacar la nueva de la sede de la AEAT.
+const RENTA_WEB_URL = "https://www1.agenciatributaria.gob.es/wlpl/DASR-CORE/AccesoDR2025RVlt";
+
+function CopyButton({ text, onError }: { text: string; onError: (m: string) => void }) {
+  const [copied, setCopied] = useState(false);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(() => () => { if (timer.current) clearTimeout(timer.current); }, []);
+  return (
+    <Button size="sm" variant="secondary" className="focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent" onClick={async () => {
+      try {
+        await navigator.clipboard.writeText(text);
+        setCopied(true);
+        if (timer.current) clearTimeout(timer.current);
+        timer.current = setTimeout(() => setCopied(false), 2000);
+      } catch {
+        onError("No se ha podido copiar. Selecciónalo y cópialo a mano.");
+      }
+    }}><span aria-live="polite">{copied ? "Copiado" : "Copiar"}</span></Button>
+  );
+}
 
 const fmt = (v: unknown, t: string) =>
   t === "euros" ? formatEuros(Math.round(Number(v) * 100)) : t === "si" ? (v ? "Sí" : "No") : String(v || "—");
@@ -40,7 +63,6 @@ export function CaseDetail() {
   const [msg, setMsg] = useState("");
   const [ref, setRef] = useState("");
   const [plan, setPlan] = useState("LIVE");
-
   const load = useCallback(async () => {
     const r = await advisorCaseDetail(id);
     if (r.ok) { setD(r.data); setError(""); } else setError(r.error);
@@ -117,6 +139,19 @@ export function CaseDetail() {
       <div className="grid items-start gap-6 lg:grid-cols-2">
         <Card>
           <h2 className="text-lg font-semibold">Datos del cliente</h2>
+          {d.aeatAccess && (
+            <section aria-labelledby="aeat-access" className="mt-4 space-y-3 rounded-md border border-border bg-surface p-4">
+              <h3 id="aeat-access" className="font-semibold">Acceso a Renta WEB</h3>
+              <a className={buttonClass("primary", "md", "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent")} href={RENTA_WEB_URL} target="_blank" rel="noopener noreferrer">Abrir Renta WEB</a>
+              <ol className="list-inside list-decimal space-y-2 text-sm">
+                <li>Entra con el certificado de la gestoría y elige «Actuar como representante de».</li>
+                <li className="space-x-2">NIF del cliente: <span className="font-mono">{d.aeatAccess.nif}</span><CopyButton text={d.aeatAccess.nif} onError={setActionError} /></li>
+                <li className="space-x-2">Referencia: <span className="font-mono">{d.aeatAccess.referencia}</span><CopyButton text={d.aeatAccess.referencia} onError={setActionError} /></li>
+                <li>Pulsa «Servicio tramitación de borrador/declaración (Renta WEB)» y trae los datos fiscales.</li>
+              </ol>
+              <p className="text-xs text-text-muted">Guardada el {formatDateTime(d.aeatAccess.savedAt)}</p>
+            </section>
+          )}
           {d.answers ? (
             <dl className="mt-3 grid grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-sm">
               {ANSWER_LABELS.map(([k, label, t]) => (

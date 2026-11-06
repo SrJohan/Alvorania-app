@@ -83,6 +83,8 @@ export async function recordConsent(kind: keyof typeof CONSENT_KIND, granted: bo
 export const createCase = (taxYear = 2025) => mutate(() => actions.createCase(taxYear));
 export const setDataSource = (source: "manual" | "documento") => mutate(() => actions.setDataSource(source));
 
+export const saveAeatReference = (nif: string, referencia: string) => mutate(() => actions.saveAeatReference(nif, referencia));
+
 export async function saveAnswers(answers: Answers, step: number) {
   update((s) => (s.case ? { ...s, case: { ...s.case, answers, questionnaireStep: step } } : s));
   pending = { answers, step };

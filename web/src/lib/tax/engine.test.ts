@@ -127,7 +127,7 @@ describe("casos completos calculados a mano", () => {
   });
 
   it("E · comunidad sin datos propios: estimación con la escala supletoria y marcada como aproximada", () => {
-    const c = calculate(A({ ccaa: "Galicia", birthYear: 1990, grossIncome: 30000, socialSecurity: 1950, withholdings: 4000 }));
+    const c = calculate(A({ ccaa: "Ceuta", birthYear: 1990, grossIncome: 30000, socialSecurity: 1950, withholdings: 4000 }));
     expect(c.approximate).toBe(true);
     expect(c.breakdown.cuotaIntegraAutonomica).toBeCloseTo(2463, 2);
     expect(euros(c.resultCents)).toBeCloseTo(926, 2);
@@ -159,5 +159,70 @@ describe("casos completos calculados a mano", () => {
   it("respuestas antiguas sin los campos nuevos siguen calculando", () => {
     const viejo = { taxYear: 2025, ccaa: "Madrid", civilStatus: "soltero", payers: 1, grossIncome: 30000, socialSecurity: 1950, withholdings: 4000, children: 0, childrenUnder3: 0, pensionContrib: 0, donations: 0, mortgagePre2013: 0 } as unknown as Answers;
     expect(Number.isFinite(calculate(viejo).resultCents)).toBe(true);
+  });
+});
+
+describe("deducciones autonómicas por nacimiento, familia numerosa y donativos", () => {
+  const rules = {
+    ...R,
+    territorios: {
+      ...R.territorios,
+      Prueba: {
+        escala: R.escalaEstatal, minimos: "estatales" as const,
+        deducciones: [
+          { code: "p_nac", label: "Nacimiento", tipo: "nacimiento" as const, porHijo: [100, 200, 300], maxBaseImponible: 30000 },
+          { code: "p_fn", label: "Familia numerosa", tipo: "familia_numerosa" as const, general: 400, especial: 800 },
+          { code: "p_don", label: "Donativos", tipo: "donativos" as const, pct: 0.25, max: 50 },
+        ],
+      },
+    },
+  };
+  const base = { ccaa: "Prueba", birthYear: 1985, grossIncome: 24000, socialSecurity: 1500, withholdings: 3000 };
+  const line = (c: ReturnType<typeof calculate>, code: string) => c.deductions.find((l) => l.code === code);
+
+  it("nacimiento: suma por hijo y repite el último importe", () => {
+    expect(line(calculate(A({ ...base, children: 4, bornThisYear: 4 }), rules), "p_nac")?.amount).toBe(900);
+  });
+  it("familia numerosa: importe distinto según general o especial", () => {
+    expect(line(calculate(A({ ...base, familiaNumerosa: "general" }), rules), "p_fn")?.amount).toBe(400);
+    expect(line(calculate(A({ ...base, familiaNumerosa: "especial" }), rules), "p_fn")?.amount).toBe(800);
+  });
+  it("donativos: porcentaje con tope", () => {
+    expect(line(calculate(A({ ...base, donationsRegional: 100 }), rules), "p_don")?.amount).toBe(25);
+    expect(line(calculate(A({ ...base, donationsRegional: 1000 }), rules), "p_don")?.amount).toBe(50);
+  });
+  it("sin datos no sale ninguna línea, y el límite de renta la deja en «no aplica»", () => {
+    const c = calculate(A(base), rules);
+    expect(["p_nac", "p_fn", "p_don"].some((k) => line(c, k))).toBe(false);
+    const rica = calculate(A({ ...base, grossIncome: 60000, children: 1, bornThisYear: 1 }), rules);
+    expect(line(rica, "p_nac")?.status).toBe("no_aplica");
+  });
+});
+
+describe("comunidades cargadas desde el Manual de la AEAT", () => {
+  const names = Object.keys(R.territorios);
+  it("están todas las de territorio común salvo Ceuta y Melilla", () => {
+    expect(names).toHaveLength(15);
+    for (const n of ["Aragón", "Asturias", "Baleares", "Canarias", "Cantabria", "Castilla-La Mancha", "Castilla y León", "Extremadura", "Galicia", "Murcia", "La Rioja", "Comunidad Valenciana"]) expect(names).toContain(n);
+  });
+  it("cada escala es creciente, acaba en «en adelante» y tipos entre 5 % y 30 %", () => {
+    for (const n of names) {
+      const e = R.territorios[n].escala;
+      expect(e.at(-1)!.hasta, n).toBeNull();
+      e.slice(0, -1).forEach((b, i) => { if (i > 0) expect(b.hasta! > e[i - 1].hasta!, n).toBe(true); });
+      e.forEach((b) => { expect(b.tipo, n).toBeGreaterThan(0.05); expect(b.tipo, n).toBeLessThan(0.3); });
+    }
+  });
+  it("cada deducción lleva su fuente de la AEAT", () => {
+    for (const n of names) for (const d of R.territorios[n].deducciones) if (n !== "Madrid" && n !== "Cataluña" && n !== "Andalucía") expect(d.fuente, d.code).toMatch(/^https:\/\/sede\.agenciatributaria\.gob\.es\//);
+  });
+  it("Cantabria: nacimiento de dos hijos suma 2 × 1.400 € y no se ve afectado por la escala supletoria", () => {
+    const c = calculate(A({ ccaa: "Cantabria", birthYear: 1985, grossIncome: 30000, socialSecurity: 1900, withholdings: 3000, children: 2, bornThisYear: 2 }));
+    expect(c.approximate).toBe(false);
+    expect(c.deductions.find((l) => l.code === "cantabria_nacimiento")?.amount).toBe(2800);
+  });
+  it("una comunidad con deducciones sin modelar avisa al usuario", () => {
+    const c = calculate(A({ ccaa: "Galicia", birthYear: 1985, grossIncome: 30000, socialSecurity: 1900, withholdings: 3000 }));
+    expect(c.deductions.find((l) => l.code === "autonomicas_otras")?.status).toBe("sugerida");
   });
 });

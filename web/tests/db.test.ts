@@ -4,6 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
 import { PLANS } from "@/lib/data/plans";
+import { RULES_2025 } from "@/lib/tax/rules";
 
 // Postgres en memoria que imita lo que Supabase aporta: esquema auth, auth.uid() y los roles authenticated / service_role.
 const A = "00000000-0000-0000-0000-00000000000a";
@@ -179,7 +180,7 @@ describe("integridad", () => {
     expect((await q("select count(*)::int n from tax_rules where tax_year = 2025"))[0].n).toBe(1);
     expect((await q("select count(*)::int n from tax_rules where kind = 'paquete' and reviewed_at is null"))[0].n).toBe(1);
     const pkg = (await q("select rule from tax_rules where kind = 'paquete'"))[0].rule as { territorios: Record<string, unknown> };
-    expect(Object.keys(pkg.territorios).sort()).toEqual(["Andalucía", "Cataluña", "Madrid"]);
+    expect(Object.keys(pkg.territorios).sort()).toEqual(Object.keys(RULES_2025.territorios).sort());
   });
   it("los precios de la base coinciden con los de la web (+20 % de 0008)", async () => {
     const plans = Object.fromEntries((await q("select code, price_cents from plans")).map((r) => [r.code, r.price_cents]));

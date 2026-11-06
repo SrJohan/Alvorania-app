@@ -89,7 +89,7 @@ async function loadCase(sb: SupabaseClient, c: Row): Promise<CaseRow> {
     taxYear: c.tax_year ?? 2025,
     answers: { ...emptyAnswers, taxYear: c.tax_year ?? 2025, ...answers } as Answers,
     questionnaireStep: Number(__step ?? 0),
-    dataSource: td?.source === "manual" || td?.source === "documento" ? td.source : null,
+    dataSource: td?.source === "aeat_datos_fiscales" ? "aeat" : td?.source === "manual" || td?.source === "documento" ? td.source : null,
     calculation: ((calcs ?? [])[0]?.output as Calculation | undefined) ?? null,
     review: rev ? { status: rev.status, advisorName, advisorColegiado, advisorReturning, advisorApprovedAt: rev.advisor_approved_at, userApprovedAt: rev.user_approved_at, notes: rev.notes ?? "" } : null,
     aeatReference: c.aeat_reference ?? null,

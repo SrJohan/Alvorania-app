@@ -7,7 +7,7 @@ const pkg = JSON.parse(fs.readFileSync(`src/lib/tax/data/irpf-${year}.json`, "ut
 const json = JSON.stringify(pkg).replace(/'/g, "''");
 
 const sql = `-- GENERADO por scripts/rules-to-sql.mjs desde src/lib/tax/data/irpf-${year}.json. No editar a mano.
--- Paquete completo de reglas del IRPF ${year}: escalas estatal y autonómicas (Madrid, Cataluña, Andalucía), mínimos,
+-- Paquete completo de reglas del IRPF ${year}: escalas estatal y autonómicas de todas las comunidades de territorio común, mínimos,
 -- reducciones y deducciones, con la URL oficial de cada cifra en "sources".
 -- reviewed_at queda nulo: con REQUIRE_REVIEWED_TAX_RULES=true el servidor no calcula hasta que un fiscalista lo firme:
 --   update tax_rules set reviewed_by = '<uuid del fiscalista>', reviewed_at = now() where tax_year = ${year} and kind = 'paquete';

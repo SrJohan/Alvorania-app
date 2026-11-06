@@ -3,6 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // Las pruebas e2e compilan en su propia carpeta para no pisar el servidor de desarrollo.
   distDir: process.env.NEXT_DIST_DIR ?? ".next",
+  // La imagen Docker del VPS (deploy/vps) compila con NEXT_OUTPUT=standalone: solo los archivos que necesita el servidor.
+  output: process.env.NEXT_OUTPUT === "standalone" ? "standalone" : undefined,
   // Solo en desarrollo: abrir la demo desde un móvil de la misma wifi (http://192.168.x.x:3000).
   allowedDevOrigins: ["192.168.*.*", "10.*.*.*"],
   // La web pública vive en WordPress; aquí solo está la app. La raíz lleva al acceso.
